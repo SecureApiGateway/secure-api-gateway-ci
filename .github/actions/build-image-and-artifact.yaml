@@ -1,0 +1,57 @@
+name: Build Image and Artifact
+inputs:
+  repositoryName: 
+    required: true
+    type: string
+runs:
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with: 
+        repository: SecureApiGateway/${{ inputs.repositoryName }}
+        path: ${{ inputs.repositoryName }}
+    - name: Set Cache with Protected Repository
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+        architecture: x64
+        cache: 'maven'
+        server-id: forgerock-internal-releases # protected repo id to get the protected dependencies
+        server-username: FR_ARTIFACTORY_USER # env variable for username in deploy
+        server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # env variable for token in deploy
+    - name: Get Version
+      run: |
+        echo "VERSION=$( cd ${{ inputs.repositoryName }} && mvn help:evaluate -Dexpression=project.version -q -DforceStdout )" >> $GITHUB_ENV
+        echo "MAVEN_SERVER_COMMUNITY=maven.forgerock.org-community" >> $GITHUB_ENV
+      env:
+        FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+    - name: Push to community snapshot if version contains snapshot
+      if: contains( env.VERSION, 'SNAPSHOT')
+      run: |
+        echo "MAVEN_SERVER_COMMUNITY=maven.forgerock.org-community-snapshots" >> $GITHUB_ENV
+    - name: Build Core Code + Test + Create Docker Image
+      run: |
+        cd ${{ inputs.repositoryName }}
+        make clean docker tag=nightly
+      env:
+        FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+    - name: Set Cache with Community Repository
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+        architecture: x64
+        cache: 'maven'
+        server-id: ${{ env.MAVEN_SERVER_COMMUNITY }} # community repo to publish the java artifact
+        server-username: FR_ARTIFACTORY_USER # env variable for username in deploy
+        server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # env variable for token in deploy
+    - name: Deploy Core Maven Artifact Package
+      run: |
+        cd ${{ inputs.repositoryName }}
+        mvn -B deploy -DskipTests
+      env:
+        FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
