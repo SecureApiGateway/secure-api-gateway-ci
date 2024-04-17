@@ -7,5 +7,3 @@ jobs:
     uses: SecureApiGateway/secure-api-gateway-core/.github/workflows/merge.yml@705-nightly-build-pipelines
     with:
       build_type: nightly
-    secrets:
-      release_github_token: ${{ secrets.RELEASE_PAT }}
