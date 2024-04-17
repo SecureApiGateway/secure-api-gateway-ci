@@ -10,11 +10,14 @@ jobs:
         uses: actions/checkout@v4
         with: 
           repository: SecureApiGateway/secure-api-gateway-core
+          path: secure-api-gateway-core
       # Add in further repos
       - name: Checkout OB
         uses: actions/checkout@v4
         with: 
           repository: SecureApiGateway/secure-api-gateway-ob-uk
+          path: secure-api-gateway-ob-uk
+      
       # Java version and maven settings with protected repository id
       - name: Set Java and Maven Cache with Protected Repository
         uses: actions/setup-java@v4
@@ -27,11 +30,6 @@ jobs:
           server-username: FR_ARTIFACTORY_USER # env variable for username in deploy
           server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # env variable for token in deploy
 
-      - name: Context Forgerock Maven Community Repository
-        run: |
-          ls -la
-          echo "MAVEN_SERVER_COMMUNITY=maven.forgerock.org-community-snapshots" >> $GITHUB_ENV
-          
       - name: Auth to GCP
         uses: google-github-actions/auth@v2
         with:
@@ -45,27 +43,44 @@ jobs:
         run: |
           gcloud auth configure-docker europe-west4-docker.pkg.dev
 
-#      - name: Build Core Code + Test + Create Docker Image
-#        run: |
-#          make clean docker tag=nightly
-#        env:
-#          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-#          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-#
-#      # Overwrite maven settings with the creds for the maven server to deploy to
-#      - uses: actions/setup-java@v4
-#        name: Set Java and Maven Cache with Community Repository
-#        with:
-#          distribution: 'zulu'
-#          java-version: '17'
-#          architecture: x64
-#          cache: 'maven'
-#          server-id: ${{ env.MAVEN_SERVER_COMMUNITY }} # community repo to publish the java artifact
-#          server-username: FR_ARTIFACTORY_USER # env variable for username in deploy
-#          server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # env variable for token in deploy
-#
-#      - name: Deploy Maven Artifact Package
-#        run: mvn -B deploy -DskipTests
-#        env:
-#          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-#          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+
+      - name: Get Core Version
+        run: |
+          echo "VERSION=$( cd secure-api-gateway-core && mvn help:evaluate -Dexpression=project.version -q -DforceStdout )" >> $GITHUB_ENV
+          echo "MAVEN_SERVER_COMMUNITY=maven.forgerock.org-community" >> $GITHUB_ENV
+        env:
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+
+      - name: Context Forgerock Maven Community Repository
+        if: contains( env.VERSION, 'SNAPSHOT')
+        run: |
+          echo "MAVEN_SERVER_COMMUNITY=maven.forgerock.org-community-snapshots" >> $GITHUB_ENV
+      
+      - name: Build Core Code + Test + Create Docker Image
+        run: |
+          cd secure-api-gateway-core
+          make clean docker tag=nightly
+        env:
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+
+      # Overwrite maven settings with the creds for the maven server to deploy to
+      - uses: actions/setup-java@v4
+        name: Set Java and Maven Cache with Community Repository
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          architecture: x64
+          cache: 'maven'
+          server-id: ${{ env.MAVEN_SERVER_COMMUNITY }} # community repo to publish the java artifact
+          server-username: FR_ARTIFACTORY_USER # env variable for username in deploy
+          server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # env variable for token in deploy
+
+      - name: Deploy Core Maven Artifact Package
+        run: |
+          cd secure-api-gateway-core
+          mvn -B deploy -DskipTests
+        env:
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
