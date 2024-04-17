@@ -1,0 +1,57 @@
+name: Build Image and Artifact
+inputs:
+  repositoryName: 
+    required: true
+    type: string
+  mavenBuildCommands:
+    required: true
+    type: string
+  FR_ARTIFACTORY_USER:
+    required: true
+    type: string
+  FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD:
+    required: true
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with: 
+        repository: SecureApiGateway/${{ inputs.repositoryName }}
+        path: ${{ inputs.repositoryName }}
+    - name: Get Version
+      shell: bash
+      run: |
+        echo "VERSION=$( cd ${{ inputs.repositoryName }} && mvn help:evaluate -Dexpression=project.version -q -DforceStdout )" >> $GITHUB_ENV
+        echo "MAVEN_SERVER_COMMUNITY=maven.forgerock.org-community" >> $GITHUB_ENV
+      env:
+        FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
+        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+    - name: Push to community snapshot if version contains snapshot
+      if: contains( env.VERSION, 'SNAPSHOT')
+      shell: bash
+      run: |
+        echo "MAVEN_SERVER_COMMUNITY=maven.forgerock.org-community-snapshots" >> $GITHUB_ENV
+    - name: Set Cache with Community Repository
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+        architecture: x64
+        cache: 'maven'
+        server-id: ${{ env.MAVEN_SERVER_COMMUNITY }} # community repo to publish the java artifact
+        server-username: FR_ARTIFACTORY_USER # env variable for username in deploy
+        server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # env variable for token in deploy
+      env:
+        FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
+        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+    - name: Deploy Core Maven Artifact Package
+      shell: bash
+      run: |
+        cd ${{ inputs.repositoryName }}
+        ${{ inputs.mavenBuildCommands }}
+      env:
+        FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
+        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}

@@ -1,11 +1,77 @@
 name: Nightly Build
 on:
+  schedule:
+    - cron: '0 3 * * 1-5' # UTC
   workflow_dispatch:
 jobs:
-  build-core:
-    name: Build Core
-    uses: SecureApiGateway/secure-api-gateway-core/.github/workflows/merge.yml@705-nightly-build-pipelines
-    with:
-      build_type: nightly
-    secrets:
-      release_github_token: ${{ secrets.RELEASE_PAT }}
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CI Code
+        uses: actions/checkout@v4  
+      # Auth GCP, SDK & Artifact Registry
+      - name: Auth to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.DEV_GAR_KEY }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2.1.0
+      - name: Auth Docker
+        run: |
+          gcloud auth configure-docker europe-west4-docker.pkg.dev
+      - name: Call build-image-and-artifact for Core
+        uses: ./.github/actions/build-image-and-artifact
+        with: 
+          repositoryName: secure-api-gateway-core
+          dockerBuildCommands: "make clean docker tag=latest && make clean docker tag=dev"
+          mavenBuildCommands: "mvn -B deploy -DskipTests"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+      - name: Call build-image-and-artifact for OB
+        uses: ./.github/actions/build-image-and-artifact
+        with: 
+          repositoryName: secure-api-gateway-ob-uk
+          dockerBuildCommands: "make clean docker tag=latest && make clean docker tag=dev"
+          mavenBuildCommands: "mvn -B deploy -DskipTests"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+      - name: Call build-artifact for Common
+        uses: ./.github/actions/build-artifact
+        with: 
+          repositoryName: secure-api-gateway-ob-uk-common
+          mavenBuildCommands: "mvn -B deploy --file pom.xml"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+      - name: Call build-image-and-artifact for RS
+        uses: ./.github/actions/build-image-and-artifact
+        with:
+          repositoryName: secure-api-gateway-ob-uk-rs
+          dockerBuildCommands: "make docker tag=nightly"
+          mavenBuildCommands: "mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+      - name: Call build-image-and-artifact for RCS
+        uses: ./.github/actions/build-image-and-artifact
+        with: 
+          repositoryName: secure-api-gateway-ob-uk-rcs
+          dockerBuildCommands: "make docker tag=nightly"
+          mavenBuildCommands: "make verify && mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+      - name: Call build-image for Functional Tests 
+        uses: ./.github/actions/build-image
+        with: 
+          repositoryName: secure-api-gateway-ob-uk-functional-tests
+          dockerBuildCommands: "make docker tag=nightly"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        if: failure()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.WEBHOOK_SBAT_NOTIFY_SLACK }}
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_TITLE: Nightly Components Build Failed 
+          SLACK_MESSAGE: Please check the link in the message
+          SLACK_USERNAME: GitHub Actions
