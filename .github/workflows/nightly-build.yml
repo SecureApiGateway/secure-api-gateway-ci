@@ -22,6 +22,5 @@ jobs:
         uses: ./.github/actions/build-image-and-artifact
         with: 
           repositoryName: secure-api-gateway-core
-        secrets: 
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
