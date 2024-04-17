@@ -28,8 +28,8 @@ jobs:
           server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # env variable for token in deploy
 
       - name: Context Forgerock Maven Community Repository
-        if: contains( env.VERSION, 'SNAPSHOT')
         run: |
+          ls -la
           echo "MAVEN_SERVER_COMMUNITY=maven.forgerock.org-community-snapshots" >> $GITHUB_ENV
           
       - name: Auth to GCP
@@ -45,28 +45,27 @@ jobs:
         run: |
           gcloud auth configure-docker europe-west4-docker.pkg.dev
 
-      - name: Build Core Code + Test + Create Docker Image
-        run: |
-          cd SecureApiGateway/secure-api-gateway-core
-          make clean docker tag=nightly
-        env:
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-
-      # Overwrite maven settings with the creds for the maven server to deploy to
-      - uses: actions/setup-java@v4
-        name: Set Java and Maven Cache with Community Repository
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-          architecture: x64
-          cache: 'maven'
-          server-id: ${{ env.MAVEN_SERVER_COMMUNITY }} # community repo to publish the java artifact
-          server-username: FR_ARTIFACTORY_USER # env variable for username in deploy
-          server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # env variable for token in deploy
-
-      - name: Deploy Maven Artifact Package
-        run: mvn -B deploy -DskipTests
-        env:
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+#      - name: Build Core Code + Test + Create Docker Image
+#        run: |
+#          make clean docker tag=nightly
+#        env:
+#          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+#          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+#
+#      # Overwrite maven settings with the creds for the maven server to deploy to
+#      - uses: actions/setup-java@v4
+#        name: Set Java and Maven Cache with Community Repository
+#        with:
+#          distribution: 'zulu'
+#          java-version: '17'
+#          architecture: x64
+#          cache: 'maven'
+#          server-id: ${{ env.MAVEN_SERVER_COMMUNITY }} # community repo to publish the java artifact
+#          server-username: FR_ARTIFACTORY_USER # env variable for username in deploy
+#          server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # env variable for token in deploy
+#
+#      - name: Deploy Maven Artifact Package
+#        run: mvn -B deploy -DskipTests
+#        env:
+#          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+#          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
