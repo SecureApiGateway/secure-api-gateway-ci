@@ -27,6 +27,6 @@ jobs:
       - name: Call build-image-and-artifact step for OB
         uses: ./.github/actions/build-image-and-artifact
         with: 
-          repositoryName: secure-api-gateway-ob
+          repositoryName: secure-api-gateway-ob-uk
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
