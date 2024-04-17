@@ -18,9 +18,15 @@ jobs:
       - name: Auth Docker
         run: |
           gcloud auth configure-docker europe-west4-docker.pkg.dev
-      - name: Call build-image-and-artifact step for Core
+      - name: Call build-image-and-artifact for Core
         uses: ./.github/actions/build-image-and-artifact
         with: 
           repositoryName: secure-api-gateway-core
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+      - name: Call build-image-and-artifact step for OB
+        uses: ./.github/actions/build-image-and-artifact
+        with: 
+          repositoryName: secure-api-gateway-ob
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
