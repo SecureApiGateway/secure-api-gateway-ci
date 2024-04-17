@@ -47,7 +47,7 @@ jobs:
         uses: ./.github/actions/build-image-and-artifact
         with:
           repositoryName: secure-api-gateway-ob-uk-rs
-          dockerBuildCommands: "make docker tag=nightly"
+          dockerBuildCommands: "make docker tag=latest"
           mavenBuildCommands: "mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -55,7 +55,7 @@ jobs:
         uses: ./.github/actions/build-image-and-artifact
         with: 
           repositoryName: secure-api-gateway-ob-uk-rcs
-          dockerBuildCommands: "make docker tag=nightly"
+          dockerBuildCommands: "make docker tag=latest"
           mavenBuildCommands: "make verify && mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -63,7 +63,7 @@ jobs:
         uses: ./.github/actions/build-image
         with: 
           repositoryName: secure-api-gateway-ob-uk-functional-tests
-          dockerBuildCommands: "make docker tag=nightly"
+          dockerBuildCommands: "make docker tag=latest"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
       - name: Slack Notification

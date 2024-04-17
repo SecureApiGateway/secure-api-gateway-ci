@@ -1,1 +1,1 @@
-# secure-api-gateway-ci
+# secure-api-gateway-ci  [![Nightly Build](https://github.com/SecureApiGateway/secure-api-gateway-ci/actions/workflows/nightly-build.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ci/actions/workflows/nightly-build.yml)
