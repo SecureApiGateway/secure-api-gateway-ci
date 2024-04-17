@@ -1,0 +1,11 @@
+name: Nightly Build
+on:
+  workflow_dispatch:
+jobs:
+  build-core:
+    name: Build Core
+    uses: SecureApiGateway/secure-api-gateway-core/.github/workflows/merge.yml@705-nightly-build-pipelines
+    with:
+      build_type: nightly
+    secrets:
+      release_github_token: ${{ secrets.RELEASE_PAT }}
