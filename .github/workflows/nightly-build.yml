@@ -2,8 +2,71 @@ name: Nightly Build
 on:
   workflow_dispatch:
 jobs:
-  build-core:
-    name: Build Core
-    uses: SecureApiGateway/secure-api-gateway-core/.github/workflows/merge.yml@705-nightly-build-pipelines
-    with:
-      build_type: nightly
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Core
+        uses: actions/checkout@v4
+        with: 
+          repository: SecureApiGateway/secure-api-gateway-core
+      # Add in further repos
+      - name: Checkout OB
+        uses: actions/checkout@v4
+        with: 
+          repository: SecureApiGateway/secure-api-gateway-ob-uk
+      # Java version and maven settings with protected repository id
+      - name: Set Java and Maven Cache with Protected Repository
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          architecture: x64
+          cache: 'maven'
+          server-id: forgerock-internal-releases # protected repo id to get the protected dependencies
+          server-username: FR_ARTIFACTORY_USER # env variable for username in deploy
+          server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # env variable for token in deploy
+
+      - name: Context Forgerock Maven Community Repository
+        if: contains( env.VERSION, 'SNAPSHOT')
+        run: |
+          echo "MAVEN_SERVER_COMMUNITY=maven.forgerock.org-community-snapshots" >> $GITHUB_ENV
+          
+      - name: Auth to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.DEV_GAR_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2.1.0
+
+      # Configure docker to use the gcloud command-line tool as a credential helper
+      - name: Auth Docker
+        run: |
+          gcloud auth configure-docker europe-west4-docker.pkg.dev
+
+      - name: Build Core Code + Test + Create Docker Image
+        run: |
+          cd SecureApiGateway/secure-api-gateway-core
+          make clean docker tag=nightly
+        env:
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+
+      # Overwrite maven settings with the creds for the maven server to deploy to
+      - uses: actions/setup-java@v4
+        name: Set Java and Maven Cache with Community Repository
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          architecture: x64
+          cache: 'maven'
+          server-id: ${{ env.MAVEN_SERVER_COMMUNITY }} # community repo to publish the java artifact
+          server-username: FR_ARTIFACTORY_USER # env variable for username in deploy
+          server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # env variable for token in deploy
+
+      - name: Deploy Maven Artifact Package
+        run: mvn -B deploy -DskipTests
+        env:
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
