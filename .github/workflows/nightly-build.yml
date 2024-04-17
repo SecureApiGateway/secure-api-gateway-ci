@@ -19,4 +19,4 @@ jobs:
         run: |
           gcloud auth configure-docker europe-west4-docker.pkg.dev
       - name: Use local my-action
-        uses: ./.github/actions/build-image-and-artifact.yaml
+        uses: ./.github/actions/build-image-and-artifact
