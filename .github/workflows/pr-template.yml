@@ -18,6 +18,7 @@ jobs:
       # Prepare Environment
       - name: Prepare Environment
         run: |
+          ls -la
           grep -v '^#' component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Auth GCP, SDK & Artifact Registry
       - name: Call Authentication
