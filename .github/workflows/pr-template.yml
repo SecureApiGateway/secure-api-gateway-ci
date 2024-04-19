@@ -30,7 +30,9 @@ jobs:
       # Prepare Environment
       - name: Prepare Environment
         run: |
-          sed -i -e 's/TAG_REPLACE/'${{ inputs.prNumber }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+          if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            sed -i -e 's/TAG_REPLACE/'${{ inputs.prNumber }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+          fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Auth GCP, SDK & Artifact Registry
       - name: Authentication
