@@ -15,7 +15,7 @@ jobs:
         uses: ./.github/actions/authentication
         with: 
           garKey: ${{ secrets.DEV_GAR_KEY }}
-          garURL: ${{ vars.GAR_LOCATION }}
+          garLocation: ${{ vars.GAR_LOCATION }}
       # Build Components
       - name: Call build-image-and-artifact for Core
         uses: ./.github/actions/build-image-and-artifact
