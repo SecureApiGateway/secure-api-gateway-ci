@@ -11,15 +11,12 @@ jobs:
       - name: Checkout CI Code
         uses: actions/checkout@v4  
       # Auth GCP, SDK & Artifact Registry
-      - name: Auth to GCP
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.DEV_GAR_KEY }}
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2.1.0
-      - name: Auth Docker
-        run: |
-          gcloud auth configure-docker europe-west4-docker.pkg.dev
+      - name: Call Authentication
+        uses: ./.github/actions/authentication
+        with: 
+          garKey: ${{ secrets.DEV_GAR_KEY }}
+          garURL: ${{ vars.GAR_LOCATION }}
+      # Build Components
       - name: Call build-image-and-artifact for Core
         uses: ./.github/actions/build-image-and-artifact
         with: 
@@ -43,20 +40,20 @@ jobs:
           mavenBuildCommands: "mvn -B deploy --file pom.xml"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-      - name: Call build-image-and-artifact for RS
-        uses: ./.github/actions/build-image-and-artifact
-        with:
-          repositoryName: secure-api-gateway-ob-uk-rs
-          dockerBuildCommands: "make docker tag=latest"
-          mavenBuildCommands: "mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
       - name: Call build-image-and-artifact for RCS
         uses: ./.github/actions/build-image-and-artifact
         with: 
           repositoryName: secure-api-gateway-ob-uk-rcs
           dockerBuildCommands: "make docker tag=latest"
           mavenBuildCommands: "make verify && mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+      - name: Call build-image-and-artifact for RS
+        uses: ./.github/actions/build-image-and-artifact
+        with:
+          repositoryName: secure-api-gateway-ob-uk-rs
+          dockerBuildCommands: "make docker tag=latest"
+          mavenBuildCommands: "mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
       - name: Call build-image for Functional Tests 
