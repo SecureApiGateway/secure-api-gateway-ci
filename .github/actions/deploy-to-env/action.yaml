@@ -22,7 +22,9 @@ runs:
   using: composite
   steps:
     - name: Create Lowercase Github Username
-      run: echo "GITHUB_USER=$(echo ${{github.actor}} | tr '[:upper:]' '[:lower:]')" >> ${GITHUB_ENV}
+      shell: bash
+      run: | 
+        echo "GITHUB_USER=$(echo ${{github.actor}} | tr '[:upper:]' '[:lower:]')" >> ${GITHUB_ENV}
     - name: 'Update Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: github.actor != 'dependabot[bot]'
