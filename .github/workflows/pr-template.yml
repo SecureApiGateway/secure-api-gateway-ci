@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: 1389-standard-steps-for-workflows # To be removed after testing
-          repository: secure-api-gateway-ci
+          repository: SecureAPIGateway/secure-api-gateway-ci
       # Prepare Environment
       - name: Prepare Environment
         run: |
