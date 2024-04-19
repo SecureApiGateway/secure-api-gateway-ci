@@ -1,4 +1,4 @@
-name: Build Image and Artifact
+name: Build Artifact
 inputs:
   repositoryName: 
     required: true
@@ -42,11 +42,8 @@ runs:
         architecture: x64
         cache: 'maven'
         server-id: ${{ env.MAVEN_SERVER_COMMUNITY }} # community repo to publish the java artifact
-        server-username: FR_ARTIFACTORY_USER # env variable for username in deploy
-        server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # env variable for token in deploy
-      env:
-        FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
-        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+        server-username: FR_ARTIFACTORY_USER # placeholder variable for username in deploy
+        server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # placeholder variable for token in deploy
     - name: Deploy Core Maven Artifact Package
       shell: bash
       run: |

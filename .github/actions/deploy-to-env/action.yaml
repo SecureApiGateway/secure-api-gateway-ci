@@ -1,0 +1,35 @@
+name: Build Image and Artifact
+inputs:
+  prNumber: 
+    required: true
+    type: string
+  serviceName:
+    required: true
+    type: string
+  cfAPIKey:
+    required: true
+    type: string
+  cfTriggerName:
+    required: true
+    type: string
+  cfPipelineName:
+    required: true
+    type: string
+  cfPipelineBranch:
+    required: true
+    type: string
+runs:
+  using: composite
+  steps:
+    - name: Create Lowercase Github Username
+      run: echo "GITHUB_USER=$(echo ${{github.actor}} | tr '[:upper:]' '[:lower:]')" >> ${GITHUB_ENV}
+    - name: 'Update Environment'
+      uses: codefresh-io/codefresh-pipeline-runner@master
+      if: github.actor != 'dependabot[bot]'
+      with:
+        args: '-v TAG=${{ inputs.prNumber }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-core'
+      env:
+        PIPELINE_NAME: ${{ inputs.cfPipelineName }}
+        CF_API_KEY: ${{ inputs.cfAPIKey }}
+        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
+        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
