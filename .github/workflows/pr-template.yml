@@ -45,7 +45,7 @@ jobs:
       - name: Run Tests
         if: env.STEPS_RUN_INITIAL_TESTS == 'true'
         run : |
-          cd ${{ inputs.repositoryName }}
+          cd ${{ inputs.componentName }}
           ${{ env.STEPS_RUN_INITIAL_TESTS_COMMAND }}
       # Set Maven Config
       - name: Set Maven Config
