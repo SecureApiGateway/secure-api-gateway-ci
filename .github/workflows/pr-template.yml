@@ -15,16 +15,13 @@ jobs:
         with:
           ref: 1389-standard-steps-for-workflows # To be removed after testing
           repository: SecureApiGateway/secure-api-gateway-ci
+          path: secure-api-gateway-ci
       # Prepare Environment
       - name: Prepare Environment
         run: |
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Checkout Calling Repo
-      - name: Checkout Calling Component Repo
-        uses: actions/checkout@v4
-        with:
-          ref: 1389-standard-steps-for-workflows # To be removed after testing
-          repository: ${{ env.GITHUB_ORG }}/${{ inputs.componentName }}
+
       # Auth GCP, SDK & Artifact Registry
       - name: Authentication
         uses: secure-api-gateway-ci/.github/actions/authentication
