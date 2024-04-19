@@ -37,7 +37,7 @@ jobs:
           garKey: ${{ secrets.DEV_GAR_KEY }}
           garLocation: ${{ env.GAR_LOCATION }}
       - name: Set Maven Config
-        uses: ./.github/actions/set-maven-config
+        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
         if: env.STEPS_SET_MAVEN_CONFIG == 'true'
         with:
           javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
