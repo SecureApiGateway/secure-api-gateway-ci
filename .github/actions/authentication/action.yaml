@@ -1,0 +1,22 @@
+name: Build Image and Artifact
+inputs:
+  garKey: 
+    required: true
+    type: string
+  garLocation:
+    required: true
+    type: string
+
+runs:
+  using: composite
+  steps:
+    # Auth GCP, SDK & Artifact Registry
+    - name: Auth to GCP
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ inputs.garKey }}
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2.1.0
+    - name: Auth Docker
+      run: |
+        gcloud auth configure-docker ${{ inputs.garLocation }}
