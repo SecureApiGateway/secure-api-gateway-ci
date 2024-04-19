@@ -51,7 +51,7 @@ runs:
       with:
         args: '-v TAG=${{ inputs.dockerTag }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-ob'
       env:
-        PIPELINE_NAME: ${{ inputs.cfPipelineName }}
+        PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
         TRIGGER_NAME: ${{ inputs.cfTriggerName }}
         CF_BRANCH: ${{ inputs.cfPipelineBranch }}
@@ -62,7 +62,7 @@ runs:
       with:
         args: '-v TAG=${{ inputs.dockerTag }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-core'
       env:
-        PIPELINE_NAME: ${{ inputs.cfPipelineName }}
+        PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
         TRIGGER_NAME: ${{ inputs.cfTriggerName }}
         CF_BRANCH: ${{ inputs.cfPipelineBranch }}
