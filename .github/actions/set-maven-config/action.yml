@@ -1,0 +1,31 @@
+name: Set Maven Config
+description: Action to create a maven config file during workflow
+inputs:
+  javaDistribution:
+    description: What java distribution to use
+    required: true
+  javaVersion:
+    description: What java version to use
+    required: true
+  javaArchitecture:
+    description: What java architecture to use
+    required: true
+  cache:
+    description: What cache to use
+    required: true
+  mavenServerID:
+    description: What Server to connect too
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Set Cache with Community Repository
+      uses: actions/setup-java@v4
+      with:
+        distribution: ${{ inputs.javaDistribution }}
+        java-version: ${{ inputs.javaVersion }}
+        architecture: ${{ inputs.javaArchitecture }}
+        cache: ${{ inputs.cache }}
+        server-id: ${{ inputs.mavenServerID }}
+        server-username: FR_ARTIFACTORY_USER # placeholder variable for username in deploy
+        server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # placeholder variable for token in deploy

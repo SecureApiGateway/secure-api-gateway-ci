@@ -21,16 +21,25 @@ jobs:
         run: |
           grep -v '^#' component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Auth GCP, SDK & Artifact Registry
-      - name: Call Authentication
+      - name: Authentication
         uses: ./.github/actions/authentication
         if: env.STEPS_AUTHENTICATE == 'true'
         with:
           garKey: ${{ secrets.DEV_GAR_KEY }}
           garLocation: ${{ env.GAR_LOCATION }}
-      #- name: Call build-image
+      - name: Set Maven Config
+        uses: ./.github/actions/set-maven-config
+        if: env.STEPS_SET_MAVEN_CONFIG == 'true'
+        with:
+          javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
+          javaVersion: ${{ env.JAVA_VERSION }}
+          javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
+          cache: ${{ env.CACHE }}
+          mavenServerID: ${{ env.MAVEN_SERVER_ID }}
+      #- name: Build Image
       #  uses: ./.github/actions/build-image
+      #  if: env.STEPS_BUILD_DOCKER_IMAGE == 'true'
       #  with:
-      #    setMavenConfig: ${{ env.SET_MAVEN_CONFIG }}
       #    repositoryName: ${{ github.repository }}
       #    dockerBuildCommands: "make clean && make docker tag=$PR_NUMBER env=dev && make docker tag=$PR_NUMBER-prod"
       #    FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
