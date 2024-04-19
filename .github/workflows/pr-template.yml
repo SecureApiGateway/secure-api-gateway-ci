@@ -38,6 +38,11 @@ jobs:
         with:
           garKey: ${{ secrets.DEV_GAR_KEY }}
           garLocation: ${{ env.GAR_LOCATION }}
+      # Run Initial Tests
+      - name: Run Tests
+        if: env.STEPS_RUN_INITIAL_TESTS == 'true'
+        run : |
+          ${{ env.STEPS_RUN_INITIAL_TESTS_COMMAND }}
       # Set Maven Config
       - name: Set Maven Config
         uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
@@ -54,7 +59,7 @@ jobs:
         if: env.STEPS_BUILD_DOCKER_IMAGE == 'true'
         with:
           checkoutCode: false
-          dockerBuildCommands: "make clean && make docker tag=${{ inputs.prNumber }} env=dev && make docker tag=${{ inputs.prNumber }}-prod"
+          dockerBuildCommands: ${{ env.STEPS_BUILD_DOCKER_COMMANDS }}
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: ${{ inputs.componentName }}
@@ -64,7 +69,7 @@ jobs:
         if: env.STEPS_BUILD_MAVEN_PROJECT == 'true'
         with:
           checkoutCode: false
-          mavenBuildCommands: "mvn -B clean package --file pom.xml"
+          mavenBuildCommands: ${{ env.STEPS_BUILD_MAVEN_COMMANDS }}
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: ${{ inputs.componentName }}
@@ -93,7 +98,7 @@ jobs:
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       - name: Call deploy-to-env
         uses: ./secure-api-gateway-ci/.github/actions/deploy-to-env
-        if: env.STEPS_DEPLOY_CHANGES == 'true'
+        if: env.STEPS_DEPLOY_CHANGES == 'true' && github.actor != 'dependabot[bot]'
         with:
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: ${{ env.CF_TRIGGER_NAME }}

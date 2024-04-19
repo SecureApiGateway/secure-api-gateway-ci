@@ -20,20 +20,47 @@ inputs:
     description: The Branch to use to run the pipeline
     required: true
   sapigType:
-    description: The Type of SAPIG that is being deployed
+    description: The Type of SAPIG that is being deployed, use BOTH for deployments that need to go to both
     required: true
 runs:
   using: composite
   steps:
     - name: Create Lowercase Github Username
       shell: bash
-      run: | 
+      run: |
         echo "GITHUB_USER=$(echo ${{github.actor}} | tr '[:upper:]' '[:lower:]')" >> ${GITHUB_ENV}
-    - name: 'Update Environment'
+        if [[ ${{ inputs.sapigType }} == "both" ]]; then
+          echo DEPLOYOB=true >> ${GITHUB_ENV}
+          echo DEPLOYCORE=true >> ${GITHUB_ENV}
+        elif [[ ${{ inputs.sapigType }} == "ob" ]]; then
+          echo DEPLOYOB=true >> ${GITHUB_ENV}
+          echo DEPLOYCORE=false >> ${GITHUB_ENV}
+        elif [[ ${{ inputs.sapigType }} == "core" ]]; then
+          echo DEPLOYOB=false >> ${GITHUB_ENV}
+          echo DEPLOYCORE=true >> ${GITHUB_ENV}
+        elif [[ ${{ inputs.sapigType }} == "none" ]]; then
+          echo DEPLOYOB=false >> ${GITHUB_ENV}
+          echo DEPLOYCORE=false >> ${GITHUB_ENV}
+        else
+          echo "Unexpected value for sapigType, use 'ob','core','both' or 'none'"
+        fi
+
+    - name: 'Update OB Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
-      if: github.actor != 'dependabot[bot]'
+      if: env.DEPLOYOB == 'true'
       with:
-        args: '-v TAG=${{ inputs.dockerTag }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-${{ inputs.sapigType }}'
+        args: '-v TAG=${{ inputs.dockerTag }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-ob'
+      env:
+        PIPELINE_NAME: ${{ inputs.cfPipelineName }}
+        CF_API_KEY: ${{ inputs.cfAPIKey }}
+        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
+        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
+
+    - name: 'Update Core Environment'
+      uses: codefresh-io/codefresh-pipeline-runner@master
+      if: env.DEPLOYCORE == 'true'
+      with:
+        args: '-v TAG=${{ inputs.dockerTag }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-core'
       env:
         PIPELINE_NAME: ${{ inputs.cfPipelineName }}
         CF_API_KEY: ${{ inputs.cfAPIKey }}
