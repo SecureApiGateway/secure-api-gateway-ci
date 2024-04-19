@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build
     steps:
-      - name: Checkout CI Code
+      - name: Checkout CI Repo
         uses: actions/checkout@v4
         with:
           ref: 1389-standard-steps-for-workflows # To be removed after testing
@@ -20,6 +20,12 @@ jobs:
       - name: Prepare Environment
         run: |
           grep -v '^#' component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
+      # Checkout Calling Repo
+      - name: Checkout CI Repo
+        uses: actions/checkout@v4
+        with:
+          ref: 1389-standard-steps-for-workflows # To be removed after testing
+          repository: ${{ env.GITHUB_ORG }}/${{ inputs.componentName }}
       # Auth GCP, SDK & Artifact Registry
       - name: Authentication
         uses: ./.github/actions/authentication
