@@ -45,14 +45,15 @@ jobs:
           javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
           cache: ${{ env.CACHE }}
           mavenServerID: ${{ env.MAVEN_SERVER_ID }}
-      #- name: Build Image
-      #  uses: ./.github/actions/build-image
-      #  if: env.STEPS_BUILD_DOCKER_IMAGE == 'true'
-      #  with:
-      #    repositoryName: ${{ github.repository }}
-      #    dockerBuildCommands: "make clean && make docker tag=$PR_NUMBER env=dev && make docker tag=$PR_NUMBER-prod"
-      #    FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-      #    FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+      - name: Build Image
+        uses: ./secure-api-gateway-ci/.github/actions/build-image
+        if: env.STEPS_BUILD_DOCKER_IMAGE == 'true'
+        with:
+          checkoutCode: false
+          repositoryName: ${{ inputs.componentName }}
+          dockerBuildCommands: "make clean && make docker tag=$PR_NUMBER env=dev && make docker tag=$PR_NUMBER-prod"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
 
 #  deploy:
 #    runs-on: ubuntu-latest
