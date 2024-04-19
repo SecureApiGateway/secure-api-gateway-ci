@@ -1,5 +1,4 @@
 name: Pull Request Build and Deploy
-
 on:
   workflow_call:
     inputs:
@@ -16,25 +15,26 @@ jobs:
         with:
           ref: 1389-standard-steps-for-workflows # To be removed after testing
           repository: SecureAPIGateway/secure-api-gateway-ci
+          path: secure-api-gateway-ci
       # Prepare Environment
       - name: Prepare Environment
         run: |
-          grep -v '^#' component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
+          grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Checkout Calling Repo
-      - name: Checkout CI Repo
+      - name: Checkout Calling Component Repo
         uses: actions/checkout@v4
         with:
           ref: 1389-standard-steps-for-workflows # To be removed after testing
           repository: ${{ env.GITHUB_ORG }}/${{ inputs.componentName }}
       # Auth GCP, SDK & Artifact Registry
       - name: Authentication
-        uses: ./.github/actions/authentication
+        uses: secure-api-gateway-ci/.github/actions/authentication
         if: env.STEPS_AUTHENTICATE == 'true'
         with:
           garKey: ${{ secrets.DEV_GAR_KEY }}
           garLocation: ${{ env.GAR_LOCATION }}
       - name: Set Maven Config
-        uses: ./.github/actions/set-maven-config
+        uses: secure-api-gateway-ci/.github/actions/set-maven-config
         if: env.STEPS_SET_MAVEN_CONFIG == 'true'
         with:
           javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
