@@ -21,6 +21,7 @@ jobs:
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
         with:
+          repo: SecureApiGateway/${{ inputs.componentName }}
           ref: 1389-standard-steps-for-workflows # Remove when done testing
           path: ${{ inputs.componentName }}
       # Prepare Environment
