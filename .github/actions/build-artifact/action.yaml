@@ -1,6 +1,9 @@
 name: Build Artifact
 description: Common steps to build a Maven artifact
 inputs:
+  checkoutCode:
+    description: Wherever or not to checkout the code for the repo
+    required: true
   repositoryName:
     description: The repository name to checkout
     required: true
@@ -18,6 +21,7 @@ runs:
   steps:
     - name: Checkout Code
       uses: actions/checkout@v4
+      if: inputs.checkoutCode == 'true'
       with: 
         repository: ${{ inputs.repositoryName }}
         path: ${{ inputs.repositoryName }}

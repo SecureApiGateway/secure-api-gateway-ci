@@ -35,7 +35,8 @@ jobs:
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
       - name: Call build-artifact for Common
         uses: ./.github/actions/build-artifact
-        with: 
+        with:
+          checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
           mavenBuildCommands: "mvn -B deploy --file pom.xml"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}

@@ -6,7 +6,7 @@ on:
         required: true
         type: string
       prNumber:
-        required: true
+        required: false
         type: string
 jobs:
   build:
@@ -58,7 +58,16 @@ jobs:
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: ${{ inputs.componentName }}
-
+        # Builds Maven Project
+      - name: Build Maven Project
+        uses: ./secure-api-gateway-ci/.github/actions/build-artifact
+        if: env.STEPS_BUILD_MAVEN_PROJECT == 'true'
+        with:
+          checkoutCode: false
+          mavenBuildCommands: "mvn -B clean package --file pom.xml"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: ${{ inputs.componentName }}
   deploy:
     runs-on: ubuntu-latest
     name: Deploy
