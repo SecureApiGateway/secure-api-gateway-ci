@@ -1,4 +1,5 @@
 name: Build Image
+description: Common steps to build a docker image
 inputs:
   checkoutCode:
     description: Wherever or not to checkout the code for the repo

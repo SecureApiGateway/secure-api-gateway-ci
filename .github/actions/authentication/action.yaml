@@ -1,11 +1,12 @@
 name: Authentication
+description: Common commands used to auth to services during workflows
 inputs:
-  garKey: 
+  garKey:
+    description: The GCP Json Auth Key
     required: true
-    type: string
   garLocation:
+    description: The location of the Google Artifact Registry
     required: true
-    type: string
 
 runs:
   using: composite

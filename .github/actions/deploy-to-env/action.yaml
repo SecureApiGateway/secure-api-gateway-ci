@@ -1,23 +1,27 @@
 name: Build Image and Artifact
+description: Common steps to deploy a built docker image to a target environment
 inputs:
-  prNumber: 
+  dockerTag:
+    description: The Tag that is being deployed
     required: true
-    type: string
   serviceName:
+    description: The Service name that is being updated
     required: true
-    type: string
   cfAPIKey:
+    description: The Codefresh API key for auth
     required: true
-    type: string
   cfTriggerName:
+    description: The name of the trigger in Codefresh pipeline to use
     required: true
-    type: string
   cfPipelineName:
+    description: The Pipeline in codefresh that is being ran
     required: true
-    type: string
   cfPipelineBranch:
+    description: The Branch to use to run the pipeline
     required: true
-    type: string
+  sapigType:
+    description: The Type of SAPIG that is being deployed
+    required: true
 runs:
   using: composite
   steps:
@@ -29,7 +33,7 @@ runs:
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: github.actor != 'dependabot[bot]'
       with:
-        args: '-v TAG=${{ inputs.prNumber }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-core'
+        args: '-v TAG=${{ inputs.dockerTag }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-${{ inputs.sapigType }}'
       env:
         PIPELINE_NAME: ${{ inputs.cfPipelineName }}
         CF_API_KEY: ${{ inputs.cfAPIKey }}

@@ -1,18 +1,18 @@
 name: Build Artifact
+description: Common steps to build a Maven artifact
 inputs:
-  repositoryName: 
+  repositoryName:
+    description: The repository name to checkout
     required: true
-    type: string
   mavenBuildCommands:
+    description: The maven commands to be ran to product the artifact
     required: true
-    type: string
   FR_ARTIFACTORY_USER:
+    description: What user to use to auth to Maven Server
     required: true
-    type: string
   FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD:
+    description: What user password to use to auth to Maven Server
     required: true
-    type: string
-
 runs:
   using: composite
   steps:

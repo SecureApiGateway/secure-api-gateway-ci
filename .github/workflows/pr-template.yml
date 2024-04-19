@@ -17,16 +17,16 @@ jobs:
       - name: Checkout CI Repo
         uses: actions/checkout@v4
         with:
-          repository: SecureApiGateway/secure-api-gateway-ci
-          ref: 1389-standard-steps-for-workflows # Remove when done testing
           path: secure-api-gateway-ci
+          ref: 1389-standard-steps-for-workflows # Remove when done testing
+          repository: SecureApiGateway/secure-api-gateway-ci
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
         with:
-          repository: SecureApiGateway/${{ inputs.componentName }}
-          ref: 1389-standard-steps-for-workflows # Remove when done testing
           path: ${{ inputs.componentName }}
+          ref: 1389-standard-steps-for-workflows # Remove when done testing
+          repository: SecureApiGateway/${{ inputs.componentName }}
       # Prepare Environment
       - name: Prepare Environment
         run: |
@@ -43,10 +43,10 @@ jobs:
         uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
         if: env.STEPS_SET_MAVEN_CONFIG == 'true'
         with:
+          cache: ${{ env.CACHE }}
+          javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
           javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
           javaVersion: ${{ env.JAVA_VERSION }}
-          javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
-          cache: ${{ env.CACHE }}
           mavenServerID: ${{ env.MAVEN_SERVER_ID }}
       # Builds Docker Image
       - name: Build Image
@@ -54,10 +54,10 @@ jobs:
         if: env.STEPS_BUILD_DOCKER_IMAGE == 'true'
         with:
           checkoutCode: false
-          repositoryName: ${{ inputs.componentName }}
           dockerBuildCommands: "make clean && make docker tag=${{ inputs.prNumber }} env=dev && make docker tag=${{ inputs.prNumber }}-prod"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: ${{ inputs.componentName }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -68,16 +68,16 @@ jobs:
       - name: Checkout CI Repo
         uses: actions/checkout@v4
         with:
-          repository: SecureApiGateway/secure-api-gateway-ci
-          ref: 1389-standard-steps-for-workflows # Remove when done testing
           path: secure-api-gateway-ci
+          ref: 1389-standard-steps-for-workflows # Remove when done testing
+          repository: SecureApiGateway/secure-api-gateway-ci
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
         with:
-          repository: SecureApiGateway/${{ inputs.componentName }}
-          ref: 1389-standard-steps-for-workflows # Remove when done testing
           path: ${{ inputs.componentName }}
+          ref: 1389-standard-steps-for-workflows # Remove when done testing
+          repository: SecureApiGateway/${{ inputs.componentName }}
       # Prepare Environment
       - name: Prepare Environment
         run: |
@@ -86,9 +86,10 @@ jobs:
         uses: ./secure-api-gateway-ci/.github/actions/deploy-to-env
         if: env.STEPS_DEPLOY_CHANGES == 'true'
         with:
-          prNumber: ${{ inputs.prNumber }}
-          serviceName: ${{ env.SERVICE_NAME }}
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
           cfPipelineName: ${{ env.CF_PIPELINE_NAME }}
           cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
+          dockerTag: ${{ inputs.prNumber }}
+          serviceName: ${{ env.SERVICE_NAME }}
+          sapigType: ${{ env.SAPIG_TYPE }}
