@@ -22,7 +22,7 @@ runs:
     - name: Checkout Code
       uses: actions/checkout@v4
       with: 
-        repository: SecureApiGateway/${{ inputs.repositoryName }}
+        repository: ${{ inputs.repositoryName }}
         path: ${{ inputs.repositoryName }}
     # Optional
     - name: Set Java and Maven Cache
