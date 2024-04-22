@@ -32,5 +32,6 @@ jobs:
             sed -i -e 's/TAG_REPLACE/'${{ inputs.prNumber }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
+      # Build Changes
       - name: Build Conformance DCR
         uses: ./secure-api-gateway-ci/.github/actions/build-conformance-dcr
