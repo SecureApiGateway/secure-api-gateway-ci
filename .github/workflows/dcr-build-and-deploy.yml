@@ -12,7 +12,7 @@ on:
 jobs:
   check:
     name: Call local build-on-push.yml
-    uses: ./.github/workflows/conformance-dcr/build-on-push.yml
+    uses: ./.github/workflows/dcr-build-on-push.yml
     with:
       componentName: ${{ inputs.componentName }}
   build:
