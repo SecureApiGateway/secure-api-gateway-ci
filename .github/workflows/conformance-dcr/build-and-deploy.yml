@@ -1,0 +1,96 @@
+name: build_and_test
+run-name: Build and Test Image
+on:
+  workflow_call:
+    inputs:
+      componentName:
+        required: true
+        type: string
+      prNumber:
+        required: false
+        type: string
+jobs:
+  check:
+    name: Call local build-on-push.yml
+    uses: ./.github/workflows/conformance-dcr/build-on-push.yml
+    with:
+      componentName: ${{ inputs.componentName }}
+  build:
+    runs-on: ubuntu-latest
+    name: Build Image
+    needs: check
+    steps:
+      # Checkout CI Repo
+      - name: Checkout CI Repo
+        uses: actions/checkout@v4
+        with:
+          path: secure-api-gateway-ci
+          ref: 1389-standard-steps-for-workflows # Remove when done testing
+          repository: SecureApiGateway/secure-api-gateway-ci
+      # Checkout Calling Repo
+      - name: Checkout Calling Repo
+        uses: actions/checkout@v4
+        with:
+          path: ${{ inputs.componentName }}
+          ref: 1389-standard-steps-for-workflows # Remove when done testing
+          repository: SecureApiGateway/${{ inputs.componentName }}
+      # Prepare Environment
+      - name: Prepare Environment
+        run: |
+          if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            sed -i -e 's/TAG_REPLACE/'${{ inputs.prNumber }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+          fi
+          if grep -q SERVICE_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            sed -i -e 's/SERVICE_REPLACE/'${{ inputs.componentName }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+          fi
+          grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
+      # Auth GCP, SDK & Artifact Registry
+      - name: Authentication
+        uses: ./secure-api-gateway-ci/.github/actions/authentication
+        if: env.STEPS_AUTHENTICATE == 'true'
+        with:
+          garKey: ${{ secrets.DEV_GAR_KEY }}
+          garLocation: ${{ env.GAR_LOCATION }}
+      # Builds Docker Image
+      - name: Build Image
+        uses: ./secure-api-gateway-ci/.github/actions/build-image
+        if: env.STEPS_BUILD_DOCKER_IMAGE == 'true'
+        with:
+          checkoutCode: false
+          dockerBuildCommands: ${{ env.STEPS_BUILD_DOCKER_COMMANDS }}
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: ${{ inputs.componentName }}
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+    needs: build
+    steps:
+      # Checkout CI Repo
+      - name: Checkout CI Repo
+        uses: actions/checkout@v4
+        with:
+          path: secure-api-gateway-ci
+          ref: 1389-standard-steps-for-workflows # Remove when done testing
+          repository: SecureApiGateway/secure-api-gateway-ci
+      # Checkout Calling Repo
+      - name: Checkout Calling Repo
+        uses: actions/checkout@v4
+        with:
+          path: ${{ inputs.componentName }}
+          ref: 1389-standard-steps-for-workflows # Remove when done testing
+          repository: SecureApiGateway/${{ inputs.componentName }}
+      # Prepare Environment
+      - name: Prepare Environment
+        run: |
+          grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
+      - name: Run Conformance DCR
+        uses: ./secure-api-gateway-ci/.github/actions/run-conformance-dcr
+        if: github.actor != 'dependabot[bot]'
+        with:
+          cfAPIKey: ${{ secrets.CF_API_KEY }}
+          cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
+          cfPipelineName: ${{ env.CF_PIPELINE_NAME }}
+          cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
+          dockerTag: ${{ inputs.prNumber }}
+          serviceName: ${{ env.SERVICE_NAME }}
