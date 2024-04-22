@@ -41,12 +41,6 @@ jobs:
         with:
           garKey: ${{ secrets.DEV_GAR_KEY }}
           garLocation: ${{ env.GAR_LOCATION }}
-      # Run Initial Tests
-      - name: Run Pre Build Tests
-        if: env.STEPS_RUN_INITIAL_TESTS == 'true'
-        run : |
-          cd ${{ inputs.componentName }}
-          ${{ env.STEPS_RUN_INITIAL_TESTS_COMMAND }}
       # Set Maven Config
       - name: Set Maven Config
         uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
@@ -58,6 +52,12 @@ jobs:
           javaVersion: ${{ env.JAVA_VERSION }}
           mavenServerID: ${{ env.MAVEN_SERVER_ID }}
           repositoryName: ${{ inputs.componentName }}
+      # Run Initial Tests
+      - name: Run Pre Build Tests
+        if: env.STEPS_RUN_INITIAL_TESTS == 'true'
+        run : |
+          cd ${{ inputs.componentName }}
+          ${{ env.STEPS_RUN_INITIAL_TESTS_COMMAND }}
       # Builds Docker Image
       - name: Build Image
         uses: ./secure-api-gateway-ci/.github/actions/build-image
