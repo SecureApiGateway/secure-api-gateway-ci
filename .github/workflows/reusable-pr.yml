@@ -14,10 +14,6 @@ on:
         description: The SAPIG Type for the component (optional)
         required: false
         type: string
-      serviceName:
-        description: The Service Name if not stated in .env file (optional) # This is needed for the SAPIG devenv repo, as OB and Core will have different service name
-        required: false
-        type: string
 jobs:
   check-dcr:
     runs-on: ubuntu-latest
@@ -160,9 +156,6 @@ jobs:
         run: |
           if [ -n ${{ inputs.sapigType }} ]; then
             echo "SAPIG_TYPE=${{ inputs.sapigType }}" >> $GITHUB_ENV
-          fi
-          if [ -n ${{ inputs.serviceName }} ]; then
-            echo "SERVICE_NAME=${{ inputs.serviceName }}" >> $GITHUB_ENV
           fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       - name: Get Branch Name
