@@ -42,7 +42,7 @@ jobs:
           garKey: ${{ secrets.DEV_GAR_KEY }}
           garLocation: ${{ env.GAR_LOCATION }}
       # Run Initial Tests
-      - name: Run Tests
+      - name: Run Pre Build Tests
         if: env.STEPS_RUN_INITIAL_TESTS == 'true'
         run : |
           cd ${{ inputs.componentName }}
@@ -57,6 +57,7 @@ jobs:
           javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
           javaVersion: ${{ env.JAVA_VERSION }}
           mavenServerID: ${{ env.MAVEN_SERVER_ID }}
+          repositoryName: ${{ inputs.componentName }}
       # Builds Docker Image
       - name: Build Image
         uses: ./secure-api-gateway-ci/.github/actions/build-image
@@ -120,4 +121,4 @@ jobs:
           cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
           dockerTag: ${{ inputs.prNumber }}
           serviceName: ${{ env.SERVICE_NAME }}
-          testVersions: ${{ env.TESTS_VERSION }}
+          testVersion: ${{ env.TESTS_VERSION }}
