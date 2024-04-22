@@ -154,7 +154,7 @@ jobs:
       # Prepare Environment
       - name: Prepare Environment
         run: |
-          if [[ -n ${{ inputs.sapigType }} ]]; then
+          if [ -n ${{ inputs.sapigType }} ]; then
             echo "SAPIG_TYPE=${{ inputs.sapigType }}" >> $GITHUB_ENV
           fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
