@@ -43,6 +43,7 @@ jobs:
           apk update && apk add git make bash curl
       - name: Make Tools
         run: |
+          ls -la
           make tools
       - name: Build Project
         run: |
