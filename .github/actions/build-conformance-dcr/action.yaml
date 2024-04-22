@@ -1,0 +1,21 @@
+name: Build Conformance DCR
+description: Common steps to build the conformance dcr project
+runs:
+  using: composite
+  steps:
+    - name: Install packages
+      shell: bash
+      run: |
+        apk update && apk add git make bash curl
+    - name: Make Tools
+      shell: bash
+      run: |
+        make tools
+    - name: Build
+      shell: bash
+      run: |
+        make build
+    - name: Test
+      shell: bash
+      run: |
+        make test

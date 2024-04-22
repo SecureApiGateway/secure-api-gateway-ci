@@ -1,0 +1,36 @@
+name: Conformance DCR - Build
+on:
+  workflow_call:
+    inputs:
+      componentName:
+        required: true
+        type: string
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    container: golang:1.17-alpine3.15
+    name: Check PR Integrity
+    steps:
+      # Checkout CI Repo
+      - name: Checkout CI Repo
+        uses: actions/checkout@v4
+        with:
+          path: secure-api-gateway-ci
+          ref: 1389-standard-steps-for-workflows # Remove when done testing
+          repository: SecureApiGateway/secure-api-gateway-ci
+      # Checkout Calling Repo
+      - name: Checkout Calling Repo
+        uses: actions/checkout@v4
+        with:
+          path: ${{ inputs.componentName }}
+          ref: 1389-standard-steps-for-workflows # Remove when done testing
+          repository: SecureApiGateway/${{ inputs.componentName }}
+      # Prepare Environment
+      - name: Prepare Environment
+        run: |
+          if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            sed -i -e 's/TAG_REPLACE/'${{ inputs.prNumber }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+          fi
+          grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
+      - name: Build Conformance DCR
+        uses: ./secure-api-gateway-ci/.github/actions/build-conformance-dcr
