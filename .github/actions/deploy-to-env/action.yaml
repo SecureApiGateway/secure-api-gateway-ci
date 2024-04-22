@@ -53,7 +53,7 @@ runs:
         fi
         
         # Wherever to sync the branch of a tag in argo CD
-        if [[ ${{ inputs.changeBranch }} == "true" ]]; then
+        if [ ${{ inputs.changeBranch } == "true" ]]; then
           echo "ARGO_DEPLOY_ARG=NEWBRANCH=${{ inputs.branchName }}" >> ${GITHUB_ENV}
         else
           echo "ARGO_DEPLOY_ARG=TAG=${{ inputs.dockerTag }}" >> ${GITHUB_ENV}
