@@ -26,14 +26,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: secure-api-gateway-ci
-          ref: 1389-standard-steps-for-workflows # Remove when done testing
           repository: SecureApiGateway/secure-api-gateway-ci
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
         with:
           path: ${{ inputs.componentName }}
-          ref: 1389-standard-steps-for-workflows # Remove when done testing
           repository: SecureApiGateway/${{ inputs.componentName }}
       # Prepare Environment
       - name: Prepare Environment
@@ -67,14 +65,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: secure-api-gateway-ci
-          ref: 1389-standard-steps-for-workflows # Remove when done testing
           repository: SecureApiGateway/secure-api-gateway-ci
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
         with:
           path: ${{ inputs.componentName }}
-          ref: 1389-standard-steps-for-workflows # Remove when done testing
           repository: SecureApiGateway/${{ inputs.componentName }}
       # Prepare Environment
       - name: Prepare Environment
@@ -142,14 +138,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: secure-api-gateway-ci
-          ref: 1389-standard-steps-for-workflows # Remove when done testing
           repository: SecureApiGateway/secure-api-gateway-ci
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
         with:
           path: ${{ inputs.componentName }}
-          ref: 1389-standard-steps-for-workflows # Remove when done testing
           repository: SecureApiGateway/${{ inputs.componentName }}
       # Prepare Environment
       - name: Prepare Environment
