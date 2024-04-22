@@ -104,6 +104,7 @@ jobs:
           javaVersion: ${{ env.JAVA_VERSION }}
           mavenServerID: ${{ env.MAVEN_SERVER_ID }}
           repositoryName: ${{ inputs.componentName }}
+          updateMavenServer: ${{ inputs.UPDATE_MAVEN_SERVER_ID }}
       # Run Initial Tests
       - name: Run Pre Build Tests
         if: env.STEPS_RUN_INITIAL_TESTS == 'true'
