@@ -13,9 +13,6 @@ inputs:
   cfTriggerName:
     description: The name of the trigger in Codefresh pipeline to use
     required: true
-  cfPipelineName:
-    description: The Pipeline in codefresh that is being ran
-    required: true
   cfPipelineBranch:
     description: The Branch to use to run the pipeline
     required: true

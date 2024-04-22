@@ -100,9 +100,19 @@ jobs:
       - name: Prepare Environment
         run: |
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
-      - name: Call deploy-to-env
+      - name: Deploy to Environment
         uses: ./secure-api-gateway-ci/.github/actions/deploy-to-env
         if: env.STEPS_DEPLOY_CHANGES == 'true' && github.actor != 'dependabot[bot]'
+        with:
+          cfAPIKey: ${{ secrets.CF_API_KEY }}
+          cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
+          cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
+          dockerTag: ${{ inputs.prNumber }}
+          serviceName: ${{ env.SERVICE_NAME }}
+          sapigType: ${{ env.SAPIG_TYPE }}
+      - name: Run Functional Tests
+        uses: ./secure-api-gateway-ci/.github/actions/run-functional-tests
+        if: env.STEPS_RUN_FUNCTIONAL_TESTS == 'true' && github.actor != 'dependabot[bot]'
         with:
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
@@ -110,4 +120,4 @@ jobs:
           cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
           dockerTag: ${{ inputs.prNumber }}
           serviceName: ${{ env.SERVICE_NAME }}
-          sapigType: ${{ env.SAPIG_TYPE }}
+          testVersions: ${{ env.TESTS_VERSION }}
