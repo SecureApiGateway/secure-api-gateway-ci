@@ -4,12 +4,9 @@ inputs:
   argoServiceName:
     description: Name of the service in Argo CD
     required: true
-  dockerTag:
-    description: The Tag that is being deployed
-    required: true
-  serviceName:
-    description: The Service name that is being updated
-    required: true
+  branchName:
+    description: The branch that is being deployed in argo
+    required: false
   cfAPIKey:
     description: The Codefresh API key for auth
     required: true
@@ -19,8 +16,17 @@ inputs:
   cfPipelineBranch:
     description: The Branch to use to run the pipeline
     required: true
+  changeBranch:
+    description: Is argo syncing a Branch, if false then a tag is synced
+    required: true
+  dockerTag:
+    description: The Tag that is being deployed in argo
+    required: false
   sapigType:
     description: The Type of SAPIG that is being deployed, use BOTH for deployments that need to go to both
+    required: true
+  serviceName:
+    description: The Service name that is being updated
     required: true
 runs:
   using: composite
@@ -29,6 +35,7 @@ runs:
       shell: bash
       run: |
         echo "GITHUB_USER=$(echo ${{github.actor}} | tr '[:upper:]' '[:lower:]')" >> ${GITHUB_ENV}
+        
         if [[ ${{ inputs.sapigType }} == "both" ]]; then
           echo DEPLOYOB=true >> ${GITHUB_ENV}
           echo DEPLOYCORE=true >> ${GITHUB_ENV}
@@ -44,12 +51,17 @@ runs:
         else
           echo "Unexpected value for sapigType, use 'ob','core','both' or 'none'"
         fi
-
+        
+        # Wherever to sync the branch of a tag in argo CD
+        if [[ ${{ inputs.changeBranch }} == "true" ]]; then
+          echo "ARGO_DEPLOY_ARG=NEWBRANCH=${{ inputs.branchName }}" >> ${GITHUB_ENV}
+        else
+          echo "ARGO_DEPLOY_ARG=TAG=${{ inputs.dockerTag }}" >> ${GITHUB_ENV}
     - name: 'Update OB Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYOB == 'true'
       with:
-        args: '-v TAG=${{ inputs.dockerTag }} -v ARGO_VALUES_PREFIX ${{ inputs.argoServiceName }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-ob'
+        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX ${{ inputs.argoServiceName }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-ob'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
@@ -60,7 +72,7 @@ runs:
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYCORE == 'true'
       with:
-        args: '-v TAG=${{ inputs.dockerTag }} -v ARGO_VALUES_PREFIX ${{ inputs.argoServiceName }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-core'
+        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX ${{ inputs.argoServiceName }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-core'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}

@@ -3,13 +3,19 @@ on:
   workflow_call:
     inputs:
       componentName:
+        description: The component name using the workflow
         required: true
         type: string
       prNumber:
+        description: The PR number for building the docker image (optional)
+        required: false
+        type: string
+      sapigType:
+        description: The SAPIG Type for the component (optional)
         required: false
         type: string
 jobs:
-  check:
+  check-dcr:
     runs-on: ubuntu-latest
     container: golang:1.17-alpine3.15
     name: Check DCR PR Integrity
@@ -54,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build
     if: ${{ always() }}
-    needs: check
+    needs: check-dcr
     steps:
       # Checkout CI Repo
       - name: Checkout CI Repo
@@ -146,12 +152,20 @@ jobs:
       # Prepare Environment
       - name: Prepare Environment
         run: |
+          if [[ -n ${{ inputs.sapigType }}; then
+            echo "SAPIG_TYPE=${{ inputs.sapigType }}" >> $GITHUB_ENV
+          fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
+      - name: Get Branch Name
+        if: env.STEPS_GET_BRANCH_NAME == 'true'
+        id: branch-name
+        uses: tj-actions/branch-names@v7
       - name: Deploy to Environment
         uses: ./secure-api-gateway-ci/.github/actions/deploy-to-env
         if: env.STEPS_DEPLOY_CHANGES == 'true' && github.actor != 'dependabot[bot]'
         with:
           argoServiceName: ${{ env.ARGO_SERVICE_NAME }}
+          branchName: ${{ steps.branch-name.outputs.current_branch || null }}
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
           cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
@@ -166,6 +180,7 @@ jobs:
           cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
           cfPipelineName: ${{ env.CF_PIPELINE_NAME }}
           cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
+          changeBranch: ${{ env.STEPS_GET_BRANCH_NAME }}
           dockerTag: ${{ inputs.prNumber }}
           serviceName: ${{ env.SERVICE_NAME }}
           testVersion: ${{ env.TESTS_VERSION }}
