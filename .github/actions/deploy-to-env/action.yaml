@@ -57,6 +57,7 @@ runs:
           echo "ARGO_DEPLOY_ARG=NEWBRANCH=${{ inputs.branchName }}" >> ${GITHUB_ENV}
         else
           echo "ARGO_DEPLOY_ARG=TAG=${{ inputs.dockerTag }}" >> ${GITHUB_ENV}
+        fi
     - name: 'Update OB Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYOB == 'true'
