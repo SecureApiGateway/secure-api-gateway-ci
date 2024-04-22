@@ -1,6 +1,9 @@
 name: Build Image and Artifact
 description: Common steps to deploy a built docker image to a target environment
 inputs:
+  argoServiceName:
+    description: Name of the service in Argo CD
+    required: true
   dockerTag:
     description: The Tag that is being deployed
     required: true
@@ -46,7 +49,7 @@ runs:
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYOB == 'true'
       with:
-        args: '-v TAG=${{ inputs.dockerTag }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-ob'
+        args: '-v TAG=${{ inputs.dockerTag }} -v ARGO_VALUES_PREFIX ${{ inputs.argoServiceName }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-ob'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
@@ -57,7 +60,7 @@ runs:
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYCORE == 'true'
       with:
-        args: '-v TAG=${{ inputs.dockerTag }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-core'
+        args: '-v TAG=${{ inputs.dockerTag }} -v ARGO_VALUES_PREFIX ${{ inputs.argoServiceName }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-core'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}

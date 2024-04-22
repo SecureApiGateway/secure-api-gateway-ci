@@ -105,6 +105,7 @@ jobs:
         uses: ./secure-api-gateway-ci/.github/actions/deploy-to-env
         if: env.STEPS_DEPLOY_CHANGES == 'true' && github.actor != 'dependabot[bot]'
         with:
+          argoServiceName: ${{ env.ARGO_SERVICE_NAME }}
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
           cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
