@@ -12,7 +12,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     container: golang:1.17-alpine3.15
-    name: Check PR Integrity
+    name: Check DCR PR Integrity
     if: inputs.componentName == 'conformance-dcr'
     steps:
       # Checkout CI Repo
@@ -32,9 +32,6 @@ jobs:
       # Prepare Environment
       - name: Prepare Environment
         run: |
-          if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
-            sed -i -e 's/TAG_REPLACE/'${{ inputs.prNumber }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
-          fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Build Changes
       - name: Install packages
@@ -56,6 +53,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Build
+    if: ${{ always() }}
+    needs: check
     steps:
       # Checkout CI Repo
       - name: Checkout CI Repo
