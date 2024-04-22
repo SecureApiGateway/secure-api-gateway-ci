@@ -35,13 +35,17 @@ jobs:
       # Build Changes
       - name: Install packages
         run: |
+          cd ${{ inputs.componentName }}
           apk update && apk add git make bash curl
       - name: Make Tools
         run: |
+          cd ${{ inputs.componentName }}
           make tools
-      - name: Build
+      - name: Build Project
         run: |
+          cd ${{ inputs.componentName }}
           make build
-      - name: Test
+      - name: Test Project
         run: |
+          cd ${{ inputs.componentName }}
           make test
