@@ -28,7 +28,9 @@ runs:
     - name: Get Version
       shell: bash
       run: |
-        echo "VERSION=$(cd ${{ inputs.repositoryName }} && mvn help:evaluate -Dexpression=project.version -q -DforceStdout )" >> $GITHUB_ENV
+        if [[ ${{ inputs.updateMavenServer}} == 'true']]; then
+          echo "VERSION=$(cd ${{ inputs.repositoryNames }} && mvn help:evaluate -Dexpression=project.version -q -DforceStdout )" >> $GITHUB_ENV
+        fi
         echo "MAVEN_SERVER_ID=${{ inputs.mavenServerID }}" >> $GITHUB_ENV
     - name: Set Up Snapshot Forgerock Maven Repository
       shell: bash
