@@ -33,5 +33,15 @@ jobs:
           fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Build Changes
-      - name: Build Conformance DCR
-        uses: ./secure-api-gateway-ci/.github/actions/build-conformance-dcr
+      - name: Install packages
+        run: |
+          apk update && apk add git make bash curl
+      - name: Make Tools
+        run: |
+          make tools
+      - name: Build
+        run: |
+          make build
+      - name: Test
+        run: |
+          make test
