@@ -1,5 +1,21 @@
 # secure-api-gateway-ci  
 NOTE:This repository is for internal PingID use only, and not designed for customers to base their deployments on.
+## Individual Components
+### conformance-dcr
+### fr-platform-config
+### sapig-openbanking-uk-developer-envs
+### secure-api-gateway-core
+### secure-api-gateway-ob-uk
+### secure-api-gateway-ob-uk-common
+### secure-api-gateway-ob-uk-fidc-initializer
+### secure-api-gateway-ob-uk-functional-tests
+### secure-api-gateway-ob-uk-rcs
+### secure-api-gateway-ob-uk-rs
+### secure-api-gateway-ob-uk-test-data-initializer
+### secure-api-gateway-ob-uk-ui
+### secure-api-gateway-parent
+### secure-api-gateway-release
+### secure-api-gateway-release-helpers
 ## Nightly Builds 
 [![Nightly Build](https://github.com/SecureApiGateway/secure-api-gateway-ci/actions/workflows/nightly-build.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ci/actions/workflows/nightly-build.yml)
 
