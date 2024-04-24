@@ -22,6 +22,9 @@ inputs:
   dockerTag:
     description: The Tag that is being deployed in argo
     required: false
+  gitTrigger:
+    description: What operation is being performed
+    required: true
   sapigType:
     description: The Type of SAPIG that is being deployed, use BOTH for deployments that need to go to both
     required: true
@@ -34,7 +37,12 @@ runs:
     - name: Create Lowercase Github Username
       shell: bash
       run: |
-        echo "GITHUB_USER=$(echo ${{github.actor}} | tr '[:upper:]' '[:lower:]')" >> ${GITHUB_ENV}
+        
+        if [ "${{ inputs.gitTrigger }}" == "pr" ]; then
+          echo "GITHUB_USER=$(echo ${{github.actor}} | tr '[:upper:]' '[:lower:]')" >> ${GITHUB_ENV}
+        else
+          echo "GITHUB_USER=dev" >> ${GITHUB_ENV}
+        fi
         
         if [[ ${{ inputs.sapigType }} == "both" ]]; then
           echo DEPLOYOB=true >> ${GITHUB_ENV}
@@ -58,6 +66,7 @@ runs:
         else
           echo "ARGO_DEPLOY_ARG=TAG=${{ inputs.dockerTag }}" >> ${GITHUB_ENV}
         fi
+
     - name: 'Update OB Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYOB == 'true'

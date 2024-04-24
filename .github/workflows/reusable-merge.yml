@@ -15,50 +15,9 @@ on:
         required: false
         type: string
 jobs:
-  check-dcr:
-    runs-on: ubuntu-latest
-    container: golang:1.17-alpine3.15
-    name: Check DCR PR Integrity
-    if: inputs.componentName == 'conformance-dcr'
-    steps:
-      # Checkout CI Repo
-      - name: Checkout CI Repo
-        uses: actions/checkout@v4
-        with:
-          path: secure-api-gateway-ci
-          repository: SecureApiGateway/secure-api-gateway-ci
-      # Checkout Calling Repo
-      - name: Checkout Calling Repo
-        uses: actions/checkout@v4
-        with:
-          path: ${{ inputs.componentName }}
-          repository: SecureApiGateway/${{ inputs.componentName }}
-      # Prepare Environment
-      - name: Prepare Environment
-        run: |
-          grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
-      # Build Changes
-      - name: Install packages
-        run: |
-          cd ${{ inputs.componentName }}
-          apk update && apk add git make bash curl
-      - name: Make Tools
-        run: |
-          cd ${{ inputs.componentName }}
-          make tools
-      - name: Build Project
-        run: |
-          cd ${{ inputs.componentName }}
-          make build
-      - name: Test Project
-        run: |
-          cd ${{ inputs.componentName }}
-          make test
   build:
     runs-on: ubuntu-latest
     name: Build
-    if: ${{ always() }}
-    needs: check-dcr
     steps:
       # Checkout CI Repo
       - name: Checkout CI Repo
@@ -82,14 +41,14 @@ jobs:
       # Auth GCP, SDK & Artifact Registry
       - name: Authentication
         uses: ./secure-api-gateway-ci/.github/actions/authentication
-        if: env.STEPS_PR_AUTHENTICATE == 'true'
+        if: env.STEPS_MERGE_AUTHENTICATE == 'true'
         with:
           garKey: ${{ secrets.DEV_GAR_KEY }}
           garLocation: ${{ env.GAR_LOCATION }}
       # Set Maven Config
       - name: Set Maven Config
         uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
-        if: env.STEPS_PR_SET_MAVEN_CONFIG == 'true'
+        if: env.STEPS_MERGE_SET_MAVEN_CONFIG == 'true'
         with:
           cache: ${{ env.CACHE }}
           javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
@@ -100,34 +59,46 @@ jobs:
           updateMavenServer: ${{ env.UPDATE_MAVEN_SERVER_ID }}
       # Run Initial Tests
       - name: Run Pre Build Tests
-        if: env.STEPS_PR_RUN_INITIAL_TESTS == 'true'
+        if: env.STEPS_MERGE_RUN_INITIAL_TESTS == 'true'
         run : |
           cd ${{ inputs.componentName }}
-          ${{ env.STEPS_PR_RUN_INITIAL_TESTS_COMMAND }}
+          ${{ env.STEPS_MERGE_RUN_INITIAL_TESTS_COMMAND }}
       # Builds Docker Image
       - name: Build Image
         uses: ./secure-api-gateway-ci/.github/actions/build-image
-        if: env.STEPS_PR_BUILD_DOCKER_IMAGE == 'true'
+        if: env.STEPS_MERGE_BUILD_DOCKER_IMAGE == 'true'
         with:
           checkoutCode: false
-          dockerBuildCommands: ${{ env.STEPS_PR_BUILD_DOCKER_COMMANDS }}
+          dockerBuildCommands: ${{ env.STEPS_MERGE_BUILD_DOCKER_COMMANDS }}
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: ${{ inputs.componentName }}
         # Builds Maven Project
+      # Set Maven Config
+      - name: Set Maven Config
+        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
+        if: env.STEPS_MERGE_SET_MAVEN_CONFIG_SECOND == 'true'
+        with:
+          cache: ${{ env.CACHE }}
+          javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
+          javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
+          javaVersion: ${{ env.JAVA_VERSION }}
+          mavenServerID: ${{ env.MAVEN_SERVER_ID_SECOND }}
+          repositoryName: ${{ inputs.componentName }}
+          updateMavenServer: ${{ env.UPDATE_MAVEN_SERVER_ID_SECOND }}
+      # Build Maven Project
       - name: Build Maven Project
         uses: ./secure-api-gateway-ci/.github/actions/build-artifact
-        if: env.STEPS_PR_BUILD_MAVEN_PROJECT == 'true'
+        if: env.STEPS_MERGE_BUILD_MAVEN_PROJECT == 'true'
         with:
           checkoutCode: false
-          mavenBuildCommands: ${{ env.STEPS_PR_BUILD_MAVEN_COMMANDS }}
+          mavenBuildCommands: ${{ env.STEPS_MERGE_BUILD_MAVEN_COMMANDS }}
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: ${{ inputs.componentName }}
   deploy:
     runs-on: ubuntu-latest
     name: Deploy
-    if: ${{ always() }}
     needs: build
     steps:
       # Checkout CI Repo
@@ -149,42 +120,39 @@ jobs:
             echo "SAPIG_TYPE=${{ inputs.sapigType }}" >> $GITHUB_ENV
           fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
-      - name: Get Branch Name
-        if: env.STEPS_PR_GET_BRANCH_NAME == 'true'
-        id: branch-name
-        uses: tj-actions/branch-names@v7
+      # Deploy to Environment
       - name: Deploy to Environment
         uses: ./secure-api-gateway-ci/.github/actions/deploy-to-env
-        if: env.STEPS_PR_DEPLOY_CHANGES == 'true' && github.actor != 'dependabot[bot]'
+        if: env.STEPS_MERGE_DEPLOY_CHANGES == 'true' && github.actor != 'dependabot[bot]'
         with:
           argoServiceName: ${{ env.ARGO_SERVICE_NAME }}
-          branchName: ${{ steps.branch-name.outputs.current_branch || null }}
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
           cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
-          changeBranch: ${{ env.STEPS_PR_GET_BRANCH_NAME }}
-          dockerTag: ${{ inputs.dockerTag }}
-          gitTrigger: pr
+          dockerTag: latest
+          gitTrigger: merge
           serviceName: ${{ env.SERVICE_NAME }}
           sapigType: ${{ env.SAPIG_TYPE }}
+      # Run Functional Tests
       - name: Run Functional Tests
         uses: ./secure-api-gateway-ci/.github/actions/run-functional-tests
-        if: env.STEPS_PR_RUN_FUNCTIONAL_TESTS == 'true' && github.actor != 'dependabot[bot]'
+        if: env.STEPS_MERGE_RUN_FUNCTIONAL_TESTS == 'true' && github.actor != 'dependabot[bot]'
         with:
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
           cfPipelineName: ${{ env.CF_PIPELINE_NAME }}
           cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
           dockerTag: ${{ inputs.dockerTag }}
-          serviceName: pr/${{ env.SERVICE_NAME }}
+          serviceName: ${{ env.SERVICE_NAME }}
           testVersion: ${{ env.TESTS_VERSION }}
+      # Run Conformance DCR Tests
       - name: Run Conformance DCR
         uses: ./secure-api-gateway-ci/.github/actions/run-conformance-dcr
-        if: env.STEPS_PR_RUN_DCR_TESTS == 'true' && github.actor != 'dependabot[bot]'
+        if: env.STEPS_MERGE_RUN_DCR_TESTS == 'true' && github.actor != 'dependabot[bot]'
         with:
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
           cfPipelineName: ${{ env.CF_PIPELINE_NAME }}
           cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
-          dockerTag: ${{ inputs.dockerTag }}
-          serviceName: pr/${{ env.SERVICE_NAME }}
+          dockerTag: latest
+          serviceName: ${{ env.SERVICE_NAME }}

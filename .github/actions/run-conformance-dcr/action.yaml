@@ -29,7 +29,7 @@ runs:
     - name: 'Update Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
       with:
-        args: '-v IMAGE_REPO=securebanking/pr/${{ inputs.serviceName }} -v TAG=${{ inputs.dockerTag }}'
+        args: '-v IMAGE_REPO=securebanking/${{ inputs.serviceName }} -v TAG=${{ inputs.dockerTag }}'
       env:
         PIPELINE_NAME: ${{ inputs.cfPipelineName }}
         CF_API_KEY: ${{ inputs.cfAPIKey }}
