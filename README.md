@@ -2,18 +2,34 @@
 NOTE:This repository is for internal PingID use only, and not designed for customers to base their deployments on.
 ## Individual Components
 ### conformance-dcr
+[![Merge - Build and Deploy](https://github.com/SecureApiGateway/conformance-dcr/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/conformance-dcr/actions/workflows/merge.yml)
 ### fr-platform-config
+[![Check Json Order](https://github.com/SecureApiGateway/fr-platform-config/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/fr-platform-config/actions/workflows/merge.yml)
 ### sapig-openbanking-uk-developer-envs
+[![Check Json Order](https://github.com/SecureApiGateway/sapig-openbanking-uk-developer-envs/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/sapig-openbanking-uk-developer-envs/actions/workflows/merge.yml)
 ### secure-api-gateway-core
+[![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/merge.yml)
 ### secure-api-gateway-ob-uk
+[![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk/actions/workflows/merge.yml)
 ### secure-api-gateway-ob-uk-common
+[![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-common/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-common/actions/workflows/merge.yml)
+[![CodeQL](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-common/actions/workflows/codeql.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-common/actions/workflows/codeql.yml)
 ### secure-api-gateway-ob-uk-fidc-initializer
+[![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-fidc-initializer/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-fidc-initializer/actions/workflows/merge.yml)
 ### secure-api-gateway-ob-uk-functional-tests
+[![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-functional-tests/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-functional-tests/actions/workflows/merge.yml)
 ### secure-api-gateway-ob-uk-rcs
+[![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs/actions/workflows/merge.yml)
+[![CodeQL](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs/actions/workflows/codeql.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs/actions/workflows/codeql.yml)
 ### secure-api-gateway-ob-uk-rs
+[![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/merge.yml)
+[![CodeQL](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/codeql.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/codeql.yml)
 ### secure-api-gateway-ob-uk-test-data-initializer
+[![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-test-data-initializer/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-test-data-initializer/actions/workflows/merge.yml)
 ### secure-api-gateway-ob-uk-ui
+[![merge-master](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-ui/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-ui/actions/workflows/merge.yml)
 ### secure-api-gateway-parent
+[![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-parent/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-parent/actions/workflows/merge.yml)
 ### secure-api-gateway-release
 ### secure-api-gateway-release-helpers
 ## Nightly Builds 

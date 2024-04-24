@@ -13,3 +13,4 @@ jobs:
           SLACK_USERNAME: GitHub Actions - Merge Complete
           SLACK_WEBHOOK: ${{ secrets.WEBHOOK_SBAT_NOTIFY_SLACK }}
           SLACK_COLOR: ${{ job.status }}
+          MSG_MINIMAL: event,commit
