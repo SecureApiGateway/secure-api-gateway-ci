@@ -7,9 +7,9 @@ jobs:
     name: Push Slack Notification
     steps:
       - name: Slack Notification
-        uses: rtCamp/action-slack-notify@v2
+        uses: rtCamp/action-slack-notify@v2.3.0
         if: success()
         env:
-          SLACK_USERNAME: GitHub Actions
+          SLACK_USERNAME: GitHub Actions - Merge Complete
           SLACK_WEBHOOK: ${{ secrets.WEBHOOK_SBAT_NOTIFY_SLACK }}
           SLACK_COLOR: ${{ job.status }}
