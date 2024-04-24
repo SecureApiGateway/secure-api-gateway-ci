@@ -1,0 +1,15 @@
+name: Merge Notification
+on:
+  workflow_call:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: Push Slack Notification
+    steps:
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2.3.0
+        if: success()
+        env:
+          SLACK_USERNAME: GitHub Actions - Merge Complete
+          SLACK_WEBHOOK: ${{ secrets.WEBHOOK_SBAT_NOTIFY_SLACK }}
+          SLACK_COLOR: ${{ job.status }}

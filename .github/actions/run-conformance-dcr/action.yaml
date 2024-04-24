@@ -1,0 +1,37 @@
+name: Build Image and Artifact
+description: Common steps to deploy a built docker image to a target environment
+inputs:
+  dockerTag:
+    description: The Tag that is being deployed
+    required: true
+  serviceName:
+    description: The Service name that is being updated
+    required: true
+  cfAPIKey:
+    description: The Codefresh API key for auth
+    required: true
+  cfTriggerName:
+    description: The name of the trigger in Codefresh pipeline to use
+    required: true
+  cfPipelineName:
+    description: The Pipeline in codefresh that is being ran
+    required: true
+  cfPipelineBranch:
+    description: The Branch to use to run the pipeline
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Create Lowercase Github Username
+      shell: bash
+      run: |
+        echo "GITHUB_USER=$(echo ${{github.actor}} | tr '[:upper:]' '[:lower:]')" >> ${GITHUB_ENV}
+    - name: 'Update Environment'
+      uses: codefresh-io/codefresh-pipeline-runner@master
+      with:
+        args: '-v IMAGE_REPO=securebanking/${{ inputs.serviceName }} -v TAG=${{ inputs.dockerTag }}'
+      env:
+        PIPELINE_NAME: ${{ inputs.cfPipelineName }}
+        CF_API_KEY: ${{ inputs.cfAPIKey }}
+        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
+        CF_BRANCH: ${{ inputs.cfPipelineBranch }}

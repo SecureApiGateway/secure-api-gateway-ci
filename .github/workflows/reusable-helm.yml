@@ -1,0 +1,38 @@
+name: Pull Request - Build and Deploy
+on:
+  workflow_call:
+    inputs:
+      componentName:
+        required: true
+        type: string
+      helmLocation:
+        required: false
+        type: string
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+      # Checkout CI Repo
+      - name: Checkout CI Repo
+        uses: actions/checkout@v4
+        with:
+          path: secure-api-gateway-ci
+          repository: SecureApiGateway/secure-api-gateway-ci
+      # Checkout Calling Repo
+      - name: Checkout Calling Repo
+        uses: actions/checkout@v4
+        with:
+          path: ${{ inputs.componentName }}
+          repository: SecureApiGateway/${{ inputs.componentName }}
+      # Prepare Environment
+      - name: Prepare Environment
+        run: |
+          if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+          fi
+          grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
+      # Check Helm Changes
+      - name: Run Template Helm
+        run: |
+          helm template ${{ env.helmLocation }}/${{ inputs.componentName }}

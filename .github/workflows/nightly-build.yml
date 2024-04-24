@@ -15,12 +15,12 @@ jobs:
         uses: ./.github/actions/authentication
         with: 
           garKey: ${{ secrets.DEV_GAR_KEY }}
-          garURL: ${{ vars.GAR_LOCATION }}
+          garLocation: ${{ vars.GAR_LOCATION }}
       # Build Components
       - name: Call build-image-and-artifact for Core
         uses: ./.github/actions/build-image-and-artifact
         with: 
-          repositoryName: secure-api-gateway-core
+          repositoryName: SecureApiGateway/secure-api-gateway-core
           dockerBuildCommands: "make clean docker tag=latest && make clean docker tag=dev"
           mavenBuildCommands: "mvn -B deploy -DskipTests"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
@@ -28,22 +28,23 @@ jobs:
       - name: Call build-image-and-artifact for OB
         uses: ./.github/actions/build-image-and-artifact
         with: 
-          repositoryName: secure-api-gateway-ob-uk
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
           dockerBuildCommands: "make clean docker tag=latest && make clean docker tag=dev"
           mavenBuildCommands: "mvn -B deploy -DskipTests"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
       - name: Call build-artifact for Common
         uses: ./.github/actions/build-artifact
-        with: 
-          repositoryName: secure-api-gateway-ob-uk-common
+        with:
+          checkoutCode: true
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
           mavenBuildCommands: "mvn -B deploy --file pom.xml"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
       - name: Call build-image-and-artifact for RCS
         uses: ./.github/actions/build-image-and-artifact
         with: 
-          repositoryName: secure-api-gateway-ob-uk-rcs
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
           dockerBuildCommands: "make docker tag=latest"
           mavenBuildCommands: "make verify && mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
@@ -51,15 +52,16 @@ jobs:
       - name: Call build-image-and-artifact for RS
         uses: ./.github/actions/build-image-and-artifact
         with:
-          repositoryName: secure-api-gateway-ob-uk-rs
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
           dockerBuildCommands: "make docker tag=latest"
           mavenBuildCommands: "mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
       - name: Call build-image for Functional Tests 
         uses: ./.github/actions/build-image
-        with: 
-          repositoryName: secure-api-gateway-ob-uk-functional-tests
+        with:
+          checkoutCode: true
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-functional-tests
           dockerBuildCommands: "make docker tag=latest"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}

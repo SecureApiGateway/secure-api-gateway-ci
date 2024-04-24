@@ -1,20 +1,21 @@
 name: Build Image and Artifact
+description: Common steps to build a docker image and a maven artifact
 inputs:
-  repositoryName: 
+  repositoryName:
+    description: What repository to checkout
     required: true
-    type: string
   dockerBuildCommands:
+    description: What commands to run to build the image
     required: true
-    type: string
   mavenBuildCommands:
+    description: Maven commands to be ran to product the artifact
     required: true
-    type: string
   FR_ARTIFACTORY_USER:
+    description: What user to use to auth to Maven Server
     required: true
-    type: string
   FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD:
+    description: What user password to use to auth to Maven Server
     required: true
-    type: string
 
 runs:
   using: composite
@@ -22,7 +23,7 @@ runs:
     - name: Checkout Code
       uses: actions/checkout@v4
       with: 
-        repository: SecureApiGateway/${{ inputs.repositoryName }}
+        repository: ${{ inputs.repositoryName }}
         path: ${{ inputs.repositoryName }}
     - name: Set Cache with Protected Repository
       uses: actions/setup-java@v4

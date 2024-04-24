@@ -1,0 +1,49 @@
+name: Set Maven Config
+description: Action to create a maven config file during workflow
+inputs:
+  javaDistribution:
+    description: What java distribution to use
+    required: true
+  javaVersion:
+    description: What java version to use
+    required: true
+  javaArchitecture:
+    description: What java architecture to use
+    required: true
+  cache:
+    description: What cache to use
+    required: true
+  mavenServerID:
+    description: What Server to connect too
+    required: true
+  repositoryName:
+    description: The Service name that is being updated
+    required: true
+  updateMavenServer:
+    description: Wherever or not the maven server should try get updated
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Get Version
+      shell: bash
+      run: |
+        if [ ${{ inputs.updateMavenServer }} == 'true' ]; then
+          echo "VERSION=$(cd ${{ inputs.repositoryNames }} && mvn help:evaluate -Dexpression=project.version -q -DforceStdout )" >> $GITHUB_ENV
+        fi
+        echo "MAVEN_SERVER_ID=${{ inputs.mavenServerID }}" >> $GITHUB_ENV
+    - name: Set Up Snapshot Forgerock Maven Repository
+      shell: bash
+      if: contains( env.VERSION, 'SNAPSHOT') && inputs.updateMavenServer == true
+      run: |
+        echo "MAVEN_SERVER_ID=maven.forgerock.org-community-snapshots" >> $GITHUB_ENV
+    - name: Set Cache with Community Repository
+      uses: actions/setup-java@v4
+      with:
+        distribution: ${{ inputs.javaDistribution }}
+        java-version: ${{ inputs.javaVersion }}
+        architecture: ${{ inputs.javaArchitecture }}
+        cache: ${{ inputs.cache }}
+        server-id: ${{ env.MAVEN_SERVER_ID }}
+        server-username: FR_ARTIFACTORY_USER # placeholder variable for username in deploy
+        server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # placeholder variable for token in deploy
