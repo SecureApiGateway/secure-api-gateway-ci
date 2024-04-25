@@ -1,0 +1,21 @@
+name: Set Node Config
+description: Action to create a node config file during workflow
+inputs:
+  cache:
+    description: What cache to use
+    required: true
+  cacheDependencyPath:
+    description: Where is the dependencies package-json
+    required: true
+  nodeVersion:
+    description: What version of node to install
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Configure Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.nodeVersion }}
+        cache: ${{ inputs.cache }}
+        cache-dependency-path: ${{ inputs.cacheDependencyPath }}
