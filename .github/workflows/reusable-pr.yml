@@ -98,6 +98,20 @@ jobs:
           mavenServerID: ${{ env.MAVEN_SERVER_ID }}
           repositoryName: ${{ inputs.componentName }}
           updateMavenServer: ${{ env.UPDATE_MAVEN_SERVER_ID }}
+      # Set Node Config
+      - name: Set Node Config
+        uses: ./secure-api-gateway-ci/.github/actions/set-node-config
+        if: env.STEPS_PR_SET_NODE_CONFIG == 'true'
+        with:
+          cache: ${{ env.CACHE }}
+          cacheDependencyPath: ${{ env.CACHE_DEP_PATH }}
+          nodeVersion: ${{ env.NODE_VERSION }}
+      # Run Lint
+      - name: Run Pre Build Tests
+        if: env.STEPS_PR_RUN_LINT == 'true'
+        run : |
+          cd ${{ inputs.componentName }}
+          ${{ env.STEPS_PR_RUN_INITIAL_TESTS_COMMAND }}
       # Run Initial Tests
       - name: Run Pre Build Tests
         if: env.STEPS_PR_RUN_INITIAL_TESTS == 'true'
