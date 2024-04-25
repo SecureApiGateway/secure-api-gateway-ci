@@ -141,7 +141,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy
-    if: ${{ always() }}
+    if: ${{ always() && needs.build.result == 'success' }}
     needs: build
     steps:
       # Checkout CI Repo
