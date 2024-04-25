@@ -141,8 +141,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy
-    if: ${{ always() && needs.build.result == 'success' }}
     needs: build
+    if: always() && !cancelled() && !contains(needs.*.result, 'failure')
     steps:
       # Checkout CI Repo
       - name: Checkout CI Repo
