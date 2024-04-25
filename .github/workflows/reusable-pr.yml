@@ -109,11 +109,11 @@ jobs:
           cacheDependencyPath: ${{ env.CACHE_DEP_PATH }}
           nodeVersion: ${{ env.NODE_VERSION }}
       # Run Lint
-      - name: Run Pre Build Tests
+      - name: Run Lint
         if: env.STEPS_PR_RUN_LINT == 'true'
         run : |
           cd ${{ inputs.componentName }}
-          ${{ env.STEPS_PR_RUN_INITIAL_TESTS_COMMAND }}
+          ${{ env.STEPS_PR_RUN_LINT_COMMAND }}
       # Run Initial Tests
       - name: Run Pre Build Tests
         if: env.STEPS_PR_RUN_INITIAL_TESTS == 'true'
@@ -169,6 +169,7 @@ jobs:
         if: env.STEPS_PR_GET_BRANCH_NAME == 'true'
         id: branch-name
         uses: tj-actions/branch-names@v7
+      # Deploy to Environment
       - name: Deploy to Environment
         uses: ./secure-api-gateway-ci/.github/actions/deploy-to-env
         if: env.STEPS_PR_DEPLOY_CHANGES == 'true' && github.actor != 'dependabot[bot]'
@@ -183,6 +184,7 @@ jobs:
           gitTrigger: pr
           serviceName: ${{ env.SERVICE_NAME }}
           sapigType: ${{ env.SAPIG_TYPE }}
+      # Run Functional Tests
       - name: Run Functional Tests
         uses: ./secure-api-gateway-ci/.github/actions/run-functional-tests
         if: env.STEPS_PR_RUN_FUNCTIONAL_TESTS == 'true' && github.actor != 'dependabot[bot]'
@@ -194,6 +196,7 @@ jobs:
           dockerTag: ${{ inputs.dockerTag }}
           serviceName: pr/${{ env.SERVICE_NAME }}
           testVersion: ${{ env.TESTS_VERSION }}
+      # Run Conformance DCR Tests
       - name: Run Conformance DCR
         uses: ./secure-api-gateway-ci/.github/actions/run-conformance-dcr
         if: env.STEPS_PR_RUN_DCR_TESTS == 'true' && github.actor != 'dependabot[bot]'
