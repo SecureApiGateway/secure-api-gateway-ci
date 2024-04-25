@@ -66,14 +66,12 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
-          ref: 1389-standard-steps-for-workflows
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
         with:
           path: ${{ inputs.componentName }}
           repository: SecureApiGateway/${{ inputs.componentName }}
-          ref: 1389-standard-steps-for-workflows
       # Prepare Environment
       - name: Prepare Environment
         run: |
@@ -152,14 +150,12 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
-          ref: 1389-standard-steps-for-workflows
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
         with:
           path: ${{ inputs.componentName }}
           repository: SecureApiGateway/${{ inputs.componentName }}
-          ref: 1389-standard-steps-for-workflows
       # Prepare Environment
       - name: Prepare Environment
         run: |
