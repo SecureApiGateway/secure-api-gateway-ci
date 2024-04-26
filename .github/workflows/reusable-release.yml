@@ -158,5 +158,5 @@ jobs:
         run: |
           cd ${{ inputs.componentName }}
           ${{ env.STEPS_RELEASE_CREATE_GITHUB_RELEASE_COMMAND }}
-        with:
+        env:
           GH_TOKEN: ${{ secrets.RELEASE_PAT }}
