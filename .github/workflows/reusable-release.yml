@@ -1,0 +1,153 @@
+name: Pull Request - Build and Deploy
+on:
+  workflow_call:
+    inputs:
+      componentName:
+        description: The component name using the workflow
+        required: true
+        type: string
+      dockerTag:
+        description: The Tag to be associated with the new docker image (optional)
+        required: false
+        type: string
+      releaseNotes:
+        description: The Release Notes associated with the Release (optional)
+        required: false
+        type: string
+      releaseVersion:
+        description: The version to be Released (#.#.#.#)
+        required: false
+        type: string
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+      # Checkout CI Repo
+      - name: Checkout CI Repo
+        uses: actions/checkout@v4
+        with:
+          path: secure-api-gateway-ci
+          repository: SecureApiGateway/secure-api-gateway-ci
+          ref: 1389-standard-steps-for-workflows
+      # Checkout Calling Repo
+      - name: Checkout Calling Repo
+        uses: actions/checkout@v4
+        with:
+          path: ${{ inputs.componentName }}
+          repository: SecureApiGateway/${{ inputs.componentName }}
+          token: ${{ secrets.release_github_token }}
+          ref: 1389-standard-steps-for-workflows
+      # Prepare Environment
+      - name: Prepare Environment
+        run: |
+          # STEPS_RELEASE_PREPARE_MAVEN_PROJECT & STEPS_RELEASE_PREPARE_TAG_MANUALLY Cannot both be true
+          if [ "${{ inputs.STEPS_RELEASE_PREPARE_MAVEN_PROJECT }}" == "${{ inputs.STEPS_RELEASE_PREPARE_TAG_MANUALLY }}" ]; then
+            echo "ERROR: STEPS_RELEASE_PREPARE_MAVEN_PROJECT & STEPS_RELEASE_PREPARE_TAG_MANUALLY Cannot both be true or false"
+            exit 1
+          fi
+          if grep -q NOTES_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            sed -i -e 's/NOTES_REPLACE/'v${{ inputs.releaseNotes }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+          fi
+          if grep -q REPO_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            sed -i -e 's/REPO_REPLACE/'${{ vars.GAR_RELEASE_REPO }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+          fi
+          if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+          fi
+          if grep -q VERSION_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            sed -i -e 's/VERSION_REPLACE/'v${{ inputs.releaseVersion }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+          fi
+          grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
+      # Auth GCP, SDK & Artifact Registry
+      - name: Authentication
+        uses: ./secure-api-gateway-ci/.github/actions/authentication
+        if: env.STEPS_RELEASE_AUTHENTICATE == 'true'
+        with:
+          garKey: ${{ secrets.DEV_GAR_KEY }}
+          garLocation: ${{ env.GAR_LOCATION }}
+      # Set Maven Config
+      - name: Set Maven Config
+        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
+        if: env.STEPS_RELEASE_SET_MAVEN_CONFIG == 'true'
+        with:
+          cache: ${{ env.CACHE }}
+          javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
+          javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
+          javaVersion: ${{ env.JAVA_VERSION }}
+          mavenServerID: ${{ env.MAVEN_SERVER_ID }}
+          repositoryName: ${{ inputs.componentName }}
+          updateMavenServer: ${{ env.UPDATE_RELEASE_MAVEN_SERVER_ID }}
+      # https://github.com/crazy-max/ghaction-import-gpg
+      # https://httgp.com/signing-commits-in-github-actions/
+      # Prepare the environment to sign the commits
+      - name: Import GPG Key
+        uses: crazy-max/ghaction-import-gpg@v5
+        if: env.STEPS_RELEASE_SET_GPG_KEY == 'true'
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY_BOT }}
+          passphrase: ${{ secrets.GPG_KEY_PASSPHRASE_BOT }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+      # Prepare Maven Project
+      - name: Prepare Maven Project
+        uses: ./secure-api-gateway-ci/.github/actions/build-artifact
+        if: env.STEPS_RELEASE_PREPARE_MAVEN_PROJECT == 'true'
+        with:
+          checkoutCode: false
+          mavenBuildCommands: ${{ env.STEPS_RELEASE_PREPARE_MAVEN_COMMANDS }}
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: ${{ inputs.componentName }}
+      # Create Tag if not using Maven Step Above
+      - name: Create Release Tag and Push
+        if: env.STEPS_RELEASE_PREPARE_TAG_MANUALLY == 'true'
+        run: |
+          echo "Creating Release Tag: v${{ inputs.releaseVersion }}"
+          git tag -a v${{ inputs.releaseVersion }} -m "Tag for release ${{ inputs.releaseVersion }}"
+          git push origin v${{ inputs.releaseVersion }}
+      # Checkout Tagged Code Created By Maven Plugin
+      - name: Checkout Tagged Code
+        uses: actions/checkout@v4
+        with:
+          path: ${{ inputs.componentName }}
+          ref: v${{ inputs.releaseVersion }}
+          repository: SecureApiGateway/${{ inputs.componentName }}
+          token: ${{ secrets.release_github_token }}
+      # Builds Docker Image
+      - name: Build Image
+        uses: ./secure-api-gateway-ci/.github/actions/build-image
+        if: env.STEPS_RELEASE_BUILD_DOCKER_IMAGE == 'true'
+        with:
+          checkoutCode: false
+          dockerBuildCommands: ${{ env.STEPS_RELEASE_BUILD_DOCKER_COMMANDS }}
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: ${{ inputs.componentName }}
+      # Set Maven Config
+      - name: Set Maven Config
+        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
+        if: env.STEPS_RELEASE_SET_MAVEN_CONFIG_SECOND == 'true'
+        with:
+          cache: ${{ env.CACHE }}
+          javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
+          javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
+          javaVersion: ${{ env.JAVA_VERSION }}
+          mavenServerID: ${{ env.MAVEN_SERVER_ID_SECOND }}
+          repositoryName: ${{ inputs.componentName }}
+          updateMavenServer: ${{ env.UPDATE_RELEASE_MAVEN_SERVER_ID_SECOND }}
+      # Deploy Maven Project
+      - name: Deploy Maven Project
+        uses: ./secure-api-gateway-ci/.github/actions/build-artifact
+        if: env.STEPS_RELEASE_DEPLOY_MAVEN_PROJECT == 'true'
+        with:
+          checkoutCode: false
+          mavenBuildCommands: ${{ env.STEPS_RELEASE_DEPLOY_MAVEN_COMMANDS }}
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: ${{ inputs.componentName }}
+      # Create Release In GitHub
+      - name: Create GitHub Release
+        if: env.STEPS_RELEASE_CREATE_GITHUB_RELEASE == 'true'
+        run: |
+          ${{ env.STEPS_RELEASE_CREATE_GITHUB_RELEASE_COMMAND }}

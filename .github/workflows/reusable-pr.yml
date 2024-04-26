@@ -97,7 +97,7 @@ jobs:
           javaVersion: ${{ env.JAVA_VERSION }}
           mavenServerID: ${{ env.MAVEN_SERVER_ID }}
           repositoryName: ${{ inputs.componentName }}
-          updateMavenServer: ${{ env.UPDATE_MAVEN_SERVER_ID }}
+          updateMavenServer: ${{ env.UPDATE_PR_MAVEN_SERVER_ID }}
       # Set Node Config
       - name: Set Node Config
         uses: ./secure-api-gateway-ci/.github/actions/set-node-config
