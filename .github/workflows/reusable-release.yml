@@ -41,9 +41,6 @@ jobs:
       # Prepare Environment
       - name: Prepare Environment
         run: |
-          if grep -q NOTES_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
-            sed -i -e 's/NOTES_REPLACE/'"${{ inputs.releaseNotes }}"'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
-          fi
           if grep -q REPO_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
             sed -i -e 's/REPO_REPLACE/'${{ vars.GAR_RELEASE_REPO }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
