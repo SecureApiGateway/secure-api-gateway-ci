@@ -36,7 +36,7 @@ jobs:
         with:
           path: ${{ inputs.componentName }}
           repository: SecureApiGateway/${{ inputs.componentName }}
-          token: ${{ secrets.release_github_token }}
+          token: ${{ secrets.RELEASE_PAT }}
           ref: 1389-standard-steps-for-workflows
       # Prepare Environment
       - name: Prepare Environment
