@@ -54,8 +54,6 @@ jobs:
             sed -i -e 's/VERSION_REPLACE/'v${{ inputs.releaseVersion }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
-          git config user.name fropenbanking
-          git config user.email obst@forgerock.com
       # Perform Checks on Settings
       - name: Check Environment Workflow Config
         run: |
@@ -108,6 +106,8 @@ jobs:
         if: env.STEPS_RELEASE_PREPARE_TAG_MANUALLY == 'true'
         run: |
           cd ${{ inputs.componentName }}
+          git config user.name fropenbanking
+          git config user.email obst@forgerock.com
           echo "Creating Release Tag: v${{ inputs.releaseVersion }}"
           git tag -a v${{ inputs.releaseVersion }} -m "Tag for release ${{ inputs.releaseVersion }}"
           git push origin v${{ inputs.releaseVersion }}
