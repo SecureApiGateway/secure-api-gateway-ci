@@ -83,12 +83,12 @@ jobs:
       - name: Import GPG Key
         uses: crazy-max/ghaction-import-gpg@v5
         if: env.STEPS_RELEASE_SET_GPG_KEY == 'true'
-        working-directory: ${{ inputs.componentName }}
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY_BOT }}
-          passphrase: ${{ secrets.GPG_KEY_PASSPHRASE_BOT }}
           git_user_signingkey: true
           git_commit_gpgsign: true
+          passphrase: ${{ secrets.GPG_KEY_PASSPHRASE_BOT }}
+          workdir: ${{ inputs.componentName }}
       # Prepare Maven Project
       - name: Prepare Maven Project
         uses: ./secure-api-gateway-ci/.github/actions/build-artifact
@@ -102,8 +102,8 @@ jobs:
       # Create Tag if not using Maven Step Above
       - name: Create Release Tag and Push
         if: env.STEPS_RELEASE_PREPARE_TAG_MANUALLY == 'true'
+        working-directory: ${{ inputs.componentName }}
         run: |
-          cd ${{ inputs.componentName }}
           git config user.name fropenbanking
           git config user.email obst@forgerock.com
           echo "Creating Release Tag: v${{ inputs.releaseVersion }}"
@@ -153,8 +153,8 @@ jobs:
       # Create Release In GitHub
       - name: Create GitHub Release
         if: env.STEPS_RELEASE_CREATE_GITHUB_RELEASE == 'true'
+        working-directory: ${{ inputs.componentName }}
         run: |
-          cd ${{ inputs.componentName }}
           gh release create --verify-tag v${{ inputs.releaseVersion }} --title "Release v${{ inputs.releaseVersion }}" --notes "${{ inputs.releaseNotes }}"
         env:
           GH_TOKEN: ${{ secrets.RELEASE_PAT }}
