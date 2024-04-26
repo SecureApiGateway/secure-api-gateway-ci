@@ -98,6 +98,9 @@ jobs:
         working-directory: ${{ inputs.componentName }}
         run : |
           ${{ env.STEPS_RELEASE_PREPARE_MAVEN_COMMANDS }}
+        env:
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
       # Create Tag if not using Maven Step Above
       - name: Create Release Tag and Push
         if: env.STEPS_RELEASE_PREPARE_TAG_MANUALLY == 'true'
