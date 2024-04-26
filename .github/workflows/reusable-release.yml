@@ -157,6 +157,6 @@ jobs:
         if: env.STEPS_RELEASE_CREATE_GITHUB_RELEASE == 'true'
         run: |
           cd ${{ inputs.componentName }}
-          ${{ env.STEPS_RELEASE_CREATE_GITHUB_RELEASE_COMMAND }}
+          gh release create --verify-tag v${{ inputs.releaseVersion }} --title "Release v${{ inputs.releaseVersion }} --notes "${{ inputs.releaseNotes }}"
         env:
           GH_TOKEN: ${{ secrets.RELEASE_PAT }}
