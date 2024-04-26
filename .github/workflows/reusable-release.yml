@@ -108,8 +108,7 @@ jobs:
           cd ${{ inputs.componentName }}
           git config user.name fropenbanking
           git config user.email obst@forgerock.com
-          
-          if [ $(git tag -l "v${{ inputs.releaseVersion }}") ]; then
+          if [[ `git tag -l "v${{ inputs.releaseVersion }}"` == v${{ inputs.releaseVersion }} ]]; then
             echo "Tag v${{ inputs.releaseVersion }} already exists, stopping workflow"
             exit 1
           else
