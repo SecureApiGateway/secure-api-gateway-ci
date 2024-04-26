@@ -94,14 +94,10 @@ jobs:
           workdir: ${{ inputs.componentName }}
       # Prepare Maven Project
       - name: Prepare Maven Project
-        uses: ./secure-api-gateway-ci/.github/actions/build-artifact
         if: env.STEPS_RELEASE_PREPARE_MAVEN_PROJECT == 'true'
-        with:
-          checkoutCode: false
-          mavenBuildCommands: ${{ env.STEPS_RELEASE_PREPARE_MAVEN_COMMANDS }}
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          repositoryName: ${{ inputs.componentName }}
+        working-directory: ${{ inputs.componentName }}
+        run : |
+          ${{ env.STEPS_RELEASE_PREPARE_MAVEN_COMMANDS }}
       # Create Tag if not using Maven Step Above
       - name: Create Release Tag and Push
         if: env.STEPS_RELEASE_PREPARE_TAG_MANUALLY == 'true'
