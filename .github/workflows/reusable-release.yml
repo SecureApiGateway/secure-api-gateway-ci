@@ -108,9 +108,16 @@ jobs:
           cd ${{ inputs.componentName }}
           git config user.name fropenbanking
           git config user.email obst@forgerock.com
-          echo "Creating Release Tag: v${{ inputs.releaseVersion }}"
-          git tag -a v${{ inputs.releaseVersion }} -m "Tag for release ${{ inputs.releaseVersion }}"
-          git push origin v${{ inputs.releaseVersion }}
+          
+          if [ $(git tag -l "v${{ inputs.releaseVersion }}") ]; then
+            echo "Tag v${{ inputs.releaseVersion }} already exists, stopping workflow"
+            exit 1
+          else
+            echo "Creating Release Tag: v${{ inputs.releaseVersion }}"
+            git tag -a v${{ inputs.releaseVersion }} -m "Tag for release ${{ inputs.releaseVersion }}"
+            git push origin v${{ inputs.releaseVersion }}
+          fi
+
       # Checkout Tagged Code Created By Maven Plugin
       - name: Checkout Tagged Code
         uses: actions/checkout@v4
@@ -118,7 +125,7 @@ jobs:
           path: ${{ inputs.componentName }}
           ref: v${{ inputs.releaseVersion }}
           repository: SecureApiGateway/${{ inputs.componentName }}
-          token: ${{ secrets.release_github_token }}
+          token: ${{ secrets.RELEASE_PAT }}
       # Builds Docker Image
       - name: Build Image
         uses: ./secure-api-gateway-ci/.github/actions/build-image
