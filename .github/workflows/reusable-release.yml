@@ -54,6 +54,8 @@ jobs:
             sed -i -e 's/VERSION_REPLACE/'v${{ inputs.releaseVersion }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
+          git config user.name fropenbanking
+          git config user.email obst@forgerock.com
       # Perform Checks on Settings
       - name: Check Environment Workflow Config
         run: |
