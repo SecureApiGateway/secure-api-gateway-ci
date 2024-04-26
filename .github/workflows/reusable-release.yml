@@ -83,6 +83,7 @@ jobs:
       - name: Import GPG Key
         uses: crazy-max/ghaction-import-gpg@v5
         if: env.STEPS_RELEASE_SET_GPG_KEY == 'true'
+        working-directory: ${{ inputs.componentName }}
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY_BOT }}
           passphrase: ${{ secrets.GPG_KEY_PASSPHRASE_BOT }}
