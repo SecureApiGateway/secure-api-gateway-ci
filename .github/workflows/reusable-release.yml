@@ -50,6 +50,9 @@ jobs:
           if grep -q VERSION_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
             sed -i -e 's/VERSION_REPLACE/'v${{ inputs.releaseVersion }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
+          if grep -q MAVEN_VERSION_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            sed -i -e 's/MAVEN_VERSION_REPLACE/'${{ inputs.releaseVersion }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+          fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Perform Checks on Settings
       - name: Check Environment Workflow Config
