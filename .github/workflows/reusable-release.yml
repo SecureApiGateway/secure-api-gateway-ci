@@ -108,14 +108,9 @@ jobs:
           cd ${{ inputs.componentName }}
           git config user.name fropenbanking
           git config user.email obst@forgerock.com
-          if [[ `git tag -l "v${{ inputs.releaseVersion }}"` == v${{ inputs.releaseVersion }} ]]; then
-            echo "Tag v${{ inputs.releaseVersion }} already exists, stopping workflow"
-            exit 1
-          else
-            echo "Creating Release Tag: v${{ inputs.releaseVersion }}"
-            git tag -a v${{ inputs.releaseVersion }} -m "Tag for release ${{ inputs.releaseVersion }}"
-            git push origin v${{ inputs.releaseVersion }}
-          fi
+          echo "Creating Release Tag: v${{ inputs.releaseVersion }}"
+          git tag -a v${{ inputs.releaseVersion }} -m "Tag for release ${{ inputs.releaseVersion }}"
+          git push origin v${{ inputs.releaseVersion }}
 
       # Checkout Tagged Code Created By Maven Plugin
       - name: Checkout Tagged Code
