@@ -105,6 +105,7 @@ jobs:
       - name: Create Release Tag and Push
         if: env.STEPS_RELEASE_PREPARE_TAG_MANUALLY == 'true'
         run: |
+          cd ${{ inputs.componentName }}
           echo "Creating Release Tag: v${{ inputs.releaseVersion }}"
           git tag -a v${{ inputs.releaseVersion }} -m "Tag for release ${{ inputs.releaseVersion }}"
           git push origin v${{ inputs.releaseVersion }}
