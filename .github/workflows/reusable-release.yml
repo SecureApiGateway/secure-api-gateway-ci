@@ -54,7 +54,7 @@ jobs:
             sed -i -e 's/VERSION_REPLACE/'v${{ inputs.releaseVersion }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
-          if [ "${{ inputs.STEPS_RELEASE_PREPARE_MAVEN_PROJECT }}" == "${{ inputs.STEPS_RELEASE_PREPARE_TAG_MANUALLY }}" ]; then
+          if [ "${{ env.STEPS_RELEASE_PREPARE_MAVEN_PROJECT }}" == "${{ env.STEPS_RELEASE_PREPARE_TAG_MANUALLY }}" ]; then
             echo "ERROR: STEPS_RELEASE_PREPARE_MAVEN_PROJECT & STEPS_RELEASE_PREPARE_TAG_MANUALLY Cannot both be true or false"
             exit 1
           fi
