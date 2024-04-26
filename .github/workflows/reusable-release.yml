@@ -153,10 +153,5 @@ jobs:
       - name: Create GitHub Release
         if: env.STEPS_RELEASE_CREATE_GITHUB_RELEASE == 'true'
         run: |
+          cd ${{ inputs.componentName }}
           ${{ env.STEPS_RELEASE_CREATE_GITHUB_RELEASE_COMMAND }}
-          
-          
-          
-          
-          sed -i -e 's/TAG_REPLACE/'pr-35'/g'             secure-api-gateway-ci/component-config/secure-api-gateway-core.env
-          sed -i -e 's/NOTES_REPLACE/'Initial Testing'/g' secure-api-gateway-ci/component-config/sapig-openbanking-uk-developer-envs.env
