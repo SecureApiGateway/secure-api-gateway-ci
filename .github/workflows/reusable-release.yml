@@ -92,8 +92,8 @@ jobs:
           git_commit_gpgsign: true
           passphrase: ${{ secrets.GPG_KEY_PASSPHRASE_BOT }}
           workdir: ${{ inputs.componentName }}
-      # Prepare Maven Project
-      - name: Prepare Maven Project
+      # Remove Snapshot, Create Release Tag, Increment Version and set Snapshot
+      - name: Remove Snapshot, Create Release Tag, Increment Version and set Snapshot
         if: env.STEPS_RELEASE_PREPARE_MAVEN_PROJECT == 'true'
         working-directory: ${{ inputs.componentName }}
         run : |
@@ -102,7 +102,7 @@ jobs:
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
       # Create Tag if not using Maven Step Above
-      - name: Create Release Tag and Push
+      - name: Create Release Tag
         if: env.STEPS_RELEASE_PREPARE_TAG_MANUALLY == 'true'
         working-directory: ${{ inputs.componentName }}
         run: |
@@ -111,7 +111,18 @@ jobs:
           echo "Creating Release Tag: v${{ inputs.releaseVersion }}"
           git tag -a v${{ inputs.releaseVersion }} -m "Tag for release ${{ inputs.releaseVersion }}"
           git push origin v${{ inputs.releaseVersion }}
-
+      # Increment Snapshot Versions (UI)
+      - name: Increment Version Manually and Commit Code
+        if: inputs.componentName == 'secure-api-gateway-ob-uk-ui'
+        working-directory: ${{ inputs.componentName }}
+        run: |
+          git config user.name fropenbanking
+          git config user.email obst@forgerock.com
+          cd secure-api-gateway-ob-uk-ui-rcs
+          npm version patch --no-git-tag-version
+          git add package.json package-lock.json
+          git commit -m "Prepare for the next development iteration"
+          git push -f
       # Checkout Tagged Code Created By Maven Plugin
       - name: Checkout Tagged Code
         uses: actions/checkout@v4
@@ -120,8 +131,8 @@ jobs:
           ref: v${{ inputs.releaseVersion }}
           repository: SecureApiGateway/${{ inputs.componentName }}
           token: ${{ secrets.RELEASE_PAT }}
-      # Builds Docker Image
-      - name: Build Image
+      # Build and Push Image to Artifact Registry
+      - name: Build and Push Image to Artifact Registry
         uses: ./secure-api-gateway-ci/.github/actions/build-image
         if: env.STEPS_RELEASE_BUILD_DOCKER_IMAGE == 'true'
         with:
@@ -142,8 +153,8 @@ jobs:
           mavenServerID: ${{ env.MAVEN_SERVER_ID_SECOND }}
           repositoryName: ${{ inputs.componentName }}
           updateMavenServer: ${{ env.UPDATE_RELEASE_MAVEN_SERVER_ID_SECOND }}
-      # Deploy Maven Project
-      - name: Deploy Maven Project
+      # Build and Push Artifacts to Maven
+      - name: Build and Push Artifacts to Maven
         uses: ./secure-api-gateway-ci/.github/actions/build-artifact
         if: env.STEPS_RELEASE_DEPLOY_MAVEN_PROJECT == 'true'
         with:
@@ -151,6 +162,17 @@ jobs:
           mavenBuildCommands: ${{ env.STEPS_RELEASE_DEPLOY_MAVEN_COMMANDS }}
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: ${{ inputs.componentName }}
+      # Build and Push Helm Templates to Maven
+      - name: Build and Push Helm Templates to Maven
+        uses: ./secure-api-gateway-ci/.github/actions/build-helm-package
+        if: env.STEPS_RELEASE_PUBLISH_HELM_PACKAGE == 'true'
+        with:
+          checkoutCode: false
+          FR_ARTIFACTORY_REPO: ${{ secrets.FR_HELM_REPO }}
+          FR_ARTIFACTORY_USER_ACCESS_TOKEN: ${{ secrets.FR_ARTIFACTORY_USER_ACCESS_TOKEN }}
+          helmCreatePackageCommand: ${{ env.STEPS_RELEASE_PUBLISH_HELM_CREATE_COMMAND }}
+          helmPublishPackageCommand: ${{ env.STEPS_RELEASE_PUBLISH_HELM_PUBLISH_COMMAND }}
           repositoryName: ${{ inputs.componentName }}
       # Create Release In GitHub
       - name: Create GitHub Release
