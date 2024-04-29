@@ -56,7 +56,7 @@ jobs:
           javaVersion: ${{ env.JAVA_VERSION }}
           mavenServerID: ${{ env.MAVEN_SERVER_ID }}
           repositoryName: ${{ inputs.componentName }}
-          updateMavenServer: ${{ env.UPDATE_MAVEN_SERVER_ID }}
+          updateMavenServer: ${{ env.UPDATE_MERGE_MAVEN_SERVER_ID }}
       # Run Initial Tests
       - name: Run Pre Build Tests
         if: env.STEPS_MERGE_RUN_INITIAL_TESTS == 'true'
@@ -73,7 +73,6 @@ jobs:
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: ${{ inputs.componentName }}
-        # Builds Maven Project
       # Set Maven Config
       - name: Set Maven Config
         uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
@@ -85,7 +84,7 @@ jobs:
           javaVersion: ${{ env.JAVA_VERSION }}
           mavenServerID: ${{ env.MAVEN_SERVER_ID_SECOND }}
           repositoryName: ${{ inputs.componentName }}
-          updateMavenServer: ${{ env.UPDATE_MAVEN_SERVER_ID_SECOND }}
+          updateMavenServer: ${{ env.UPDATE_MERGE_MAVEN_SERVER_ID_SECOND }}
       # Build Maven Project
       - name: Build Maven Project
         uses: ./secure-api-gateway-ci/.github/actions/build-artifact

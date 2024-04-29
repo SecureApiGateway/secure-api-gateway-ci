@@ -1,0 +1,184 @@
+name: Pull Request - Build and Deploy
+on:
+  workflow_call:
+    inputs:
+      componentName:
+        description: The component name using the workflow
+        required: true
+        type: string
+      dockerTag:
+        description: The Tag to be associated with the new docker image (optional)
+        required: false
+        type: string
+      releaseNotes:
+        description: The Release Notes associated with the Release (optional)
+        required: false
+        type: string
+      releaseVersion:
+        description: "The version to be Released (#.#.# | #.#.#-RC1)"
+        required: false
+        type: string
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+      # Checkout CI Repo
+      - name: Checkout CI Repo
+        uses: actions/checkout@v4
+        with:
+          path: secure-api-gateway-ci
+          repository: SecureApiGateway/secure-api-gateway-ci
+      # Checkout Calling Repo
+      - name: Checkout Calling Repo
+        uses: actions/checkout@v4
+        with:
+          path: ${{ inputs.componentName }}
+          repository: SecureApiGateway/${{ inputs.componentName }}
+          token: ${{ secrets.RELEASE_PAT }}
+      # Prepare Environment
+      - name: Prepare Environment
+        run: |
+          if grep -q REPO_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            sed -i -e 's|REPO_REPLACE|'"${{ vars.GAR_RELEASE_REPO }}"'|g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+          fi
+          if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+          fi
+          if grep -q VERSION_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            sed -i -e 's/VERSION_REPLACE/'v${{ inputs.releaseVersion }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+          fi
+          if grep -q VERSION_MAVEN_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            sed -i -e 's/VERSION_MAVEN_REPLACE/'${{ inputs.releaseVersion }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+          fi
+          grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
+      # Perform Checks on Settings
+      - name: Check Environment Workflow Config
+        run: |
+          if [ "${{ env.STEPS_RELEASE_PREPARE_MAVEN_PROJECT }}" == "${{ env.STEPS_RELEASE_PREPARE_TAG_MANUALLY }}" ]; then
+            echo "ERROR: STEPS_RELEASE_PREPARE_MAVEN_PROJECT & STEPS_RELEASE_PREPARE_TAG_MANUALLY Cannot both be true or false"
+            exit 1
+          fi
+      # Auth GCP, SDK & Artifact Registry
+      - name: Authentication
+        uses: ./secure-api-gateway-ci/.github/actions/authentication
+        if: env.STEPS_RELEASE_AUTHENTICATE == 'true'
+        with:
+          garKey: ${{ secrets.DEV_GAR_KEY }}
+          garLocation: ${{ env.GAR_LOCATION }}
+      # Set Maven Config
+      - name: Set Maven Config
+        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
+        if: env.STEPS_RELEASE_SET_MAVEN_CONFIG == 'true'
+        with:
+          cache: ${{ env.CACHE }}
+          javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
+          javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
+          javaVersion: ${{ env.JAVA_VERSION }}
+          mavenServerID: ${{ env.MAVEN_SERVER_ID }}
+          repositoryName: ${{ inputs.componentName }}
+          updateMavenServer: ${{ env.UPDATE_RELEASE_MAVEN_SERVER_ID }}
+      # https://github.com/crazy-max/ghaction-import-gpg
+      # https://httgp.com/signing-commits-in-github-actions/
+      # Prepare the environment to sign the commits
+      - name: Import GPG Key
+        uses: crazy-max/ghaction-import-gpg@v5
+        if: env.STEPS_RELEASE_SET_GPG_KEY == 'true'
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY_BOT }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+          passphrase: ${{ secrets.GPG_KEY_PASSPHRASE_BOT }}
+          workdir: ${{ inputs.componentName }}
+      # Remove Snapshot, Create Release Tag, Increment Version and set Snapshot
+      - name: Remove Snapshot, Create Release Tag, Increment Version and set Snapshot
+        if: env.STEPS_RELEASE_PREPARE_MAVEN_PROJECT == 'true'
+        working-directory: ${{ inputs.componentName }}
+        run : |
+          ${{ env.STEPS_RELEASE_PREPARE_MAVEN_COMMANDS }}
+        env:
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+      # Create Tag if not using Maven Step Above
+      - name: Create Release Tag
+        if: env.STEPS_RELEASE_PREPARE_TAG_MANUALLY == 'true'
+        working-directory: ${{ inputs.componentName }}
+        run: |
+          git config user.name fropenbanking
+          git config user.email obst@forgerock.com
+          echo "Creating Release Tag: v${{ inputs.releaseVersion }}"
+          git tag -a v${{ inputs.releaseVersion }} -m "Tag for release ${{ inputs.releaseVersion }}"
+          git push origin v${{ inputs.releaseVersion }}
+      # Increment Snapshot Versions (UI)
+      - name: Increment Version Manually and Commit Code
+        if: inputs.componentName == 'secure-api-gateway-ob-uk-ui'
+        working-directory: ${{ inputs.componentName }}
+        run: |
+          git config user.name fropenbanking
+          git config user.email obst@forgerock.com
+          cd secure-api-gateway-ob-uk-ui-rcs
+          npm version patch --no-git-tag-version
+          git add package.json package-lock.json
+          git commit -m "Prepare for the next development iteration"
+          git push -f
+      # Checkout Tagged Code Created By Maven Plugin
+      - name: Checkout Tagged Code
+        uses: actions/checkout@v4
+        with:
+          path: ${{ inputs.componentName }}
+          ref: v${{ inputs.releaseVersion }}
+          repository: SecureApiGateway/${{ inputs.componentName }}
+          token: ${{ secrets.RELEASE_PAT }}
+      # Build and Push Image to Artifact Registry
+      - name: Build and Push Image to Artifact Registry
+        uses: ./secure-api-gateway-ci/.github/actions/build-image
+        if: env.STEPS_RELEASE_BUILD_DOCKER_IMAGE == 'true'
+        with:
+          checkoutCode: false
+          dockerBuildCommands: ${{ env.STEPS_RELEASE_BUILD_DOCKER_COMMANDS }}
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: ${{ inputs.componentName }}
+      # Set Maven Config
+      - name: Set Maven Config
+        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
+        if: env.STEPS_RELEASE_SET_MAVEN_CONFIG_SECOND == 'true'
+        with:
+          cache: ${{ env.CACHE }}
+          javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
+          javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
+          javaVersion: ${{ env.JAVA_VERSION }}
+          mavenServerID: ${{ env.MAVEN_SERVER_ID_SECOND }}
+          repositoryName: ${{ inputs.componentName }}
+          updateMavenServer: ${{ env.UPDATE_RELEASE_MAVEN_SERVER_ID_SECOND }}
+      # Build and Push Artifacts to Maven
+      - name: Build and Push Artifacts to Maven
+        uses: ./secure-api-gateway-ci/.github/actions/build-artifact
+        if: env.STEPS_RELEASE_DEPLOY_MAVEN_PROJECT == 'true'
+        with:
+          checkoutCode: false
+          mavenBuildCommands: ${{ env.STEPS_RELEASE_DEPLOY_MAVEN_COMMANDS }}
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: ${{ inputs.componentName }}
+      # Build and Push Helm Templates to Maven
+      - name: Build and Push Helm Templates to Maven
+        uses: ./secure-api-gateway-ci/.github/actions/build-helm-package
+        if: env.STEPS_RELEASE_PUBLISH_HELM_PACKAGE == 'true'
+        with:
+          checkoutCode: false
+          FR_ARTIFACTORY_REPO: ${{ secrets.FR_HELM_REPO }}
+          FR_ARTIFACTORY_USER_ACCESS_TOKEN: ${{ secrets.FR_ARTIFACTORY_USER_ACCESS_TOKEN }}
+          helmCreatePackageCommand: ${{ env.STEPS_RELEASE_PUBLISH_HELM_CREATE_COMMAND }}
+          helmPublishPackageCommand: ${{ env.STEPS_RELEASE_PUBLISH_HELM_PUBLISH_COMMAND }}
+          repositoryName: ${{ inputs.componentName }}
+      # Create Release In GitHub
+      - name: Create GitHub Release
+        if: env.STEPS_RELEASE_CREATE_GITHUB_RELEASE == 'true'
+        working-directory: ${{ inputs.componentName }}
+        run: |
+          if [[ ! "${{ inputs.releaseVersion }}" =~ "RC" ]]; then
+            gh release create --verify-tag v${{ inputs.releaseVersion }} --title "Release v${{ inputs.releaseVersion }}" --notes "${{ inputs.releaseNotes }}"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
