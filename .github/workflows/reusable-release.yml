@@ -101,10 +101,6 @@ jobs:
         env:
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          GIT_AUTHOR_NAME: ${{ secrets.GIT_COMMIT_USERNAME_BOT }}
-          GIT_AUTHOR_EMAIL: ${{ secrets.GIT_COMMIT_AUTHOR_EMAIL_BOT }}
-          GIT_COMMITTER_NAME: ${{ secrets.GIT_COMMIT_USERNAME_BOT }}
-          GIT_COMMITTER_EMAIL: ${{ secrets.GIT_COMMIT_AUTHOR_EMAIL_BOT }}
       # Create Tag if not using Maven Step Above
       - name: Create Release Tag and Push
         if: env.STEPS_RELEASE_PREPARE_TAG_MANUALLY == 'true'
