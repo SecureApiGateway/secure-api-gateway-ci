@@ -15,7 +15,7 @@ on:
         required: false
         type: string
       releaseVersion:
-        description: The version to be Released (#.#.#.#)
+        description: "The version to be Released (#.#.# | #.#.#-RC1)"
         required: false
         type: string
 jobs:
@@ -29,7 +29,6 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
-          ref: 1389-standard-steps-for-workflows
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
@@ -37,7 +36,6 @@ jobs:
           path: ${{ inputs.componentName }}
           repository: SecureApiGateway/${{ inputs.componentName }}
           token: ${{ secrets.RELEASE_PAT }}
-          ref: 1389-standard-steps-for-workflows
       # Prepare Environment
       - name: Prepare Environment
         run: |
