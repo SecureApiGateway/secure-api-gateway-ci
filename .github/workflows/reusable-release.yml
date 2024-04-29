@@ -157,6 +157,9 @@ jobs:
         if: env.STEPS_RELEASE_CREATE_GITHUB_RELEASE == 'true'
         working-directory: ${{ inputs.componentName }}
         run: |
-          gh release create --verify-tag v${{ inputs.releaseVersion }} --title "Release v${{ inputs.releaseVersion }}" --notes "${{ inputs.releaseNotes }}"
+          if [[ "${{ inputs.releaseVersion }}" =~ "RC" ]]; then
+            draftReleaseFlag="-d"
+          fi
+          gh release create --verify-tag v${{ inputs.releaseVersion }} --title "Release v${{ inputs.releaseVersion }}" --notes "${{ inputs.releaseNotes }}" $draftReleaseFlag
         env:
           GH_TOKEN: ${{ secrets.RELEASE_PAT }}
