@@ -20,6 +20,7 @@ jobs:
         uses: ./secure-api-gateway-ci/.github/actions/authentication
         with:
           gcpKey: ${{ inputs.gcpKey }}
+          garLocation: ${{ inputs.garLocation }}
       - name: Get Webhook URL from GSM
         run: |
           echo "SLACK_WEBHOOK=$(gcloud --project ${{ inputs.gcpProject }} secrets versions access latest --secret=${{ inputs.gsmSlackWebhookName }})" >> $GITHUB_ENV
