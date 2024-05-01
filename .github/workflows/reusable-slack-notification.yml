@@ -3,7 +3,7 @@ on:
   workflow_call:
     secrets:
       garLocation:
-        required: true
+        required: false
       gcpKey:
         required: true
       gcpProject:
