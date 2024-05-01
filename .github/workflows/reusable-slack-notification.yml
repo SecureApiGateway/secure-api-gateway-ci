@@ -3,10 +3,13 @@ on:
   workflow_call:
     inputs:
       garLocation:
+        type: string
         required: false
       gcpProject:
+        type: string
         required: true
       gsmSlackWebhookName:
+        type: string
         required: true
     secrets:
       gcpKey:
