@@ -30,7 +30,7 @@ jobs:
       - name: Authentication
         uses: ./secure-api-gateway-ci/.github/actions/authentication
         with:
-          gcpKey: ${{ inputs.gcpKey }}
+          gcpKey: ${{ secrets.gcpKey }}
           garLocation: ${{ inputs.garLocation }}
       # Get Webhook from GSM
       - name: Get Webhook URL from GSM
