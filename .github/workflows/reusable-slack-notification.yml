@@ -25,7 +25,6 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
-          ref: 1389-reusable-workflow
       # Auth GCP, SDK & Artifact Registry
       - name: Authentication
         uses: ./secure-api-gateway-ci/.github/actions/authentication
