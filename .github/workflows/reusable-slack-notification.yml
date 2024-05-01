@@ -1,14 +1,15 @@
 name: Merge Notification
 on:
   workflow_call:
-    secrets:
+    inputs:
       garLocation:
         required: false
-      gcpKey:
-        required: true
       gcpProject:
         required: true
       gsmSlackWebhookName:
+        required: true
+    secrets:
+      gcpKey:
         required: true
 jobs:
   check:
