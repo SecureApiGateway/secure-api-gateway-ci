@@ -1,4 +1,4 @@
-name: Merge Notification
+name: Merge - Slack Notification
 on:
   workflow_call:
     inputs:
