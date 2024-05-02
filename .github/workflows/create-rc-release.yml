@@ -1,18 +1,14 @@
-name: Get Latest SAPIG RC Build Version
+name: Get Next SAPIG Build Version
 #run-name: "${{ inputs.releaseVersion }}: RC Build"
 on:
   workflow_dispatch:
     inputs:
-      buildVersion:
-        description: What version of SAPIG is being built (#.#.# - rc# not required)
-        type: string
-        required: true
-#      draftBuild:
-#        description: Is this a draft build (No artifacts pushed)
-#        type: boolean
-#        required: true
       sapigType:
         description: SAPIG Type to be built (ob | core)
+        type: string
+        required: true
+      versionToChange:
+        description: Semantic Version to change ( Major | Minor | Patch | Bug )
         type: string
         required: true
 jobs:
@@ -35,5 +31,4 @@ jobs:
             echo "OB Components to be built; IG, RCS, RS, RCS-UI, Test Data Initializer, Functional Tests & DCR Conformance Tests"
             components="IG RCS RS RCSUI TDI FUNC DCR"
           fi
-          versionToUse=$(./scripts/docker-get-max-rc-version.sh "$components" "$version")
-          echo "Use `${{ inputs.releaseVersion }}-rc$versionToUse` in the release workflows"
+          versionToUse=$(./scripts/docker-get-max-rc-version.sh "$components" "$versionToChange" )
