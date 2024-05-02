@@ -23,30 +23,54 @@ jobs:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
       # Auth GCP, SDK & Artifact Registry
+      # Auth for GSM Secret
       - name: Authentication
         uses: ./secure-api-gateway-ci/.github/actions/authentication
         with:
-          gcpKey: ${{ secrets.GCR_RELEASE_REPO }}
-          garLocation: ${{ inputs.GAR_RELEASE_REPO }}
+          gcpKey: ${{ secrets.GCP_SECRET_READ }}
+          garLocation: ${{ env.GAR_LOCATION }}
       # Get Webhook from GSM
       - name: Get Webhook URL from GSM
         run: |
-          echo "SLACK_WEBHOOK=$(gcloud --project ${{ vars.SAPIG_PROJECT }} secrets versions access latest --secret=${{ vars.GSM_NOTIFY_WEBOOK_NAME }})" >> $GITHUB_ENV
-      # Prepare Environment
+          GITHUB_USER=$(echo "${{github.actor}}" | tr '[:upper:]' '[:lower:]')
+          case $GITHUB_USER in
+            shaunharrisonfr)
+              gsmSecretToUse="slack-webhook-shaun-dm"
+              ;;
+            dbadham-fr)
+              gsmSecretToUse="slack-webhook-shaun-dm"
+              ;;
+            bohocode)
+              gsmSecretToUse="slack-webhook-shaun-dm"
+              ;;
+            *)
+              gsmSecretToUse="slack-webhook-tests-results"
+              ;;
+          esac
+          echo SLACK_WEBHOOK="$(gcloud --project ${{ vars.SAPIG_PROJECT }} secrets versions access latest --secret=$gsmSecretToUse)" >> $GITHUB_ENV
+      # Auth GCP, SDK & Artifact Registry
+      # Auth for Artifact Registry
+      - name: Authentication
+        uses: ./secure-api-gateway-ci/.github/actions/authentication
+        with:
+          gcpKey: ${{ secrets.DEV_GAR_KEY }}
+          garLocation: ${{ env.GAR_LOCATION }}
+      # Get Next Release Version
       - name: Get Next Release Version
         run: |
           sapigType=$(echo "${{ inputs.sapigType }}" | tr "[:upper:]" "[:lower:]")
+          versionToChange=$(echo "${{ inputs.versionToChange }}" | tr "[:upper:]" "[:lower:]")
           if [ "$sapigType" != "core" ] && [ "$sapigType" != "ob" ]; then
             echo "Warning: sapigType can only be 'ob' or 'core'"
             exit 1
           fi
           if [ "$sapigType" == "core" ]; then
-            echo "Core Components to be built; Core"
+            echo "Core Components to check against; Core"
             components="Core"
           else
-            echo "OB Components to be built; IG, RCS, RS, RCS-UI, Test Data Initializer, Functional Tests & DCR Conformance Tests"
+            echo "OB Components to check against; IG, RCS, RS, RCS-UI, Test Data Initializer, Functional Tests & DCR Conformance Tests"
             components="IG RCS RS RCSUI TDI FUNC DCR"
           fi
-          versionToUse=$(./scripts/docker-get-max-rc-version.sh "$components" "$versionToChange" )
-          slackMessage="The next available version to use for a ${{ inputs.versionToChange }} release is : $versionToUse"
+          versionToUse=$(./secure-api-gateway-ci/scripts/docker-get-next-version.sh "$components" "$versionToChange" )
+          slackMessage="The next available version to use for a OB ${{ inputs.versionToChange }} release is: \`$versionToUse\`"
           curl -X POST -H "Content-type: application/json" --data '{"text": "'"$slackMessage"'"}' "${{ env.SLACK_WEBHOOK }}" || echo "ERROR - Could not send message"
