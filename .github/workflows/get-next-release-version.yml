@@ -1,4 +1,4 @@
-name: Get Next SAPIG Build Version
+name: Release - Get Next SAPIG Version
 #run-name: "${{ inputs.releaseVersion }}: RC Build"
 on:
   workflow_dispatch:
@@ -26,8 +26,8 @@ jobs:
       - name: Authentication
         uses: ./secure-api-gateway-ci/.github/actions/authentication
         with:
-          gcpKey: ${{ secrets.gcpKey }}
-          garLocation: ${{ inputs.garLocation }}
+          gcpKey: ${{ secrets.GCR_RELEASE_REPO }}
+          garLocation: ${{ inputs.GAR_RELEASE_REPO }}
       # Get Webhook from GSM
       - name: Get Webhook URL from GSM
         run: |

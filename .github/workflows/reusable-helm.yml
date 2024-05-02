@@ -1,4 +1,4 @@
-name: Pull Request - Build and Deploy
+name: Pull Request - Helm Template
 on:
   workflow_call:
     inputs:
