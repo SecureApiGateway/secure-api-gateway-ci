@@ -1,15 +1,45 @@
 name: Merge Notification
 on:
   workflow_call:
+    inputs:
+      garLocation:
+        type: string
+        required: false
+      gcpProject:
+        type: string
+        required: true
+      gsmSlackWebhookName:
+        type: string
+        required: true
+    secrets:
+      gcpKey:
+        required: true
 jobs:
   check:
     runs-on: ubuntu-latest
     name: Push Slack Notification
     steps:
+      # Checkout Code
+      - name: Checkout CI Repo
+        uses: actions/checkout@v4
+        with:
+          path: secure-api-gateway-ci
+          repository: SecureApiGateway/secure-api-gateway-ci
+      # Auth GCP, SDK & Artifact Registry
+      - name: Authentication
+        uses: ./secure-api-gateway-ci/.github/actions/authentication
+        with:
+          gcpKey: ${{ secrets.gcpKey }}
+          garLocation: ${{ inputs.garLocation }}
+      # Get Webhook from GSM
+      - name: Get Webhook URL from GSM
+        run: |
+          echo "SLACK_WEBHOOK=$(gcloud --project ${{ inputs.gcpProject }} secrets versions access latest --secret=${{ inputs.gsmSlackWebhookName }})" >> $GITHUB_ENV
+      # Post Notification
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2.3.0
         env:
           SLACK_USERNAME: GitHub Actions - Merge Complete
-          SLACK_WEBHOOK: ${{ secrets.WEBHOOK_SBAT_NOTIFY_SLACK }}
+          SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
           SLACK_COLOR: ${{ job.status }}
           MSG_MINIMAL: commit

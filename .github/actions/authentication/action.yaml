@@ -1,12 +1,12 @@
 name: Authentication
 description: Common commands used to auth to services during workflows
 inputs:
-  garKey:
+  gcpKey:
     description: The GCP Json Auth Key
     required: true
   garLocation:
     description: The location of the Google Artifact Registry
-    required: true
+    required: false
 
 runs:
   using: composite
@@ -15,10 +15,11 @@ runs:
     - name: Auth to GCP
       uses: google-github-actions/auth@v2
       with:
-        credentials_json: ${{ inputs.garKey }}
+        credentials_json: ${{ inputs.gcpKey }}
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2.1.0
     - name: Auth Docker
       shell: bash
+      if: inputs.garLocation != ''
       run: |
         gcloud auth configure-docker ${{ inputs.garLocation }}

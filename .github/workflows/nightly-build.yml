@@ -14,14 +14,14 @@ jobs:
       - name: Call Authentication
         uses: ./.github/actions/authentication
         with: 
-          garKey: ${{ secrets.DEV_GAR_KEY }}
+          gcpKey: ${{ secrets.DEV_GAR_KEY }}
           garLocation: ${{ vars.GAR_LOCATION }}
       # Build Components
       - name: Call build-image-and-artifact for Core
         uses: ./.github/actions/build-image-and-artifact
         with: 
           repositoryName: SecureApiGateway/secure-api-gateway-core
-          dockerBuildCommands: "make clean docker tag=latest && make clean docker tag=dev"
+          dockerBuildCommands: "make clean docker tag=latest && make clean docker tag=dev env=dev"
           mavenBuildCommands: "mvn -B deploy -DskipTests"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -29,7 +29,7 @@ jobs:
         uses: ./.github/actions/build-image-and-artifact
         with: 
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
-          dockerBuildCommands: "make clean docker tag=latest && make clean docker tag=dev"
+          dockerBuildCommands: "make clean docker tag=latest && make clean docker tag=dev env=dev"
           mavenBuildCommands: "mvn -B deploy -DskipTests"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
