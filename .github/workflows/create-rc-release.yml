@@ -1,0 +1,52 @@
+name: Get Next SAPIG Build Version
+#run-name: "${{ inputs.releaseVersion }}: RC Build"
+on:
+  workflow_dispatch:
+    inputs:
+      sapigType:
+        description: SAPIG Type to be built (ob | core)
+        type: string
+        required: true
+      versionToChange:
+        description: Semantic Version to change ( Major | Minor | Patch | Bug )
+        type: string
+        required: true
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout Code
+      - name: Checkout CI Repo
+        uses: actions/checkout@v4
+        with:
+          path: secure-api-gateway-ci
+          repository: SecureApiGateway/secure-api-gateway-ci
+      # Auth GCP, SDK & Artifact Registry
+      - name: Authentication
+        uses: ./secure-api-gateway-ci/.github/actions/authentication
+        with:
+          gcpKey: ${{ secrets.gcpKey }}
+          garLocation: ${{ inputs.garLocation }}
+      # Get Webhook from GSM
+      - name: Get Webhook URL from GSM
+        run: |
+          echo "SLACK_WEBHOOK=$(gcloud --project ${{ vars.SAPIG_PROJECT }} secrets versions access latest --secret=${{ vars.GSM_NOTIFY_WEBOOK_NAME }})" >> $GITHUB_ENV
+      # Prepare Environment
+      - name: Get Next Release Version
+        run: |
+          sapigType=$(echo "${{ inputs.sapigType }}" | tr "[:upper:]" "[:lower:]")
+          if [ "$sapigType" != "core" ] && [ "$sapigType" != "ob" ]; then
+            echo "Warning: sapigType can only be 'ob' or 'core'"
+            exit 1
+          fi
+          if [ "$sapigType" == "core" ]; then
+            echo "Core Components to be built; Core"
+            components="Core"
+          else
+            echo "OB Components to be built; IG, RCS, RS, RCS-UI, Test Data Initializer, Functional Tests & DCR Conformance Tests"
+            components="IG RCS RS RCSUI TDI FUNC DCR"
+          fi
+          versionToUse=$(./scripts/docker-get-max-rc-version.sh "$components" "$versionToChange" )
+          slackMessage="The next available version to use for a ${{ inputs.versionToChange }} release is : $versionToUse"
+          curl -X POST -H "Content-type: application/json" --data '{"text": "'"$slackMessage"'"}' "${{ env.SLACK_WEBHOOK }}" || echo "ERROR - Could not send message"
