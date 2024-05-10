@@ -57,7 +57,15 @@ jobs:
           mavenBuildCommands: "mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-      - name: Call build-image for Functional Tests 
+      - name: Call build-image for Core Functional Tests
+        uses: ./.github/actions/build-image
+        with:
+          checkoutCode: true
+          repositoryName: SecureApiGateway/secure-api-gateway-functional-test-framework
+          dockerBuildCommands: "make docker tag=latest"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+      - name: Call build-image for OB Functional Tests
         uses: ./.github/actions/build-image
         with:
           checkoutCode: true
