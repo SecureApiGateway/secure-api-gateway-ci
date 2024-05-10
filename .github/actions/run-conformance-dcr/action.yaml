@@ -22,16 +22,29 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Create Lowercase Github Username
-      shell: bash
-      run: |
-        echo "GITHUB_USER=$(echo ${{github.actor}} | tr '[:upper:]' '[:lower:]')" >> ${GITHUB_ENV}
-    - name: 'Update Environment'
+    - name: 'Run Conformance DCR Tests'
       uses: codefresh-io/codefresh-pipeline-runner@master
       with:
         args: '-v IMAGE_REPO=securebanking/${{ inputs.serviceName }} -v TAG=${{ inputs.dockerTag }}'
       env:
         PIPELINE_NAME: ${{ inputs.cfPipelineName }}
+        CF_API_KEY: ${{ inputs.cfAPIKey }}
+        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
+        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
+    - name: 'Change Pipeline Name for Nightly'
+      shell: bash
+      run: |
+        if [ "${{ inputs.cfPipelineName }}" == "SAPIG-devenv/dev-ob-dcr-conformance-tests" ]; then
+          echo "cfPipelineName=SAPIG-devenv/nightly-ob-dcr-conformance-tests" >> ${GITHUB_ENV}
+        else
+           echo "cfPipelineName=SAPIG-devenv/nightly-core-dcr-conformance-tests" >> ${GITHUB_ENV}
+        fi
+    - name: 'Run Conformance DCR Tests'
+      uses: codefresh-io/codefresh-pipeline-runner@master
+      with:
+        args: '-v IMAGE_REPO=securebanking/${{ inputs.serviceName }} -v TAG=${{ inputs.dockerTag }}'
+      env:
+        PIPELINE_NAME: ${{ env.cfPipelineName }}
         CF_API_KEY: ${{ inputs.cfAPIKey }}
         TRIGGER_NAME: ${{ inputs.cfTriggerName }}
         CF_BRANCH: ${{ inputs.cfPipelineBranch }}
