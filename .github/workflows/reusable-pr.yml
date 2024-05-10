@@ -193,7 +193,7 @@ jobs:
           cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
           dockerTag: ${{ inputs.dockerTag }}
           serviceName: pr/${{ env.SERVICE_NAME }}
-          testVersion: ${{ env.TESTS_VERSION }}
+          testsVersion: ${{ env.TESTS_VERSION }}
       # Run Conformance DCR Tests
       - name: Run Conformance DCR
         uses: ./secure-api-gateway-ci/.github/actions/run-conformance-dcr
