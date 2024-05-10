@@ -13,6 +13,9 @@ NOTE:This repository is for internal PingID use only, and not designed for custo
 ### secure-api-gateway-core
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/merge.yml)
 [![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/release.yml)
+### secure-api-gateway-functional-test-framework
+[![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/merge.yml)
+[![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/release.yml)
 ### secure-api-gateway-ob-uk
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk/actions/workflows/merge.yml)
 [![Release - Build, Deploy & Create Releas](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk/actions/workflows/release.yml)
