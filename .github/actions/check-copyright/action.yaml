@@ -1,20 +1,11 @@
-name: Build Image
-description: Common steps to build a docker image
+name: Check Copyright
+description: Common steps to check the copyright of our components
 inputs:
   checkoutCode:
     description: Wherever or not to checkout the code for the repo
     required: true
   repositoryName:
     description: What repository to checkout
-    required: true
-  dockerBuildCommands:
-    description: What commands to run to build the image
-    required: true
-  FR_ARTIFACTORY_USER:
-    description: What user to use to auth to Maven Server
-    required: true
-  FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD:
-    description: What user password to use to auth to Maven Server
     required: true
 
 runs:
@@ -23,14 +14,11 @@ runs:
     - name: Checkout Code
       uses: actions/checkout@v4
       if: inputs.checkoutCode == 'true'
-      with: 
+      with:
         repository: ${{ inputs.repositoryName }}
         path: ${{ inputs.repositoryName }}
     - name: Run Docker Commands
       shell: bash
       run: |
         cd ${{ inputs.repositoryName }}
-        ${{ inputs.dockerBuildCommands }}
-      env:
-        FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
-        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+        mvn license:check
