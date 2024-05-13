@@ -1,0 +1,22 @@
+name: Nightly Check
+on:
+  schedule:
+    - cron: '0 2 * * 1-5' # UTC
+  workflow_dispatch:
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CI Code
+        uses: actions/checkout@v4
+      - name: Call check copyright for RS
+        uses: ./.github/actions/check-copyright
+        with:
+          checkoutCode: true
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
+      - name: Call check copyright for RCS
+        uses: ./.github/actions/check-copyright
+        with:
+          checkoutCode: true
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs

@@ -1,0 +1,24 @@
+name: Check Copyright
+description: Common steps to check the copyright of our components
+inputs:
+  checkoutCode:
+    description: Wherever or not to checkout the code for the repo
+    required: true
+  repositoryName:
+    description: What repository to checkout
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      if: inputs.checkoutCode == 'true'
+      with:
+        repository: ${{ inputs.repositoryName }}
+        path: ${{ inputs.repositoryName }}
+    - name: Run Docker Commands
+      shell: bash
+      run: |
+        cd ${{ inputs.repositoryName }}
+        mvn license:check
