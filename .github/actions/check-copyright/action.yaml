@@ -7,6 +7,15 @@ inputs:
   repositoryName:
     description: What repository to checkout
     required: true
+  dockerBuildCommands:
+    description: What commands to run to build the image
+    required: true
+  FR_ARTIFACTORY_USER:
+    description: What user to use to auth to Maven Server
+    required: true
+  FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD:
+    description: What user password to use to auth to Maven Server
+    required: true
 
 runs:
   using: composite
@@ -21,4 +30,7 @@ runs:
       shell: bash
       run: |
         cd ${{ inputs.repositoryName }}
-        mvn license:check
+        ${{ inputs.dockerBuildCommands }}
+      env:
+        FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
+        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
