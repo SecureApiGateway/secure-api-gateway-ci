@@ -1,5 +1,5 @@
 name: Check Copyright
-description: Common steps to check the copyright of our components
+description: Common steps to perform a code scan on a components
 inputs:
   checkoutCode:
     description: Wherever or not to checkout the code for the repo
