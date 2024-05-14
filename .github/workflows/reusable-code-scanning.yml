@@ -30,7 +30,7 @@ jobs:
           repository: SecureApiGateway/secure-api-gateway-ci
       # Auth GCP, SDK & Artifact Registry
       - name: Call Authentication
-        uses: ./.github/actions/authentication
+        uses: ./secure-api-gateway-ci/.github/actions/authentication
         with:
           gcpKey: ${{ secrets.DEV_GAR_KEY }}
           garLocation: ${{ vars.GAR_LOCATION }}

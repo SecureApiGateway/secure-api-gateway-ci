@@ -91,7 +91,7 @@ runs:
 
     - name: 'Update OB Nightly Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
-      if: env.GITHUB_USER == 'dev'
+      if: env.GITHUB_USER == 'dev' && env.DEPLOYOB == 'true'
       with:
         args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX ${{ inputs.argoServiceName }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=nightly-ob'
       env:
@@ -102,7 +102,7 @@ runs:
 
     - name: 'Update Core Nightly Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
-      if: env.GITHUB_USER == 'dev'
+      if: env.GITHUB_USER == 'dev' && env.DEPLOYCORE == 'true'
       with:
         args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX ${{ inputs.argoServiceName }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=nightly-core'
       env:
