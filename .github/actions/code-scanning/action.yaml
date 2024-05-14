@@ -30,7 +30,6 @@ runs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ inputs.language }}
-        working-directory: ${{ inputs.repositoryName }}
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
       with:
