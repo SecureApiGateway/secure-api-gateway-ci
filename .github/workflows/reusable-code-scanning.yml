@@ -28,6 +28,12 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
+      # Checkout Calling Repo
+      - name: Checkout Calling Repo
+        uses: actions/checkout@v4
+        with:
+          path: ${{ inputs.componentName }}
+          repository: SecureApiGateway/${{ inputs.componentName }}
       # Prepare Environment
       - name: Prepare Environment
         run: |
@@ -38,7 +44,6 @@ jobs:
       # Set Maven Config
       - name: Set Maven Config
         uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
-        if: env.STEPS_PR_SET_MAVEN_CONFIG == 'true'
         with:
           cache: ${{ env.CACHE }}
           javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
@@ -46,12 +51,12 @@ jobs:
           javaVersion: ${{ env.JAVA_VERSION }}
           mavenServerID: ${{ env.MAVEN_SERVER_ID }}
           repositoryName: ${{ inputs.componentName }}
-          updateMavenServer: ${{ env.UPDATE_PR_MAVEN_SERVER_ID }}
+          updateMavenServer: false
       - name: Call code-scanning on Component
         uses: ./secure-api-gateway-ci/.github/actions/code-scanning
         with:
-          checkoutCode: true
+          checkoutCode: false
           language: ${{ inputs.language }}
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          repositoryName: SecureApiGateway/${{ inputs.componentName }}
+          repositoryName: ${{ inputs.componentName }}
