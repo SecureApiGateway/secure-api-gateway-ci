@@ -28,17 +28,18 @@ runs:
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
-      working-directory: ${{ inputs.repositoryName }}
       with:
         languages: ${{ inputs.language }}
+        working-directory: ${{ inputs.repositoryName }}
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
-      working-directory: ${{ inputs.repositoryName }}
+      with:
+        working-directory: ${{ inputs.repositoryName }}
       env:
         FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
         FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
-      working-directory: ${{ inputs.repositoryName }}
       with:
         category: "/language:${{ inputs.language }}"
+        working-directory: ${{ inputs.repositoryName }}
