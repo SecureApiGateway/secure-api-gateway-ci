@@ -1,0 +1,44 @@
+name: Code Scanning
+description: Common steps to perform a code scan on a components
+inputs:
+  checkoutCode:
+    description: Wherever or not to checkout the code for the repo
+    required: true
+  repositoryName:
+    description: The repository name to checkout
+    required: true
+  FR_ARTIFACTORY_USER:
+    description: What user to use to auth to Maven Server
+    required: true
+  FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD:
+    description: What user password to use to auth to Maven Server
+    required: true
+  language:
+    description: The language to use for the scanning
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      if: inputs.checkoutCode == 'true'
+      with: 
+        repository: ${{ inputs.repositoryName }}
+        path: ${{ inputs.repositoryName }}
+    # Initializes the CodeQL tools for scanning.
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      working-directory: ${{ inputs.repositoryName }}
+      with:
+        languages: ${{ inputs.language }}
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v3
+      working-directory: ${{ inputs.repositoryName }}
+      env:
+        FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
+        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      working-directory: ${{ inputs.repositoryName }}
+      with:
+        category: "/language:${{ inputs.language }}"
