@@ -37,7 +37,6 @@ NOTE:This repository is for internal PingID use only, and not designed for custo
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/merge.yml)
 [![CodeQL](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/codeql.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/codeql.yml)
 [![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/release.yml)
-[![CodeQL](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/codeql.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/codeql.yml)
 ### secure-api-gateway-ob-uk-test-data-initializer
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-test-data-initializer/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-test-data-initializer/actions/workflows/merge.yml)
 [![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-test-data-initializer/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-test-data-initializer/actions/workflows/release.yml)
