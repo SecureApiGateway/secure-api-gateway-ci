@@ -13,6 +13,9 @@ inputs:
   FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD:
     description: What user password to use to auth to Maven Server
     required: true
+  actionTrigger:
+    description: Action performed will decide what steps to use
+    required: true
   javaArchitecture:
     description: What java architecture to use
     required: true
@@ -43,6 +46,19 @@ runs:
     # Set Maven Config
     - name: Set Maven Config
       uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
+      if: inputs.actionTrigger == 'merge'
+      with:
+        cache: ${{ inputs.cache }}
+        javaArchitecture: ${{ inputs.javaArchitecture }}
+        javaDistribution: ${{ inputs.javaDistribution }}
+        javaVersion: ${{ inputs.javaVersion }}
+        mavenServerID: ${{ inputs.mavenServerID }}
+        repositoryName: ${{ inputs.repositoryName }}
+        updateMavenServer: false
+    # Set Maven Config
+    - name: Set Maven Config
+      uses: ./.github/actions/set-maven-config
+      if: inputs.actionTrigger == 'nightly'
       with:
         cache: ${{ inputs.cache }}
         javaArchitecture: ${{ inputs.javaArchitecture }}
