@@ -20,8 +20,8 @@ jobs:
         with:
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
-  analyze:
-    name: Analyze
+  analyze-core:
+    name: Analyze Core
     runs-on: 'ubuntu-latest'
     timeout-minutes: 360
     permissions:
@@ -47,42 +47,30 @@ jobs:
           language: 'java-kotlin'
           mavenServerID: 'forgerock-internal-releases'
           repositoryName: SecureApiGateway/secure-api-gateway-core
-      - name: Call code-scanning on Common
+  analyze-common:
+    name: Analyze Common
+    runs-on: 'ubuntu-latest'
+    timeout-minutes: 360
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout CI Code
+        uses: actions/checkout@v4
+      - name: Call code-scanning on Core
         uses: ./.github/actions/code-scanning
         with:
           cache: 'maven'
           checkoutCode: true
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          githubAction: nightly
           javaArchitecture: x64
           javaDistribution: 'zulu'
           javaVersion: '17'
           language: 'java-kotlin'
-          mavenServerID: 'maven.forgerock.org-community'
+          mavenServerID: 'forgerock-internal-releases'
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
-      - name: Call code-scanning on RCS
-        uses: ./.github/actions/code-scanning
-        with:
-          cache: 'maven'
-          checkoutCode: true
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          javaArchitecture: x64
-          javaDistribution: 'zulu'
-          javaVersion: '17'
-          language: 'java-kotlin'
-          mavenServerID: 'maven.forgerock.org-community'
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
-      - name: Call code-scanning on RS
-        uses: ./.github/actions/code-scanning
-        with:
-          cache: 'maven'
-          checkoutCode: true
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          javaArchitecture: x64
-          javaDistribution: 'zulu'
-          javaVersion: '17'
-          language: 'java-kotlin'
-          mavenServerID: 'maven.forgerock.org-community'
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
