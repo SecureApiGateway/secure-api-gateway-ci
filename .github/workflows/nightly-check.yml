@@ -34,7 +34,7 @@ jobs:
       - name: Checkout CI Code
         uses: actions/checkout@v4
       - name: Call code-scanning on Core
-        uses: ./secure-api-gateway-ci/.github/actions/code-scanning
+        uses: ./.github/actions/code-scanning
         with:
           cache: 'maven'
           checkoutCode: true
@@ -47,7 +47,7 @@ jobs:
           mavenServerID: 'forgerock-internal-releases'
           repositoryName: SecureApiGateway/secure-api-gateway-core
       - name: Call code-scanning on Common
-        uses: ./secure-api-gateway-ci/.github/actions/code-scanning
+        uses: ./.github/actions/code-scanning
         with:
           cache: 'maven'
           checkoutCode: true
@@ -60,7 +60,7 @@ jobs:
           mavenServerID: 'maven.forgerock.org-community'
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
       - name: Call code-scanning on RCS
-        uses: ./secure-api-gateway-ci/.github/actions/code-scanning
+        uses: ./.github/actions/code-scanning
         with:
           cache: 'maven'
           checkoutCode: true
@@ -73,7 +73,7 @@ jobs:
           mavenServerID: 'maven.forgerock.org-community'
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
       - name: Call code-scanning on RS
-        uses: ./secure-api-gateway-ci/.github/actions/code-scanning
+        uses: ./.github/actions/code-scanning
         with:
           cache: 'maven'
           checkoutCode: true
