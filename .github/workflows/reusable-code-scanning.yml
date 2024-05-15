@@ -49,6 +49,7 @@ jobs:
           checkoutCode: false
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          githubAction: merge
           javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
           javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
           javaVersion: ${{ env.JAVA_VERSION }}
