@@ -12,17 +12,18 @@ NOTE:This repository is for internal PingID use only, and not designed for custo
 [![Check Json Order](https://github.com/SecureApiGateway/sapig-openbanking-uk-developer-envs/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/sapig-openbanking-uk-developer-envs/actions/workflows/merge.yml)
 ### secure-api-gateway-core
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/merge.yml)
+[![Merge - Perform Code Scan](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/codeql.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/codeql.yml)
 [![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/release.yml)
 ### secure-api-gateway-functional-test-framework
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/merge.yml)
 [![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/release.yml)
 ### secure-api-gateway-ob-uk
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk/actions/workflows/merge.yml)
-[![Release - Build, Deploy & Create Releas](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk/actions/workflows/release.yml)
+[![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk/actions/workflows/release.yml)
 ### secure-api-gateway-ob-uk-common
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-common/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-common/actions/workflows/merge.yml)
-[![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-common/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-common/actions/workflows/release.yml)
 [![CodeQL](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-common/actions/workflows/codeql.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-common/actions/workflows/codeql.yml)
+[![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-common/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-common/actions/workflows/release.yml)
 ### secure-api-gateway-ob-uk-fidc-initializer
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-fidc-initializer/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-fidc-initializer/actions/workflows/merge.yml)
 ### secure-api-gateway-ob-uk-functional-tests
@@ -30,10 +31,11 @@ NOTE:This repository is for internal PingID use only, and not designed for custo
 [![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-functional-tests/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-functional-tests/actions/workflows/release.yml)
 ### secure-api-gateway-ob-uk-rcs
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs/actions/workflows/merge.yml)
-[![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs/actions/workflows/release.yml)
 [![CodeQL](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs/actions/workflows/codeql.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs/actions/workflows/codeql.yml)
+[![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs/actions/workflows/release.yml)
 ### secure-api-gateway-ob-uk-rs
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/merge.yml)
+[![CodeQL](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/codeql.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/codeql.yml)
 [![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/release.yml)
 [![CodeQL](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/codeql.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/codeql.yml)
 ### secure-api-gateway-ob-uk-test-data-initializer
@@ -47,7 +49,13 @@ NOTE:This repository is for internal PingID use only, and not designed for custo
 [![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-parent/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-parent/actions/workflows/release.yml)
 ### secure-api-gateway-release
 ### secure-api-gateway-release-helpers
-## Nightly Builds 
+## Nightly Checks
+[![Nightly Check](https://github.com/SecureApiGateway/secure-api-gateway-ci/actions/workflows/nightly-check.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ci/actions/workflows/nightly-check.yml)
+
+This action will trigger each morning before nightly builds is ran, however a failure will not cause nightly builds to not trigger.
+
+Its purpose is to run some of the less common steps on the code, that isn't needed with each PR. For Example, vulnerability code scanning & maven copyright checks
+## Nightly Builds
 [![Nightly Build](https://github.com/SecureApiGateway/secure-api-gateway-ci/actions/workflows/nightly-build.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ci/actions/workflows/nightly-build.yml)
 
 This action will trigger each morning before the cluster is deployed. 
@@ -91,5 +99,5 @@ For example using our `Core` repo again, we need to build a docker image, and bu
 
 The main improvement for this way of structuring our workflows, is that if a change is needed to go to a newer version of Java for example, instead of checking out each individual component repository which uses java, making the change, creating a PR, getting the PR approved, and finally merging, we can create one PR with in the CI repo, with one PR.
 
-We are also getting the additional security of requiring PRs to be reviewed before a change like this is able to be made, if github variables|secrets were used for this, then there wouldn't be anything stopping someone changing the value of the variable, if they had the required permissions. 
+We are also getting the additional security of requiring PRs to be reviewed before a change like this is merged, if GitHub variables|secrets were used for this, then there wouldn't be anything stopping someone changing the value of the variable, if they had the required permissions. 
 

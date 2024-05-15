@@ -1,11 +1,11 @@
 name: Code Scanning
 description: Common steps to perform a code scan on a components
 inputs:
+  cache:
+    description: What cache to use
+    required: true
   checkoutCode:
     description: Wherever or not to checkout the code for the repo
-    required: true
-  repositoryName:
-    description: The repository name to checkout
     required: true
   FR_ARTIFACTORY_USER:
     description: What user to use to auth to Maven Server
@@ -13,8 +13,23 @@ inputs:
   FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD:
     description: What user password to use to auth to Maven Server
     required: true
+  javaArchitecture:
+    description: What java architecture to use
+    required: true
+  javaDistribution:
+    description: What java distribution to use
+    required: true
+  javaVersion:
+    description: What java version to use
+    required: true
   language:
     description: The language to use for the scanning
+    required: true
+  mavenServerID:
+    description: What Server to connect too
+    required: true
+  repositoryName:
+    description: The repository name to checkout
     required: true
 runs:
   using: composite
@@ -25,6 +40,17 @@ runs:
       with: 
         repository: ${{ inputs.repositoryName }}
         path: ${{ inputs.repositoryName }}
+    # Set Maven Config
+    - name: Set Maven Config
+      uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
+      with:
+        cache: ${{ inputs.cache }}
+        javaArchitecture: ${{ inputs.javaArchitecture }}
+        javaDistribution: ${{ inputs.javaDistribution }}
+        javaVersion: ${{ inputs.javaVersion }}
+        mavenServerID: ${{ inputs.mavenServerID }}
+        repositoryName: ${{ inputs.repositoryName }}
+        updateMavenServer: false
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
@@ -41,4 +67,3 @@ runs:
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{ inputs.language }}"
-        working-directory: ${{ inputs.repositoryName }}
