@@ -41,22 +41,18 @@ jobs:
             sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
-      # Set Maven Config
-      - name: Set Maven Config
-        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
-        with:
-          cache: ${{ env.CACHE }}
-          javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
-          javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
-          javaVersion: ${{ env.JAVA_VERSION }}
-          mavenServerID: ${{ env.MAVEN_SERVER_ID }}
-          repositoryName: ${{ inputs.componentName }}
-          updateMavenServer: false
+      # Call Code Scanning
       - name: Call code-scanning on Component
         uses: ./secure-api-gateway-ci/.github/actions/code-scanning
         with:
+          cache: ${{ env.CACHE }}
           checkoutCode: false
-          language: ${{ inputs.language }}
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
+          javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
+          javaVersion: ${{ env.JAVA_VERSION }}
+          language: ${{ inputs.language }}
+          mavenServerID: ${{ env.MAVEN_SERVER_ID }}
           repositoryName: ${{ inputs.componentName }}
+          updateMavenServer: false
