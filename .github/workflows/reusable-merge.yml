@@ -63,16 +63,6 @@ jobs:
         run : |
           cd ${{ inputs.componentName }}
           ${{ env.STEPS_MERGE_RUN_INITIAL_TESTS_COMMAND }}
-      # Builds Docker Image
-      - name: Build Image
-        uses: ./secure-api-gateway-ci/.github/actions/build-image
-        if: env.STEPS_MERGE_BUILD_DOCKER_IMAGE == 'true'
-        with:
-          checkoutCode: false
-          dockerBuildCommands: ${{ env.STEPS_MERGE_BUILD_DOCKER_COMMANDS }}
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          repositoryName: ${{ inputs.componentName }}
       # Set Maven Config
       - name: Set Maven Config
         uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
@@ -92,6 +82,16 @@ jobs:
         with:
           checkoutCode: false
           mavenBuildCommands: ${{ env.STEPS_MERGE_BUILD_MAVEN_COMMANDS }}
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: ${{ inputs.componentName }}
+      # Builds Docker Image
+      - name: Build Image
+        uses: ./secure-api-gateway-ci/.github/actions/build-image
+        if: env.STEPS_MERGE_BUILD_DOCKER_IMAGE == 'true'
+        with:
+          checkoutCode: false
+          dockerBuildCommands: ${{ env.STEPS_MERGE_BUILD_DOCKER_COMMANDS }}
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: ${{ inputs.componentName }}
