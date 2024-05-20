@@ -129,16 +129,6 @@ jobs:
           ref: v${{ inputs.releaseVersion }}
           repository: SecureApiGateway/${{ inputs.componentName }}
           token: ${{ secrets.RELEASE_PAT }}
-      # Build and Push Image to Artifact Registry
-      - name: Build and Push Image to Artifact Registry
-        uses: ./secure-api-gateway-ci/.github/actions/build-image
-        if: env.STEPS_RELEASE_BUILD_DOCKER_IMAGE == 'true'
-        with:
-          checkoutCode: false
-          dockerBuildCommands: ${{ env.STEPS_RELEASE_BUILD_DOCKER_COMMANDS }}
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          repositoryName: ${{ inputs.componentName }}
       # Set Maven Config
       - name: Set Maven Config
         uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
@@ -158,6 +148,16 @@ jobs:
         with:
           checkoutCode: false
           mavenBuildCommands: ${{ env.STEPS_RELEASE_DEPLOY_MAVEN_COMMANDS }}
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: ${{ inputs.componentName }}
+      # Build and Push Image to Artifact Registry
+      - name: Build and Push Image to Artifact Registry
+        uses: ./secure-api-gateway-ci/.github/actions/build-image
+        if: env.STEPS_RELEASE_BUILD_DOCKER_IMAGE == 'true'
+        with:
+          checkoutCode: false
+          dockerBuildCommands: ${{ env.STEPS_RELEASE_BUILD_DOCKER_COMMANDS }}
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: ${{ inputs.componentName }}
