@@ -71,7 +71,7 @@ runs:
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYOB == 'true'
       with:
-        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX ${{ inputs.argoServiceName }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-ob'
+        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ inputs.argoServiceName }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-ob'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
@@ -82,7 +82,7 @@ runs:
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYCORE == 'true'
       with:
-        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX ${{ inputs.argoServiceName }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-core'
+        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ inputs.argoServiceName }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-core'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
@@ -93,7 +93,7 @@ runs:
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.GITHUB_USER == 'dev' && env.DEPLOYOB == 'true'
       with:
-        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX ${{ inputs.argoServiceName }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=nightly-ob'
+        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ inputs.argoServiceName }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=nightly-ob'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
@@ -104,7 +104,7 @@ runs:
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.GITHUB_USER == 'dev' && env.DEPLOYCORE == 'true'
       with:
-        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX ${{ inputs.argoServiceName }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=nightly-core'
+        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ inputs.argoServiceName }} -v SERVICE_NAME=${{ inputs.serviceName }} -v ENVIRONMENT=nightly-core'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
