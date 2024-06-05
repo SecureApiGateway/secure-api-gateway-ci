@@ -35,4 +35,4 @@ jobs:
       # Check Helm Changes
       - name: Run Template Helm
         run: |
-          helm template ${{ env.helmLocation }}
+          helm template ${{ inputs.componentName}}/${{ env.HELM_FILES_LOCATION }}
