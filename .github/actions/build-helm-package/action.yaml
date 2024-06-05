@@ -7,8 +7,14 @@ inputs:
   FR_ARTIFACTORY_REPO:
     description: What repo to push in the Maven Server
     required: true
+  FR_ARTIFACTORY_USER:
+    description: User to authenticate to Maven Server
+    required: true
   FR_ARTIFACTORY_USER_ACCESS_TOKEN:
     description: What access token to use to push to the Maven Server
+    required: true
+  FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD:
+    description: Password for User to authenticate to Maven Server
     required: true
   helmCreatePackageCommand:
     description: Command to run to create helm package
@@ -35,6 +41,10 @@ runs:
         JF_URL: ${{ inputs.FR_ARTIFACTORY_REPO }}
         # JFrog Platform access token
         JF_ACCESS_TOKEN: ${{ inputs.FR_ARTIFACTORY_USER_ACCESS_TOKEN }}
+    - name: Add Helm Repo
+      shell: bash
+      run: |
+        helm repo add forgerock-helm https://maven.forgerock.org/artifactory/forgerock-helm-virtual/ --username ${{ inputs.FR_ARTIFACTORY_USER }} --password ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
     - name: Create & Publish Helm Package
       shell: bash
       run: |
