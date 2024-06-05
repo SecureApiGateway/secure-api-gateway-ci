@@ -165,7 +165,9 @@ jobs:
         with:
           checkoutCode: false
           FR_ARTIFACTORY_REPO: ${{ secrets.FR_HELM_REPO }}
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ACCESS_TOKEN: ${{ secrets.FR_ARTIFACTORY_USER_ACCESS_TOKEN }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER }}
           helmCreatePackageCommand: ${{ env.STEPS_RELEASE_PUBLISH_HELM_CREATE_COMMAND }}
           helmPublishPackageCommand: ${{ env.STEPS_RELEASE_PUBLISH_HELM_PUBLISH_COMMAND }}
           repositoryName: ${{ inputs.componentName }}
