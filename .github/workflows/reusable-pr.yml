@@ -66,7 +66,6 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
-          ref: 1437-github-actions-test-trusted-dir #Change Later
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
