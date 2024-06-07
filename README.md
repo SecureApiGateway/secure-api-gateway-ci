@@ -47,7 +47,12 @@ NOTE:This repository is for internal PingID use only, and not designed for custo
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-parent/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-parent/actions/workflows/merge.yml)
 [![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-parent/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-parent/actions/workflows/release.yml)
 ### secure-api-gateway-release
+[![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-releases/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-releases/actions/workflows/release.yml)
 ### secure-api-gateway-release-helpers
+[![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-releases-helpers/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-releases-helpers/actions/workflows/release.yml)
+### secure-api-gateway-test-trusted-directory
+[![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-test-trusted-directory/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-test-trusted-directory/actions/workflows/merge.yml)
+[![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-test-trusted-directory/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-test-trusted-directory/actions/workflows/release.yml)
 ## Nightly Checks
 [![Nightly Check](https://github.com/SecureApiGateway/secure-api-gateway-ci/actions/workflows/nightly-check.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ci/actions/workflows/nightly-check.yml)
 
