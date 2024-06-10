@@ -16,6 +16,9 @@ inputs:
   FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD:
     description: What user password to use to auth to Maven Server
     required: true
+  updateMavenServer:
+    description: Wherever or not the maven server should try get updated
+    required: true
 runs:
   using: composite
   steps:
@@ -27,6 +30,7 @@ runs:
         path: ${{ inputs.repositoryName }}
     - name: Get Version
       shell: bash
+      if: inputs.updateMavenServer == 'true'
       run: |
         echo "VERSION=$( cd ${{ inputs.repositoryName }} && mvn help:evaluate -Dexpression=project.version -q -DforceStdout )" >> $GITHUB_ENV
         echo "MAVEN_SERVER_COMMUNITY=maven.forgerock.org-community" >> $GITHUB_ENV
@@ -34,12 +38,13 @@ runs:
         FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
         FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
     - name: Push to community snapshot if version contains snapshot
-      if: contains( env.VERSION, 'SNAPSHOT')
+      if: contains( env.VERSION, 'SNAPSHOT') && inputs.updateMavenServer == true
       shell: bash
       run: |
         echo "MAVEN_SERVER_COMMUNITY=maven.forgerock.org-community-snapshots" >> $GITHUB_ENV
     - name: Set Cache with Community Repository
       uses: actions/setup-java@v4
+      if: inputs.updateMavenServer == 'true'
       with:
         distribution: 'zulu'
         java-version: '17'
