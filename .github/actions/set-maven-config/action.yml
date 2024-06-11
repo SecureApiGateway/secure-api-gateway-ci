@@ -34,9 +34,11 @@ runs:
         echo "MAVEN_SERVER_ID=${{ inputs.mavenServerID }}" >> $GITHUB_ENV
     - name: Set Up Snapshot Forgerock Maven Repository
       shell: bash
-      if: contains( env.VERSION, 'SNAPSHOT') && inputs.updateMavenServer == true
+      if: contains( env.VERSION, 'SNAPSHOT')
       run: |
-        echo "MAVEN_SERVER_ID=maven.forgerock.org-community-snapshots" >> $GITHUB_ENV
+        if [ ${{ inputs.updateMavenServer }} == 'true' ]; then
+          echo "MAVEN_SERVER_ID=maven.forgerock.org-community-snapshots" >> $GITHUB_ENV
+        fi
     - name: Set Cache with Community Repository
       uses: actions/setup-java@v4
       with:
