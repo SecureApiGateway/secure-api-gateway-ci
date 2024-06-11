@@ -82,12 +82,17 @@ jobs:
           dockerBuildCommands: "make docker tag=latest"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+      # Get Webhook from GSM
+      - name: Get Webhook URL from GSM
+        run: |
+          echo "SLACK_WEBHOOK=$(gcloud --project ${{ vars.SAPIG_PROJECT }} secrets versions access latest --secret=${{ vars.GSM_SBAT_WEBOOK_NAME }})" >> $GITHUB_ENV
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
         if: failure()
         env:
-          SLACK_WEBHOOK: ${{ secrets.WEBHOOK_SBAT_NOTIFY_SLACK }}
+          MSG_MINIMAL: commit
           SLACK_COLOR: ${{ job.status }}
-          SLACK_TITLE: Nightly Components Build Failed 
           SLACK_MESSAGE: Please check the link in the message
+          SLACK_TITLE: Nightly Components Build Failed
           SLACK_USERNAME: GitHub Actions
+          SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
