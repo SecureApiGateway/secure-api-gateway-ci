@@ -63,6 +63,17 @@ jobs:
         run : |
           cd ${{ inputs.componentName }}
           ${{ env.STEPS_MERGE_RUN_INITIAL_TESTS_COMMAND }}
+      # Build Maven Project
+      - name: Build Maven Project
+        uses: ./secure-api-gateway-ci/.github/actions/build-artifact
+        if: env.STEPS_MERGE_BUILD_MAVEN_PROJECT == 'true'
+        with:
+          checkoutCode: false
+          mavenBuildCommands: ${{ env.STEPS_MERGE_BUILD_MAVEN_COMMANDS }}
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: ${{ inputs.componentName }}
+          updateMavenServer: false
       # Set Maven Config
       - name: Set Maven Config
         uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
@@ -75,13 +86,13 @@ jobs:
           mavenServerID: ${{ env.MAVEN_SERVER_ID_SECOND }}
           repositoryName: ${{ inputs.componentName }}
           updateMavenServer: ${{ env.UPDATE_MERGE_MAVEN_SERVER_ID_SECOND }}
-      # Build Maven Project
+      # Upload Maven Artifacts
       - name: Build Maven Project
         uses: ./secure-api-gateway-ci/.github/actions/build-artifact
-        if: env.STEPS_MERGE_BUILD_MAVEN_PROJECT == 'true'
+        if: env.STEPS_MERGE_UPLOAD_MAVEN_PROJECT == 'true'
         with:
           checkoutCode: false
-          mavenBuildCommands: ${{ env.STEPS_MERGE_BUILD_MAVEN_COMMANDS }}
+          mavenBuildCommands: ${{ env.STEPS_MERGE_UPLOAD_MAVEN_COMMANDS }}
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: ${{ inputs.componentName }}
