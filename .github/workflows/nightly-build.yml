@@ -49,7 +49,7 @@ jobs:
           mavenBuildCommands: "mvn -B deploy --file pom.xml"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          updateMavenServer: true
+          updateMavenServer: false
       - name: Call build-image-and-artifact for RCS
         uses: ./.github/actions/build-image-and-artifact
         with: 
