@@ -40,7 +40,7 @@ runs:
     - name: Push to community snapshot if version contains snapshot
       if: contains( env.VERSION, 'SNAPSHOT')
       shell: bash
-      run:
+      run: |
         if [ ${{ inputs.updateMavenServer }} == 'true' ]; then
           echo "MAVEN_SERVER_COMMUNITY=maven.forgerock.org-community-snapshots" >> $GITHUB_ENV
         fi
