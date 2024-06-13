@@ -90,7 +90,7 @@ jobs:
               ;;
           esac
           if grep -q KUSTOMIZE_DIR_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
-            sed -i -e 's/KUSTOMIZE_DIR_REPLACE/'$kustomiseDir'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+            sed -i -e "s|KUSTOMIZE_DIR_REPLACE|$kustomiseDir|g" secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Auth GCP, SDK & Artifact Registry
