@@ -75,11 +75,12 @@ jobs:
       # Prepare Environment
       - name: Prepare Environment
         run: |
+          sapigType=${{ inputs.sapigType || null }}
           if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
             sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
           if grep -q KUSTOMIZE_DIR_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
-            case ${{ inputs.sapigType }} in
+            case $sapigType in
               core)
                 kustomiseDir="core/kustomize/overlay/7.3.0/dev"
                 ;;
