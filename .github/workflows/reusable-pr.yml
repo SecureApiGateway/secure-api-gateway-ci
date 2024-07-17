@@ -75,10 +75,13 @@ jobs:
       # Prepare Environment
       - name: Prepare Environment
         run: |
+          # Sapig Type is optional so need to set it as null if not in use
           sapigType=${{ inputs.sapigType || null }}
+          # What Docker Tag to build
           if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
             sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
+          # Kustomize folders can be different based off of what sapig type is being built
           if grep -q KUSTOMIZE_DIR_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
             case $sapigType in
               core)
@@ -93,6 +96,7 @@ jobs:
             esac
             sed -i -e "s|KUSTOMIZE_DIR_REPLACE|$kustomiseDir|g" secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
+          # Once all replacements are done, load all the variables in the .env file to github
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Auth GCP, SDK & Artifact Registry
       - name: Authentication
