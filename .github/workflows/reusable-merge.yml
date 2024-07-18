@@ -51,7 +51,7 @@ jobs:
             elif [[ "$branch" == "main" || "$branch" == "master" ]]; then
               sed -i -e 's/LATESTTAG_REPLACE/'latest}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
             else
-              echo "ERROR: Unknown branch"
+              echo "ERROR: Unknown branch - Merge workflow should only run for Master | Main or ob-V# Branches"
               exit 1
             fi
           fi
