@@ -14,6 +14,10 @@ on:
         description: The SAPIG Type for the component (optional)
         required: false
         type: string
+      componentBranch:
+        description: The repository branch for component (optional)
+        required: false
+        type: string
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -34,9 +38,24 @@ jobs:
       # Prepare Environment
       - name: Prepare Environment
         run: |
+          # What Docker Tag to build
           if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
             sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
+          # We may have more than one 'main' branch active at one time, need to be able to identify the different branches and create different 'latest' docker tags 
+          if [[ "${{ inputs.componentBranch }}" ]]; then
+            if [[ "${{ inputs.componentBranch }}" =~ v[0-9] ]]; then
+              # Only going up to v999, should be more than enough as only on v4 at time of writing
+              branch=$(echo ${{ inputs.componentBranch }} | grep -oP "v[0-9]{1,3}") 
+              sed -i -e 's/LATESTTAG_REPLACE/'latest-$branch}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+            elif [[ "$branch" == "main" || "$branch" == "master" ]]; then
+              sed -i -e 's/LATESTTAG_REPLACE/'latest}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+            else
+              echo "ERROR: Unknown branch - Merge workflow should only run for Master | Main or ob-V# Branches"
+              exit 1
+            fi
+          fi
+          # Once all replacements are done, load all the variables in the .env file to github
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Auth GCP, SDK & Artifact Registry
       - name: Authentication
@@ -130,6 +149,17 @@ jobs:
           if [ -n ${{ inputs.sapigType }} ]; then
             echo "SAPIG_TYPE=${{ inputs.sapigType }}" >> $GITHUB_ENV
           fi
+          # Need to know if the change is for Dev or Nightly
+          if [[ "${{ inputs.componentBranch }}" ]]; then
+            if [[ "${{ inputs.componentBranch }}" =~ v[0-9] ]]; then
+              branch=$(echo ${{ inputs.componentBranch }} | grep -oP "v[0-9]{1,3}")
+              echo "TARGET_ENV=dev" >> GITHUB_ENV
+              echo "LATEST_TAG=latest-$branch" >> GITHUB_ENV
+            else
+              echo "TARGET_ENV=nightly" >> $GITHUB_ENV
+              echo "LATEST_TAG=latest" >> $GITHUB_ENV
+            fi
+          fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Deploy to Environment
       - name: Deploy to Environment
@@ -140,10 +170,11 @@ jobs:
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
           cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
-          dockerTag: latest
+          dockerTag: ${{ env.LATEST_TAG }}
           gitTrigger: merge
           serviceName: ${{ env.SERVICE_NAME }}
           sapigType: ${{ env.SAPIG_TYPE }}
+          targetEnv: ${{ env.TARGET_ENV }}
       # Run Functional Tests
       - name: Run Functional Tests
         uses: ./secure-api-gateway-ci/.github/actions/run-functional-tests
@@ -155,6 +186,7 @@ jobs:
           cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
           dockerTag: ${{ inputs.dockerTag }}
           serviceName: ${{ env.SERVICE_NAME }}
+          targetEnv: ${{ env.TARGET_ENV }}
           testsVersion: ${{ env.TESTS_VERSION }}
       # Run Conformance DCR Tests
       - name: Run Conformance DCR
@@ -165,5 +197,5 @@ jobs:
           cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
           cfPipelineName: ${{ env.CF_PIPELINE_NAME }}
           cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
-          dockerTag: latest
+          dockerTag: ${{ env.LATEST_TAG }}
           serviceName: ${{ env.SERVICE_NAME }}
