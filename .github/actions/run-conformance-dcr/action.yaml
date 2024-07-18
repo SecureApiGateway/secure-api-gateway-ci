@@ -25,12 +25,12 @@ runs:
     - name: 'Decide what trigger to run, dev or nightly'
       shell: bash
       run: |
-        # If the docker tag to run contains v# then it is a nightly target
+        # If the docker tag to run contains v# then it is a dev target
         if [[ "${{ inputs.dockerTag }}" =~ v[0-9] ]]; then
-          echo "cfPipelineName=SAPIG-devenv/nightly-ob-dcr-conformance-tests" >> ${GITHUB_ENV}
-        else
-          # If it doesn't contain V# then it is a dev target use the existing vlaue that has bene passed in
           echo "cfPipelineName=${{ inputs.cfPipelineName }} >> ${GITHUB_ENV}
+        else
+          # If it doesn't contain V# then it is a nightly target
+          echo "cfPipelineName=SAPIG-devenv/nightly-ob-dcr-conformance-tests" >> ${GITHUB_ENV}
         fi
     - name: 'Run Conformance DCR Tests'
       uses: codefresh-io/codefresh-pipeline-runner@master
