@@ -36,22 +36,26 @@ runs:
           # Check if the target env is dev or nightly
           if [ "${{ inputs.targetEnv }}" == "nightly" ]; then
             echo "cfPipelineName=SAPIG-devenv/nightly-ob-functional-tests" >> ${GITHUB_ENV}
+            echo "cfPipelineBranch=master" >> ${GITHUB_ENV}
           else
             echo "cfPipelineName=${{ inputs.cfPipelineName }}" >> ${GITHUB_ENV}
+            echo "cfPipelineBranch=${{ inputs.cfPipelineBranch }}" >> ${GITHUB_ENV}
           fi
         else
           if [ "${{ inputs.targetEnv }}" == "nightly" ]; then
             echo "cfPipelineName=SAPIG-devenv/nightly-core-functional-tests" >> ${GITHUB_ENV}
+            echo "cfPipelineBranch=master" >> ${GITHUB_ENV}
           else
             echo "cfPipelineName=${{ inputs.cfPipelineName }}" >> ${GITHUB_ENV}
+            echo "cfPipelineBranch=${{ inputs.cfPipelineBranch }}" >> ${GITHUB_ENV}
           fi        
         fi
     - name: 'Run Functional Tests'
       uses: codefresh-io/codefresh-pipeline-runner@master
       with:
-        args: '-v IMAGE_REPO=securebanking/${{ inputs.serviceName }} -v TAG=${{ inputs.dockerTag }} -v TEST_TASK=${{ inputs.testsVersion }} -v BRANCH=${{ inputs.cfPipelineBranch }}'
+        args: '-v IMAGE_REPO=securebanking/${{ inputs.serviceName }} -v TAG=${{ inputs.dockerTag }} -v TEST_TASK=${{ inputs.testsVersion }} -v BRANCH=${{ env.cfPipelineBranch }}'
       env:
         PIPELINE_NAME: ${{ env.cfPipelineName }}
         CF_API_KEY: ${{ inputs.cfAPIKey }}
         TRIGGER_NAME: ${{ inputs.cfTriggerName }}
-        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
+        CF_BRANCH: ${{ env.cfPipelineBranch }}
