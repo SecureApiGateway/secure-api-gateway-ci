@@ -19,30 +19,34 @@ inputs:
   cfPipelineBranch:
     description: The Branch to use to run the pipeline
     required: true
+  targetEnv:
+    description: What environment is being targeted
+    required: true
   testsVersion:
     description: The versions of the tests to run
     required: false
 runs:
   using: composite
   steps:
-    - name: 'Run Dev Functional Tests'
-      uses: codefresh-io/codefresh-pipeline-runner@master
-      with:
-        args: '-v IMAGE_REPO=securebanking/${{ inputs.serviceName }} -v TAG=${{ inputs.dockerTag }} -v TEST_TASK=${{ inputs.testsVersion }}'
-      env:
-        PIPELINE_NAME: ${{ inputs.cfPipelineName }}
-        CF_API_KEY: ${{ inputs.cfAPIKey }}
-        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
-        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
-    - name: 'Change Pipeline Name for Nightly'
+    - name: 'Decide what trigger to run, dev or nightly'
       shell: bash
       run: |
+        # Check if the OB or Core functional tests are being ran
         if [ "${{ inputs.cfPipelineName }}" == "SAPIG-devenv/dev-ob-functional-tests" ]; then
-          echo "cfPipelineName=SAPIG-devenv/nightly-ob-functional-tests" >> ${GITHUB_ENV}
+          # Check if the target env is dev or nightly
+          if [ "${{ inputs.targetEnv }}" == "nightly" ]; then
+            echo "cfPipelineName=SAPIG-devenv/nightly-ob-functional-tests" >> ${GITHUB_ENV}
+          else
+            echo "cfPipelineName=${{ inputs.cfPipelineName }}" >> ${GITHUB_ENV}
+          fi
         else
-           echo "cfPipelineName=SAPIG-devenv/nightly-core-functional-tests" >> ${GITHUB_ENV}
+          if [ "${{ inputs.targetEnv }}" == "nightly" ]; then
+            echo "cfPipelineName=SAPIG-devenv/nightly-core-functional-tests" >> ${GITHUB_ENV}
+          else
+            echo "cfPipelineName=${{ inputs.cfPipelineName }}" >> ${GITHUB_ENV}
+          fi        
         fi
-    - name: 'Run Nightly Functional Tests'
+    - name: 'Run Functional Tests'
       uses: codefresh-io/codefresh-pipeline-runner@master
       with:
         args: '-v IMAGE_REPO=securebanking/${{ inputs.serviceName }} -v TAG=${{ inputs.dockerTag }} -v TEST_TASK=${{ inputs.testsVersion }}'

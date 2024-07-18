@@ -22,22 +22,15 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: 'Run Conformance DCR Tests'
-      uses: codefresh-io/codefresh-pipeline-runner@master
-      with:
-        args: '-v IMAGE_REPO=securebanking/${{ inputs.serviceName }} -v TAG=${{ inputs.dockerTag }}'
-      env:
-        PIPELINE_NAME: ${{ inputs.cfPipelineName }}
-        CF_API_KEY: ${{ inputs.cfAPIKey }}
-        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
-        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
-    - name: 'Change Pipeline Name for Nightly'
+    - name: 'Decide what trigger to run, dev or nightly'
       shell: bash
       run: |
-        if [ "${{ inputs.cfPipelineName }}" == "SAPIG-devenv/dev-ob-dcr-conformance-tests" ]; then
+        # If the docker tag to run contains v# then it is a nightly target
+        if [[ "${{ inputs.dockerTag }}" =~ v[0-9] ]]; then
           echo "cfPipelineName=SAPIG-devenv/nightly-ob-dcr-conformance-tests" >> ${GITHUB_ENV}
         else
-           echo "cfPipelineName=SAPIG-devenv/nightly-core-dcr-conformance-tests" >> ${GITHUB_ENV}
+          # If it doesn't contain V# then it is a dev target use the existing vlaue that has bene passed in
+          echo "cfPipelineName=${{ inputs.cfPipelineName }} >> ${GITHUB_ENV}
         fi
     - name: 'Run Conformance DCR Tests'
       uses: codefresh-io/codefresh-pipeline-runner@master

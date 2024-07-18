@@ -31,6 +31,9 @@ inputs:
   serviceName:
     description: The Service name that is being updated
     required: true
+  targetEnv:
+    description: What environment is being targeted
+    required: true
   testTrustedDirectoryArgoServiceName:
     description: The parameter name(s) of the test trusted directory in Argo
     required: false
@@ -43,13 +46,18 @@ runs:
     - name: Create Lowercase Github Username
       shell: bash
       run: |
-        
+        # Deciding what environment to deploy too, either individual or dev envs
         if [ "${{ inputs.gitTrigger }}" == "pr" ]; then
           echo "GITHUB_USER=$(echo ${{github.actor}} | tr '[:upper:]' '[:lower:]')" >> ${GITHUB_ENV}
         else
-          echo "GITHUB_USER=dev" >> ${GITHUB_ENV}
+          if [ "${{ inputs.targetEnv }}" == "dev" ]; then
+            echo "GITHUB_USER=dev" >> ${GITHUB_ENV}
+          else
+            echo "GITHUB_USER=nightly" >> ${GITHUB_ENV}
+          fi
         fi
         
+        # Deciding if its a core or ob component or both
         if [[ ${{ inputs.sapigType }} == "both" ]]; then
           echo DEPLOYOB=true >> ${GITHUB_ENV}
           echo DEPLOYCORE=true >> ${GITHUB_ENV}
@@ -79,7 +87,7 @@ runs:
           echo "Unexpected value for sapigType, use 'ob','core','both','test-trusted-directory' or 'none'"
         fi
         
-        # Wherever to sync the branch of a tag in argo CD
+        # Wherever to sync the branch of a tag in argo CD (Kustomise)
         if [ "${{ inputs.changeBranch }}" == "true" ]; then
           echo "ARGO_DEPLOY_ARG=NEWBRANCH=${{ inputs.branchName }}" >> ${GITHUB_ENV}
         else
@@ -102,28 +110,6 @@ runs:
       if: env.DEPLOYCORE == 'true'
       with:
         args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-core'
-      env:
-        PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
-        CF_API_KEY: ${{ inputs.cfAPIKey }}
-        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
-        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
-
-    - name: 'Update OB Nightly Environment'
-      uses: codefresh-io/codefresh-pipeline-runner@master
-      if: env.GITHUB_USER == 'dev' && env.DEPLOYOB == 'true'
-      with:
-        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=nightly-ob'
-      env:
-        PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
-        CF_API_KEY: ${{ inputs.cfAPIKey }}
-        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
-        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
-
-    - name: 'Update Core Nightly Environment'
-      uses: codefresh-io/codefresh-pipeline-runner@master
-      if: env.GITHUB_USER == 'dev' && env.DEPLOYCORE == 'true'
-      with:
-        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=nightly-core'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
