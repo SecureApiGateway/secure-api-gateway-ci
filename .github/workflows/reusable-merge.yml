@@ -43,9 +43,9 @@ jobs:
             if [[ "${{ inputs.componentBranch }}" =~ v[0-9] ]]; then
               # Only going up to v999, should be more than enough as only on v4 at time of writing
               branch=$(echo ${{ inputs.componentBranch }} | grep -oP "v[0-9]{1,3}") 
-              sed -i -e 's/LATESTTAG_REPLACE/'latest-$branch}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+              sed -i -e 's/LATESTTAG_REPLACE/'latest-${branch}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
             elif [[ "${{ inputs.componentBranch }}" == "main" || "${{ inputs.componentBranch }}" == "master" ]]; then
-              sed -i -e 's/LATESTTAG_REPLACE/'latest}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+              sed -i -e 's/LATESTTAG_REPLACE/'latest'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
             else
               echo "ERROR: Unknown branch - Merge workflow should only run for Master | Main or ob-V# Branches"
               exit 1
