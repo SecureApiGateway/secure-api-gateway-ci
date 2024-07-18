@@ -38,10 +38,6 @@ jobs:
       # Prepare Environment
       - name: Prepare Environment
         run: |
-          # What Docker Tag to build
-          if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
-            sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
-          fi
           # We may have more than one 'main' branch active at one time, need to be able to identify the different branches and create different 'latest' docker tags 
           if [[ "${{ inputs.componentBranch }}" ]]; then
             if [[ "${{ inputs.componentBranch }}" =~ v[0-9] ]]; then
@@ -54,6 +50,10 @@ jobs:
               echo "ERROR: Unknown branch - Merge workflow should only run for Master | Main or ob-V# Branches"
               exit 1
             fi
+          fi
+          # What Docker Tag to build
+          if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
           # Once all replacements are done, load all the variables in the .env file to github
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
