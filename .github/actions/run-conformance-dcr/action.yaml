@@ -27,7 +27,7 @@ runs:
       run: |
         # If the docker tag to run contains v# then it is a dev target
         if [[ "${{ inputs.dockerTag }}" =~ v[0-9] ]]; then
-          echo "cfPipelineName=${{ inputs.cfPipelineName }} >> ${GITHUB_ENV}
+          echo "cfPipelineName=${{ inputs.cfPipelineName }}" >> ${GITHUB_ENV}
         else
           # If it doesn't contain V# then it is a nightly target
           echo "cfPipelineName=SAPIG-devenv/nightly-ob-dcr-conformance-tests" >> ${GITHUB_ENV}
