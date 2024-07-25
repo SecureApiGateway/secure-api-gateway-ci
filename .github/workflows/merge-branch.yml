@@ -28,6 +28,7 @@ jobs:
           ref: ${{ inputs.targetBranch }}
       - name: Set Git config
         run: |
+          cd ${{ inputs.componentName }}
           git config user.name fropenbanking
           git config user.email obst@forgerock.com
       - name: Perform Rebase
