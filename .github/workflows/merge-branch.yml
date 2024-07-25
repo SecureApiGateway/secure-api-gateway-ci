@@ -1,0 +1,41 @@
+name: Merge - Merge Master to OB-V4
+on:
+  workflow_call:
+    inputs:
+      componentName:
+        description: The component name using the workflow
+        required: true
+        type: string
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Merge
+    steps:
+      # Checkout Calling Repo OB-V4 Branch
+      - name: Checkout Calling Repo
+        uses: actions/checkout@v4
+        with:
+          repository: SecureApiGateway/${{ inputs.componentName }}
+          ref: ob-v4
+      - name: Set Git config
+        run: |
+          git config user.name fropenbanking
+          git config user.email obst@forgerock.com
+      - name: Merge master back to dev
+        run: |
+          git merge --no-ff master -m "Auto-merge Master into OB-V4 Branch" || echo "Conflicts found, unable to merge"
+          git push -f
+      # Get Webhook from GSM
+      - name: Get Webhook URL from GSM
+        run: |
+          echo "SLACK_WEBHOOK=$(gcloud --project ${{ vars.SAPIG_PROJECT }} secrets versions access latest --secret=${{ vars.GSM_SBAT_WEBOOK_NAME }})" >> $GITHUB_ENV
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        if: failure()
+        env:
+          MSG_MINIMAL: commit
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_MESSAGE: A Manual merge of master to ob-v4 is required for repo '${{ inputs.componentName }}'
+          SLACK_TITLE: Auto Merge Failure
+          SLACK_USERNAME: GitHub Actions
+          SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
