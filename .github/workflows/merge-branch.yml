@@ -32,6 +32,7 @@ jobs:
           repository: SecureApiGateway/${{ inputs.componentName }}
           path: ${{ inputs.componentName }}
           ref: ${{ inputs.targetBranch }}
+          fetch-depth: 0
       # Auth GCP, SDK & Artifact Registry
       - name: Call Authentication
         uses: ./secure-api-gateway-ci/.github/actions/authentication
