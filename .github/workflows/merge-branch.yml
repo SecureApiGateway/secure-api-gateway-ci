@@ -1,0 +1,49 @@
+name: Merge - Merge Source Branch to Target Branch
+on:
+  workflow_call:
+    inputs:
+      componentName:
+        description: The component name using the workflow
+        required: true
+        type: string
+      sourceBranch:
+        description: Where the merge code is coming from
+        required: true
+        type: string
+      targetBranch:
+        description: Where the code is going
+        required: true
+        type: string
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    name: Merge
+    steps:
+      # Checkout Calling Repo Target Branch
+      - name: Checkout Calling Repo
+        uses: actions/checkout@v4
+        with:
+          repository: SecureApiGateway/${{ inputs.componentName }}
+          ref: ${{ inputs.targetBranch }}
+      - name: Set Git config
+        run: |
+          git config user.name fropenbanking
+          git config user.email obst@forgerock.com
+      - name: Perform Rebase
+        run: |
+          git rebase ${{ inputs.sourceBranch }} || echo "Conflicts found, unable to rebase" && exit 1
+          git push -f
+      # Get Webhook from GSM
+      - name: Get Webhook URL from GSM
+        run: |
+          echo "SLACK_WEBHOOK=$(gcloud --project ${{ vars.SAPIG_PROJECT }} secrets versions access latest --secret=${{ vars.GSM_SBAT_WEBOOK_NAME }})" >> $GITHUB_ENV
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        if: failure()
+        env:
+          MSG_MINIMAL: commit
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_MESSAGE: A Manual rebase of ${{ inputs.sourceBranch }} to ${{ inputs.targetBranch }} is required for repo '${{ inputs.componentName }}'
+          SLACK_TITLE: Auto Merge Failure
+          SLACK_USERNAME: GitHub Actions
+          SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
