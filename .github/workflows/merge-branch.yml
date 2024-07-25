@@ -15,7 +15,7 @@ on:
         required: true
         type: string
 jobs:
-  build:
+  merge:
     runs-on: ubuntu-latest
     name: Merge
     steps:
