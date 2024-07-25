@@ -31,7 +31,7 @@ jobs:
           git config user.email obst@forgerock.com
       - name: Perform Merge
         run: |
-          git merge --no-ff ${{ inputs.sourceBranch }} -m "Auto-merge ${{ inputs.sourceBranch }} into ${{ inputs.targetBranch }} Branch" || echo "Conflicts found, unable to merge"
+          git rebase ${{ inputs.sourceBranch }} || echo "Conflicts found, unable to merge" && exit 1
           git push -f
       # Get Webhook from GSM
       - name: Get Webhook URL from GSM
