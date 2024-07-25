@@ -47,8 +47,6 @@ jobs:
       - name: Perform Rebase
         run: |
           cd ${{ inputs.componentName }}
-          git fetch --all
-          git pull --all
           git rebase origin/${{ inputs.sourceBranch }} || echo "Conflicts found, unable to rebase" && exit 1
           git push --force-with-lease
       # Get Webhook from GSM
