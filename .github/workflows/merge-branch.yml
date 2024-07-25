@@ -1,4 +1,4 @@
-name: Merge - Merge Master to OB-V4
+name: Merge - Merge Source Branch to Target Branch
 on:
   workflow_call:
     inputs:
@@ -6,24 +6,32 @@ on:
         description: The component name using the workflow
         required: true
         type: string
+      sourceBranch:
+        description: Where the merge code is coming from
+        required: true
+        type: string
+      targetBranch:
+        description: Where the code is going
+        required: true
+        type: string
 jobs:
   build:
     runs-on: ubuntu-latest
     name: Merge
     steps:
-      # Checkout Calling Repo OB-V4 Branch
+      # Checkout Calling Repo Target Branch
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
         with:
           repository: SecureApiGateway/${{ inputs.componentName }}
-          ref: ob-v4
+          ref: ${{ inputs.targetBranch }}
       - name: Set Git config
         run: |
           git config user.name fropenbanking
           git config user.email obst@forgerock.com
-      - name: Merge master back to dev
+      - name: Perform Merge
         run: |
-          git merge --no-ff master -m "Auto-merge Master into OB-V4 Branch" || echo "Conflicts found, unable to merge"
+          git merge --no-ff ${{ inputs.sourceBranch }} -m "Auto-merge ${{ inputs.sourceBranch }} into ${{ inputs.targetBranch }} Branch" || echo "Conflicts found, unable to merge"
           git push -f
       # Get Webhook from GSM
       - name: Get Webhook URL from GSM
@@ -35,7 +43,7 @@ jobs:
         env:
           MSG_MINIMAL: commit
           SLACK_COLOR: ${{ job.status }}
-          SLACK_MESSAGE: A Manual merge of master to ob-v4 is required for repo '${{ inputs.componentName }}'
+          SLACK_MESSAGE: A Manual merge of ${{ inputs.sourceBranch }} to ${{ inputs.targetBranch }} is required for repo '${{ inputs.componentName }}'
           SLACK_TITLE: Auto Merge Failure
           SLACK_USERNAME: GitHub Actions
           SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
