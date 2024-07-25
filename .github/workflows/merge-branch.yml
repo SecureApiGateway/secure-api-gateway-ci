@@ -19,6 +19,12 @@ jobs:
     runs-on: ubuntu-latest
     name: Merge
     steps:
+      # Checkout CI Repo
+      - name: Checkout CI Repo
+        uses: actions/checkout@v4
+        with:
+          path: secure-api-gateway-ci
+          repository: SecureApiGateway/secure-api-gateway-ci
       # Checkout Calling Repo Target Branch
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
