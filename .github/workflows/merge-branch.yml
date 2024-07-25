@@ -39,14 +39,11 @@ jobs:
         with:
           gcpKey: ${{ secrets.GCP_SECRET_READ }}
           garLocation: ${{ vars.GAR_LOCATION }}
-      - name: Set Git config
+      - name: Perform Rebase
         run: |
           cd ${{ inputs.componentName }}
           git config user.name fropenbanking
           git config user.email obst@forgerock.com
-      - name: Perform Rebase
-        run: |
-          cd ${{ inputs.componentName }}
           git rebase origin/${{ inputs.sourceBranch }} || { echo "Conflicts found, unable to rebase" && exit 1; }
           git push --force-with-lease
       # Get Webhook from GSM
