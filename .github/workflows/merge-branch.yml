@@ -24,6 +24,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: SecureApiGateway/${{ inputs.componentName }}
+          path: ${{ inputs.componentName }}
           ref: ${{ inputs.targetBranch }}
       - name: Set Git config
         run: |
@@ -31,10 +32,13 @@ jobs:
           git config user.email obst@forgerock.com
       - name: Perform Rebase
         run: |
+          cd ${{ inputs.componentName }}
+          git fetch --all
           git rebase ${{ inputs.sourceBranch }} || echo "Conflicts found, unable to rebase" && exit 1
           git push -f
       # Get Webhook from GSM
       - name: Get Webhook URL from GSM
+        if: failure()
         run: |
           echo "SLACK_WEBHOOK=$(gcloud --project ${{ vars.SAPIG_PROJECT }} secrets versions access latest --secret=${{ vars.GSM_SBAT_WEBOOK_NAME }})" >> $GITHUB_ENV
       - name: Slack Notification
