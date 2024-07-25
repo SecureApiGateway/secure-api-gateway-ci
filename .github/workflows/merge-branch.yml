@@ -29,9 +29,9 @@ jobs:
         run: |
           git config user.name fropenbanking
           git config user.email obst@forgerock.com
-      - name: Perform Merge
+      - name: Perform Rebase
         run: |
-          git rebase ${{ inputs.sourceBranch }} || echo "Conflicts found, unable to merge" && exit 1
+          git rebase ${{ inputs.sourceBranch }} || echo "Conflicts found, unable to rebase" && exit 1
           git push -f
       # Get Webhook from GSM
       - name: Get Webhook URL from GSM
@@ -43,7 +43,7 @@ jobs:
         env:
           MSG_MINIMAL: commit
           SLACK_COLOR: ${{ job.status }}
-          SLACK_MESSAGE: A Manual merge of ${{ inputs.sourceBranch }} to ${{ inputs.targetBranch }} is required for repo '${{ inputs.componentName }}'
+          SLACK_MESSAGE: A Manual rebase of ${{ inputs.sourceBranch }} to ${{ inputs.targetBranch }} is required for repo '${{ inputs.componentName }}'
           SLACK_TITLE: Auto Merge Failure
           SLACK_USERNAME: GitHub Actions
           SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
