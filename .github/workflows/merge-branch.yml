@@ -40,6 +40,14 @@ jobs:
         with:
           gcpKey: ${{ secrets.GCP_SECRET_READ }}
           garLocation: ${{ vars.GAR_LOCATION }}
+      - name: Import GPG Key
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY_BOT }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+          passphrase: ${{ secrets.GPG_KEY_PASSPHRASE_BOT }}
+          workdir: ${{ inputs.componentName }}
       - name: Perform Rebase
         run: |
           cd ${{ inputs.componentName }}
