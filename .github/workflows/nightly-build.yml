@@ -142,6 +142,13 @@ jobs:
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-functional-tests
+      # Auth GCP, SDK & Artifact Registry
+      - name: Call Authentication
+        if: failure()
+        uses: ./secure-api-gateway-ci/.github/actions/authentication
+        with:
+          gcpKey: ${{ secrets.GCP_SECRET_READ }}
+          garLocation: ${{ vars.GAR_LOCATION }}
       # Get Webhook from GSM
       - name: Get Webhook URL from GSM
         if: failure()
