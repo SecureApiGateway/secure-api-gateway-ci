@@ -1,14 +1,11 @@
 name: Build Artifact
 description: Common steps to build a Maven artifact
 inputs:
+  checkoutBranch:
+    description: What branch of the repo to checkout
+    required: false
   checkoutCode:
     description: Wherever or not to checkout the code for the repo
-    required: true
-  repositoryName:
-    description: The repository name to checkout
-    required: true
-  mavenBuildCommands:
-    description: The maven commands to be ran to product the artifact
     required: true
   FR_ARTIFACTORY_USER:
     description: What user to use to auth to Maven Server
@@ -16,18 +13,44 @@ inputs:
   FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD:
     description: What user password to use to auth to Maven Server
     required: true
+  mavenBuildCommands:
+    description: The maven commands to be ran to product the artifact
+    required: true
+  repositoryName:
+    description: The repository name to checkout
+    required: true
   updateMavenServer:
     description: Wherever or not the maven server should try get updated
     required: true
 runs:
   using: composite
   steps:
-    - name: Checkout Code
+    - name: Determine what Branch of code to check out
+      shell: bash
+      run: |
+        if [ ${{ inputs.checkoutCode }} == 'true' ]; then
+          if [[ "${{ inputs.checkoutBranch }}" ]]; then
+            echo CHECKOUTBRANCHCODE=true >> ${GITHUB_ENV}
+          else
+            echo CHECKOUTMAINCODE=true >> ${GITHUB_ENV}
+          fi
+        else
+          echo CHECKOUTMAINCODE=false >> ${GITHUB_ENV}
+          echo CHECKOUTBRANCHCODE=false >> ${GITHUB_ENV}
+        fi
+    - name: Checkout Main Branch Code
       uses: actions/checkout@v4
-      if: inputs.checkoutCode == 'true'
+      if: env.CHECKOUTMAINCODE == 'true'
       with: 
         repository: ${{ inputs.repositoryName }}
         path: ${{ inputs.repositoryName }}
+    - name: Checkout Branch Code
+      uses: actions/checkout@v4
+      if: env.CHECKOUTBRANCHCODE == 'true'
+      with:
+        repository: ${{ inputs.repositoryName }}
+        path: ${{ inputs.repositoryName }}
+        ref: ${{ inputs.checkoutBranch }}
     - name: Get Version
       shell: bash
       if: inputs.updateMavenServer == 'true'
