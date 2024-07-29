@@ -145,7 +145,7 @@ jobs:
       # Auth GCP, SDK & Artifact Registry
       - name: Call Authentication
         if: failure()
-        uses: ./secure-api-gateway-ci/.github/actions/authentication
+        uses: ./.github/actions/authentication
         with:
           gcpKey: ${{ secrets.GCP_SECRET_READ }}
           garLocation: ${{ vars.GAR_LOCATION }}
