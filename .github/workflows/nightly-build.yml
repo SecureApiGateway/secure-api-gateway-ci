@@ -35,7 +35,8 @@ jobs:
           repositoryName: SecureApiGateway/secure-api-gateway-core
       - name: Call build-image-and-artifact for OB
         uses: ./.github/actions/build-image-and-artifact
-        with: 
+        with:
+          checkoutBranch: master
           dockerBuildCommands: "make clean docker tag=latest && make clean docker tag=dev env=dev"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -44,6 +45,7 @@ jobs:
       - name: Call build-artifact for Common
         uses: ./.github/actions/build-artifact
         with:
+          checkoutBranch: master
           checkoutCode: true
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -52,7 +54,8 @@ jobs:
           updateMavenServer: false
       - name: Call build-image-and-artifact for RCS
         uses: ./.github/actions/build-image-and-artifact
-        with: 
+        with:
+          checkoutBranch: master
           dockerBuildCommands: "make docker tag=latest"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -61,6 +64,7 @@ jobs:
       - name: Call build-image-and-artifact for RS
         uses: ./.github/actions/build-image-and-artifact
         with:
+          checkoutBranch: master
           dockerBuildCommands: "make docker tag=latest"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -77,6 +81,7 @@ jobs:
       - name: Call build-image for OB Functional Tests
         uses: ./.github/actions/build-image
         with:
+          checkoutBranch: master
           checkoutCode: true
           dockerBuildCommands: "make docker tag=latest"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
