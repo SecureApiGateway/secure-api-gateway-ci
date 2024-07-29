@@ -20,6 +20,7 @@ jobs:
       - name: Call build-image-and-artifact for Test Trusted Directory
         uses: ./.github/actions/build-image-and-artifact
         with:
+          checkoutCode: true
           dockerBuildCommands: "make clean docker tag=latest"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -27,7 +28,8 @@ jobs:
           repositoryName: SecureApiGateway/secure-api-gateway-test-trusted-directory
       - name: Call build-image-and-artifact for Core
         uses: ./.github/actions/build-image-and-artifact
-        with: 
+        with:
+          checkoutCode: true
           dockerBuildCommands: "make clean docker tag=latest && make clean docker tag=dev env=dev"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -37,6 +39,7 @@ jobs:
         uses: ./.github/actions/build-image-and-artifact
         with:
           checkoutBranch: master
+          checkoutCode: true
           dockerBuildCommands: "make clean docker tag=latest && make clean docker tag=dev env=dev"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -56,6 +59,7 @@ jobs:
         uses: ./.github/actions/build-image-and-artifact
         with:
           checkoutBranch: master
+          checkoutCode: true
           dockerBuildCommands: "make docker tag=latest"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -65,6 +69,7 @@ jobs:
         uses: ./.github/actions/build-image-and-artifact
         with:
           checkoutBranch: master
+          checkoutCode: true
           dockerBuildCommands: "make docker tag=latest"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -92,6 +97,7 @@ jobs:
         uses: ./.github/actions/build-image-and-artifact
         with:
           checkoutBranch: ob-v4
+          checkoutCode: true
           dockerBuildCommands: "make clean docker tag=latest-v4 && make clean docker tag=dev-v4 env=dev"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -111,6 +117,7 @@ jobs:
         uses: ./.github/actions/build-image-and-artifact
         with:
           checkoutBranch: ob-v4
+          checkoutCode: true
           dockerBuildCommands: "make docker tag=latest-v4"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -120,6 +127,7 @@ jobs:
         uses: ./.github/actions/build-image-and-artifact
         with:
           checkoutBranch: ob-v4
+          checkoutCode: true
           dockerBuildCommands: "make docker tag=latest-v4"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -134,6 +142,13 @@ jobs:
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-functional-tests
+      # Auth GCP, SDK & Artifact Registry
+      - name: Call Authentication
+        if: failure()
+        uses: ./.github/actions/authentication
+        with:
+          gcpKey: ${{ secrets.GCP_SECRET_READ }}
+          garLocation: ${{ vars.GAR_LOCATION }}
       # Get Webhook from GSM
       - name: Get Webhook URL from GSM
         if: failure()

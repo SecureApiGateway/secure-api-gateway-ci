@@ -26,7 +26,7 @@ runs:
       shell: bash
       run: |
         if [ ${{ inputs.checkoutCode }} == 'true' ]; then
-          if [[ "${{ inputs.checkoutBranch }}" ]]; then
+          if [[ "${{ inputs.checkoutBranch }}" != "master" || "${{ inputs.checkoutBranch }}" != "main" ]]; then
             echo CHECKOUTBRANCHCODE=true >> ${GITHUB_ENV}
           else
             echo CHECKOUTMAINCODE=true >> ${GITHUB_ENV}
