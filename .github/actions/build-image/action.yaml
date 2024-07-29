@@ -1,11 +1,11 @@
 name: Build Image
 description: Common steps to build a docker image
 inputs:
+  checkoutBranch:
+    description: What branch of the repo to checkout
+    required: false
   checkoutCode:
     description: Wherever or not to checkout the code for the repo
-    required: true
-  repositoryName:
-    description: What repository to checkout
     required: true
   dockerBuildCommands:
     description: What commands to run to build the image
@@ -15,6 +15,9 @@ inputs:
     required: true
   FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD:
     description: What user password to use to auth to Maven Server
+    required: true
+  repositoryName:
+    description: What repository to checkout
     required: true
 
 runs:

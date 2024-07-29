@@ -16,74 +16,127 @@ jobs:
         with: 
           gcpKey: ${{ secrets.DEV_GAR_KEY }}
           garLocation: ${{ vars.GAR_LOCATION }}
-      # Build Components
+      # Build V3 Components
       - name: Call build-image-and-artifact for Test Trusted Directory
         uses: ./.github/actions/build-image-and-artifact
         with:
-          repositoryName: SecureApiGateway/secure-api-gateway-test-trusted-directory
           dockerBuildCommands: "make clean docker tag=latest"
-          mavenBuildCommands: "mvn -B deploy -DskipTests"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "mvn -B deploy -DskipTests"
+          repositoryName: SecureApiGateway/secure-api-gateway-test-trusted-directory
       - name: Call build-image-and-artifact for Core
         uses: ./.github/actions/build-image-and-artifact
         with: 
-          repositoryName: SecureApiGateway/secure-api-gateway-core
           dockerBuildCommands: "make clean docker tag=latest && make clean docker tag=dev env=dev"
-          mavenBuildCommands: "mvn -B deploy -DskipTests"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "mvn -B deploy -DskipTests"
+          repositoryName: SecureApiGateway/secure-api-gateway-core
       - name: Call build-image-and-artifact for OB
         uses: ./.github/actions/build-image-and-artifact
-        with: 
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
+        with:
+          checkoutBranch: master
           dockerBuildCommands: "make clean docker tag=latest && make clean docker tag=dev env=dev"
-          mavenBuildCommands: "mvn -B deploy -DskipTests"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "mvn -B deploy -DskipTests"
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
       - name: Call build-artifact for Common
         uses: ./.github/actions/build-artifact
         with:
+          checkoutBranch: master
           checkoutCode: true
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
-          mavenBuildCommands: "mvn -B deploy --file pom.xml"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "mvn -B deploy --file pom.xml"
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
           updateMavenServer: false
       - name: Call build-image-and-artifact for RCS
         uses: ./.github/actions/build-image-and-artifact
-        with: 
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
+        with:
+          checkoutBranch: master
           dockerBuildCommands: "make docker tag=latest"
-          mavenBuildCommands: "make verify && mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "make verify && mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
       - name: Call build-image-and-artifact for RS
         uses: ./.github/actions/build-image-and-artifact
         with:
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
+          checkoutBranch: master
           dockerBuildCommands: "make docker tag=latest"
-          mavenBuildCommands: "mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
       - name: Call build-image for Core Functional Tests
         uses: ./.github/actions/build-image
         with:
           checkoutCode: true
-          repositoryName: SecureApiGateway/secure-api-gateway-functional-test-framework
           dockerBuildCommands: "make docker tag=latest"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: SecureApiGateway/secure-api-gateway-functional-test-framework
       - name: Call build-image for OB Functional Tests
         uses: ./.github/actions/build-image
         with:
+          checkoutBranch: master
           checkoutCode: true
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-functional-tests
           dockerBuildCommands: "make docker tag=latest"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-functional-tests
+      # Build V4 Components
+      - name: Call build-image-and-artifact for OB V4
+        uses: ./.github/actions/build-image-and-artifact
+        with:
+          checkoutBranch: ob-v4
+          dockerBuildCommands: "make clean docker tag=latest-v4 && make clean docker tag=dev-v4 env=dev"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "mvn -B deploy -DskipTests"
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
+      - name: Call build-artifact for Common V4
+        uses: ./.github/actions/build-artifact
+        with:
+          checkoutBranch: ob-v4
+          checkoutCode: true
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "mvn -B deploy --file pom.xml"
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
+          updateMavenServer: false
+      - name: Call build-image-and-artifact for RCS V4
+        uses: ./.github/actions/build-image-and-artifact
+        with:
+          checkoutBranch: ob-v4
+          dockerBuildCommands: "make docker tag=latest-v4"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "make verify && mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
+      - name: Call build-image-and-artifact for RS V4
+        uses: ./.github/actions/build-image-and-artifact
+        with:
+          checkoutBranch: ob-v4
+          dockerBuildCommands: "make docker tag=latest-v4"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
+      - name: Call build-image for OB Functional Tests V4
+        uses: ./.github/actions/build-image
+        with:
+          checkoutBranch: ob-v4
+          checkoutCode: true
+          dockerBuildCommands: "make docker tag=latest-v4"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-functional-tests
       # Get Webhook from GSM
       - name: Get Webhook URL from GSM
+        if: failure()
         run: |
           echo "SLACK_WEBHOOK=$(gcloud --project ${{ vars.SAPIG_PROJECT }} secrets versions access latest --secret=${{ vars.GSM_SBAT_WEBOOK_NAME }})" >> $GITHUB_ENV
       - name: Slack Notification
