@@ -4,6 +4,9 @@ inputs:
   checkoutBranch:
     description: What branch of the repo to checkout
     required: false
+  checkoutCode:
+    description: Wherever or not to checkout the code for the repo
+    required: true
   dockerBuildCommands:
     description: What commands to run to build the image
     required: true
