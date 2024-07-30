@@ -1,9 +1,15 @@
 name: Code Scanning
 description: Common steps to perform a code scan on a components
 inputs:
+  actionTrigger:
+    description: Action performed will decide what steps to use
+    required: true
   cache:
     description: What cache to use
     required: true
+  checkoutBranch:
+    description: What branch of the repo to checkout
+    required: false
   checkoutCode:
     description: Wherever or not to checkout the code for the repo
     required: true
@@ -12,9 +18,6 @@ inputs:
     required: true
   FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD:
     description: What user password to use to auth to Maven Server
-    required: true
-  actionTrigger:
-    description: Action performed will decide what steps to use
     required: true
   javaArchitecture:
     description: What java architecture to use
@@ -37,12 +40,32 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Checkout Code
+    - name: Determine what Branch of code to check out
+      shell: bash
+      run: |
+        if [ ${{ inputs.checkoutCode }} == 'true' ]; then
+          if [[ "${{ inputs.checkoutBranch }}" != "master" || "${{ inputs.checkoutBranch }}" != "main" ]]; then
+            echo CHECKOUTBRANCHCODE=true >> ${GITHUB_ENV}
+          else
+            echo CHECKOUTMAINCODE=true >> ${GITHUB_ENV}
+          fi
+        else
+          echo CHECKOUTMAINCODE=false >> ${GITHUB_ENV}
+          echo CHECKOUTBRANCHCODE=false >> ${GITHUB_ENV}
+        fi
+    - name: Checkout Main Branch Code
       uses: actions/checkout@v4
-      if: inputs.checkoutCode == 'true'
-      with: 
+      if: env.CHECKOUTMAINCODE == 'true'
+      with:
         repository: ${{ inputs.repositoryName }}
         path: ${{ inputs.repositoryName }}
+    - name: Checkout Branch Code
+      uses: actions/checkout@v4
+      if: env.CHECKOUTBRANCHCODE == 'true'
+      with:
+        repository: ${{ inputs.repositoryName }}
+        path: ${{ inputs.repositoryName }}
+        ref: ${{ inputs.checkoutBranch }}
     # Set Maven Config
     - name: Set Maven Config
       uses: ./secure-api-gateway-ci/.github/actions/set-maven-config

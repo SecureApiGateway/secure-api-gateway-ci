@@ -46,6 +46,7 @@ jobs:
         uses: ./secure-api-gateway-ci/.github/actions/code-scanning
         with:
           cache: ${{ env.CACHE }}
+          checkoutBranch: main #Branch doesn't have to match for this, the if statement will just checkout the default ref which is what we want here
           checkoutCode: false
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}

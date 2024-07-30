@@ -10,16 +10,34 @@ jobs:
     steps:
       - name: Checkout CI Code
         uses: actions/checkout@v4
-      - name: Call check copyright for RS
+      - name: Call check copyright for RS V3
         uses: ./.github/actions/check-copyright
         with:
+          checkoutBranch: master
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
-      - name: Call check copyright for RCS
+      - name: Call check copyright for RCS V3
         uses: ./.github/actions/check-copyright
         with:
+          checkoutBranch: master
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
+      - name: Call check copyright for RS V4
+        uses: ./.github/actions/check-copyright
+        with:
+          checkoutBranch: ob-v4
+          checkoutCode: true
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
+      - name: Call check copyright for RCS V4
+        uses: ./.github/actions/check-copyright
+        with:
+          checkoutBranch: ob-v4
+          checkoutCode: true
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
+      - name: Set Var if Failure
+        if: failure()
+        run: |
+          echo FAILUREINBUILD=true >> ${GITHUB_ENV}
   analyze-core:
     name: Analyze Core
     runs-on: 'ubuntu-latest'
@@ -37,6 +55,7 @@ jobs:
         uses: ./.github/actions/code-scanning
         with:
           cache: 'maven'
+          checkoutBranch: main
           checkoutCode: true
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -47,6 +66,10 @@ jobs:
           language: 'java-kotlin'
           mavenServerID: 'forgerock-internal-releases'
           repositoryName: SecureApiGateway/secure-api-gateway-core
+      - name: Set Var if Failure
+        if: failure()
+        run: |
+          echo FAILUREINBUILD=true >> ${GITHUB_ENV}
   analyze-common:
     name: Analyze Common
     runs-on: 'ubuntu-latest'
@@ -64,6 +87,7 @@ jobs:
         uses: ./.github/actions/code-scanning
         with:
           cache: 'maven'
+          checkoutBranch: master
           checkoutCode: true
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -74,6 +98,10 @@ jobs:
           language: 'java-kotlin'
           mavenServerID: 'forgerock-internal-releases'
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
+      - name: Set Var if Failure
+        if: failure()
+        run: |
+          echo FAILUREINBUILD=true >> ${GITHUB_ENV}
   analyze-rs:
     name: Analyze RS
     runs-on: 'ubuntu-latest'
@@ -91,6 +119,7 @@ jobs:
         uses: ./.github/actions/code-scanning
         with:
           cache: 'maven'
+          checkoutBranch: master
           checkoutCode: true
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -101,6 +130,10 @@ jobs:
           language: 'java-kotlin'
           mavenServerID: 'forgerock-internal-releases'
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
+      - name: Set Var if Failure
+        if: failure()
+        run: |
+          echo FAILUREINBUILD=true >> ${GITHUB_ENV}
   analyze-rcs:
     name: Analyze RCS
     runs-on: 'ubuntu-latest'
@@ -118,6 +151,7 @@ jobs:
         uses: ./.github/actions/code-scanning
         with:
           cache: 'maven'
+          checkoutBranch: master
           checkoutCode: true
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -128,3 +162,129 @@ jobs:
           language: 'java-kotlin'
           mavenServerID: 'forgerock-internal-releases'
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
+      - name: Set Var if Failure
+        if: failure()
+        run: |
+          echo FAILUREINBUILD=true >> ${GITHUB_ENV}
+  analyze-common-v4:
+    name: Analyze Common V4
+    runs-on: 'ubuntu-latest'
+    timeout-minutes: 360
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout CI Code
+        uses: actions/checkout@v4
+      - name: Call code-scanning on Core
+        uses: ./.github/actions/code-scanning
+        with:
+          cache: 'maven'
+          checkoutBranch: ob-v4
+          checkoutCode: true
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          actionTrigger: nightly
+          javaArchitecture: x64
+          javaDistribution: 'zulu'
+          javaVersion: '17'
+          language: 'java-kotlin'
+          mavenServerID: 'forgerock-internal-releases'
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
+      - name: Set Var if Failure
+        if: failure()
+        run: |
+          echo FAILUREINBUILD=true >> ${GITHUB_ENV}
+  analyze-rs-v4:
+    name: Analyze RS V4
+    runs-on: 'ubuntu-latest'
+    timeout-minutes: 360
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout CI Code
+        uses: actions/checkout@v4
+      - name: Call code-scanning on Core
+        uses: ./.github/actions/code-scanning
+        with:
+          cache: 'maven'
+          checkoutBranch: ob-v4
+          checkoutCode: true
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          actionTrigger: nightly
+          javaArchitecture: x64
+          javaDistribution: 'zulu'
+          javaVersion: '17'
+          language: 'java-kotlin'
+          mavenServerID: 'forgerock-internal-releases'
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
+      - name: Set Var if Failure
+        if: failure()
+        run: |
+          echo FAILUREINBUILD=true >> ${GITHUB_ENV}
+  analyze-rcs-v4:
+    name: Analyze RCS V4
+    runs-on: 'ubuntu-latest'
+    timeout-minutes: 360
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout CI Code
+        uses: actions/checkout@v4
+      - name: Call code-scanning on Core
+        uses: ./.github/actions/code-scanning
+        with:
+          cache: 'maven'
+          checkoutBranch: ob-v4
+          checkoutCode: true
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          actionTrigger: nightly
+          javaArchitecture: x64
+          javaDistribution: 'zulu'
+          javaVersion: '17'
+          language: 'java-kotlin'
+          mavenServerID: 'forgerock-internal-releases'
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
+      - name: Set Var if Failure
+        if: failure()
+        run: |
+          echo FAILUREINBUILD=true >> ${GITHUB_ENV}
+  check-for-failure:
+    name: Check for failure & Notify
+    runs-on: 'ubuntu-latest'
+    steps:
+      # Auth GCP, SDK & Artifact Registry
+      - name: Call Authentication
+        if: env.FAILUREINBUILD == 'true'
+        uses: ./.github/actions/authentication
+        with:
+          gcpKey: ${{ secrets.GCP_SECRET_READ }}
+          garLocation: ${{ vars.GAR_LOCATION }}
+      # Get Webhook from GSM
+      - name: Get Webhook URL from GSM
+        if: env.FAILUREINBUILD == 'true'
+        run: |
+          echo "SLACK_WEBHOOK=$(gcloud --project ${{ vars.SAPIG_PROJECT }} secrets versions access latest --secret=${{ vars.GSM_SBAT_WEBOOK_NAME }})" >> $GITHUB_ENV
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        if: env.FAILUREINBUILD == 'true'
+        env:
+          MSG_MINIMAL: commit
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_MESSAGE: Please check the link in the message
+          SLACK_TITLE: Nightly Components Checks Failed
+          SLACK_USERNAME: GitHub Actions
+          SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
