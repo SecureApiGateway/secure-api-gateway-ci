@@ -265,6 +265,7 @@ jobs:
   check-for-failure:
     name: Check for failure & Notify
     runs-on: 'ubuntu-latest'
+    needs: [copyright, analyze-core,analyze-common,analyze-rs,analyze-rcs,analyze-common-v4,analyze-rs-v4,analyze-rcs-v4]
     steps:
       # Auth GCP, SDK & Artifact Registry
       - name: Call Authentication
