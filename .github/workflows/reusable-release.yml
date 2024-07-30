@@ -117,7 +117,7 @@ jobs:
           npm version patch --no-git-tag-version
           git add package.json package-lock.json
           git commit -m "Prepare for the next development iteration"
-          git push -f
+          git push --force-with-lease
       # Checkout Tagged Code Created By Maven Plugin
       - name: Checkout Tagged Code
         uses: actions/checkout@v4
