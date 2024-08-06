@@ -42,7 +42,7 @@ jobs:
       - name: Call check copyright for CORE V3
         uses: ./.github/actions/check-copyright
         with:
-          checkoutBranch: master
+          checkoutBranch: main
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-core
       # Common
