@@ -10,16 +10,6 @@ jobs:
     steps:
       - name: Checkout CI Code
         uses: actions/checkout@v4
-      # Set Maven Config
-      - name: Set Maven Config
-        uses: ./.github/actions/set-maven-config
-        with:
-          cache: maven
-          javaArchitecture: x64
-          javaDistribution: zulu
-          javaVersion: 17
-          mavenServerID: forgerock-internal-releases
-          updateMavenServer: false
       # Common
       - name: Call check copyright for Common V3
         uses: ./.github/actions/check-copyright
@@ -48,13 +38,6 @@ jobs:
           checkoutBranch: master
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
-      # CORE
-      - name: Call check copyright for CORE V3
-        uses: ./.github/actions/check-copyright
-        with:
-          checkoutBranch: main
-          checkoutCode: true
-          repositoryName: SecureApiGateway/secure-api-gateway-core
       # Common
       - name: Call check copyright for Common V4
         uses: ./.github/actions/check-copyright
@@ -83,13 +66,54 @@ jobs:
           checkoutBranch: ob-v4
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
+      # Checkout Core Repo
+      - name: Checkout Core Repo
+        uses: actions/checkout@v4
+        with:
+          path: secure-api-gateway-core
+          repository: secure-api-gateway-core
+          ref: main
+      # Set Maven Config
+      - name: Set Maven Config
+        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
+        with:
+          cache: maven
+          javaArchitecture: x64
+          javaDistribution: zulu
+          javaVersion: 17
+          mavenServerID: forgerock-internal-releases
+          repositoryName: secure-api-gateway-core
+          updateMavenServer: false
+      # CORE
+      - name: Call check copyright for CORE V3
+        uses: ./secure-api-gateway-ci/.github/actions/check-copyright
+        with:
+          checkoutCode: false
+          repositoryName: SecureApiGateway/secure-api-gateway-core
+      # Checkout Core Repo
+      - name: Checkout Core Repo
+        uses: actions/checkout@v4
+        with:
+          path: secure-api-gateway-core
+          repository: secure-api-gateway-core
+          ref: ob-v4
+      # Set Maven Config
+      - name: Set Maven Config
+        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
+        with:
+          cache: maven
+          javaArchitecture: x64
+          javaDistribution: zulu
+          javaVersion: 17
+          mavenServerID: forgerock-internal-releases
+          repositoryName: secure-api-gateway-core
+          updateMavenServer: false
       # CORE
       - name: Call check copyright for CORE V4
-        uses: ./.github/actions/check-copyright
+        uses: ./secure-api-gateway-ci/.github/actions/check-copyright
         with:
-          checkoutBranch: ob-v4
-          checkoutCode: true
-          repositoryName: SecureApiGateway/secure-api-gateway-core
+          checkoutCode: false
+          repositoryName: secure-api-gateway-core
       - name: Set Var if Failure
         if: failure()
         run: |

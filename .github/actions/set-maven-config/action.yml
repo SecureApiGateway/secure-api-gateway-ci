@@ -18,7 +18,7 @@ inputs:
     required: true
   repositoryName:
     description: The Service name that is being updated
-    required: false
+    required: true
   updateMavenServer:
     description: Wherever or not the maven server should try get updated
     required: true
