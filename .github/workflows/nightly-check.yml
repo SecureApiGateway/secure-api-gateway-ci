@@ -37,7 +37,7 @@ jobs:
         with:
           checkoutBranch: master
           checkoutCode: true
-          repositoryName: SecureApiGateway/secure-api-gateway-uk
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
       # CORE
       - name: Call check copyright for CORE V3
         uses: ./.github/actions/check-copyright
