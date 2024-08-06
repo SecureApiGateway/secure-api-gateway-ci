@@ -268,6 +268,9 @@ jobs:
     needs: [copyright, analyze-core,analyze-common,analyze-rs,analyze-rcs,analyze-common-v4,analyze-rs-v4,analyze-rcs-v4]
     if: ${{ always() && contains(needs.*.result, 'failure') }}
     steps:
+      # Checkout CI Repo
+      - name: Checkout CI Code
+        uses: actions/checkout@v4
       # Auth GCP, SDK & Artifact Registry
       - name: Call Authentication
         uses: ./.github/actions/authentication
