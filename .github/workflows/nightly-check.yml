@@ -71,7 +71,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: secure-api-gateway-core
-          repository: secure-api-gateway-core
+          repository: SecureApiGateway/secure-api-gateway-core
           ref: main
       # Set Maven Config
       - name: Set Maven Config
@@ -95,7 +95,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: secure-api-gateway-core
-          repository: secure-api-gateway-core
+          repository: SecureApiGateway/secure-api-gateway-core
           ref: ob-v4
       # Set Maven Config
       - name: Set Maven Config
