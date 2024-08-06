@@ -285,7 +285,7 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           MSG_MINIMAL: commit
-          SLACK_COLOR: ${{ job.status }}
+          SLACK_COLOR: failure
           SLACK_MESSAGE: Please check the link in the message
           SLACK_TITLE: Nightly Components Checks Failed
           SLACK_USERNAME: GitHub Actions
