@@ -92,7 +92,7 @@ jobs:
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
         with:
           checkoutCode: false
-          repositoryName: SecureApiGateway/secure-api-gateway-core
+          repositoryName: secure-api-gateway-core
       # Checkout Core Repo
       - name: Checkout Core Repo
         uses: actions/checkout@v4
