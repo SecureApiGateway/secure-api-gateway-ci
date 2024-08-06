@@ -84,5 +84,5 @@ runs:
         cd ${{ inputs.repositoryName }}
         ${{ inputs.mavenBuildCommands }}
       env:
-        FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
-        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+        FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER || null }}
+        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD || null}}

@@ -131,6 +131,13 @@ jobs:
         working-directory: ${{ inputs.componentName }}
         run : |
           ${{ env.STEPS_PR_RUN_LINT_COMMAND }}
+      # Run Copyright Test
+      - name: Run Copyright Check
+        if: env.STEPS_PR_RUN_COPYRIGHT_TESTS == 'true'
+        uses: ./secure-api-gateway-ci/.github/actions/check-copyright
+        with:
+          checkoutCode: false
+          repositoryName: ${{ inputs.componentName }}
       # Run Initial Tests
       - name: Run Pre Build Tests
         if: env.STEPS_PR_RUN_INITIAL_TESTS == 'true'
