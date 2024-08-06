@@ -92,6 +92,8 @@ jobs:
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
         with:
           checkoutCode: false
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: secure-api-gateway-core
       # Checkout Core Repo
       - name: Checkout Core Repo
@@ -116,6 +118,8 @@ jobs:
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
         with:
           checkoutCode: false
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: secure-api-gateway-core
       - name: Set Var if Failure
         if: failure()

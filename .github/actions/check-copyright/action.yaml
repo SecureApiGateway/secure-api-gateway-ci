@@ -7,6 +7,12 @@ inputs:
   checkoutCode:
     description: Wherever or not to checkout the code for the repo
     required: true
+  FR_ARTIFACTORY_USER:
+    description: What user to use to auth to Maven Server
+    required: false
+  FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD:
+    description: What user password to use to auth to Maven Server
+    required: false
   repositoryName:
     description: What repository to checkout
     required: true
@@ -45,3 +51,6 @@ runs:
       run: |
         cd ${{ inputs.repositoryName }}
         mvn license:check
+      env:
+        FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
+        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
