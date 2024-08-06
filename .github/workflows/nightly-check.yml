@@ -10,30 +10,62 @@ jobs:
     steps:
       - name: Checkout CI Code
         uses: actions/checkout@v4
+        # RS
       - name: Call check copyright for RS V3
         uses: ./.github/actions/check-copyright
         with:
           checkoutBranch: master
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
+      # RCS
       - name: Call check copyright for RCS V3
         uses: ./.github/actions/check-copyright
         with:
           checkoutBranch: master
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
+      # OB
+      - name: Call check copyright for RS V3
+        uses: ./.github/actions/check-copyright
+        with:
+          checkoutBranch: master
+          checkoutCode: true
+          repositoryName: SecureApiGateway/secure-api-gateway-ob
+      # CORE
+      - name: Call check copyright for RCS V3
+        uses: ./.github/actions/check-copyright
+        with:
+          checkoutBranch: master
+          checkoutCode: true
+          repositoryName: SecureApiGateway/secure-api-gateway-core
+      # RS
       - name: Call check copyright for RS V4
         uses: ./.github/actions/check-copyright
         with:
           checkoutBranch: ob-v4
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
+      # RCS
       - name: Call check copyright for RCS V4
         uses: ./.github/actions/check-copyright
         with:
           checkoutBranch: ob-v4
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
+      # OB
+      - name: Call check copyright for RS V4
+        uses: ./.github/actions/check-copyright
+        with:
+          checkoutBranch: ob-v4
+          checkoutCode: true
+          repositoryName: SecureApiGateway/secure-api-gateway-ob
+      # CORE
+      - name: Call check copyright for RCS V4
+        uses: ./.github/actions/check-copyright
+        with:
+          checkoutBranch: ob-v4
+          checkoutCode: true
+          repositoryName: SecureApiGateway/secure-api-gateway-core
       - name: Set Var if Failure
         if: failure()
         run: |
