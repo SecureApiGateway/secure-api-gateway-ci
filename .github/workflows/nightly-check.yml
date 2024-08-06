@@ -10,6 +10,16 @@ jobs:
     steps:
       - name: Checkout CI Code
         uses: actions/checkout@v4
+      # Set Maven Config
+      - name: Set Maven Config
+        uses: ./.github/actions/set-maven-config
+        with:
+          cache: maven
+          javaArchitecture: x64
+          javaDistribution: zulu
+          javaVersion: 17
+          mavenServerID: forgerock-internal-releases
+          updateMavenServer: false
       # Common
       - name: Call check copyright for Common V3
         uses: ./.github/actions/check-copyright
