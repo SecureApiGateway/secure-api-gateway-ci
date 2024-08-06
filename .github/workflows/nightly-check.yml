@@ -10,6 +10,13 @@ jobs:
     steps:
       - name: Checkout CI Code
         uses: actions/checkout@v4
+      # Common
+      - name: Call check copyright for Common V3
+        uses: ./.github/actions/check-copyright
+        with:
+          checkoutBranch: master
+          checkoutCode: true
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
         # RS
       - name: Call check copyright for RS V3
         uses: ./.github/actions/check-copyright
@@ -25,19 +32,26 @@ jobs:
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
       # OB
-      - name: Call check copyright for RS V3
+      - name: Call check copyright for OB V3
         uses: ./.github/actions/check-copyright
         with:
           checkoutBranch: master
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob
       # CORE
-      - name: Call check copyright for RCS V3
+      - name: Call check copyright for CORE V3
         uses: ./.github/actions/check-copyright
         with:
           checkoutBranch: master
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-core
+      # Common
+      - name: Call check copyright for Common V4
+        uses: ./.github/actions/check-copyright
+        with:
+          checkoutBranch: ob-v4
+          checkoutCode: true
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
       # RS
       - name: Call check copyright for RS V4
         uses: ./.github/actions/check-copyright
@@ -53,14 +67,14 @@ jobs:
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
       # OB
-      - name: Call check copyright for RS V4
+      - name: Call check copyright for OB V4
         uses: ./.github/actions/check-copyright
         with:
           checkoutBranch: ob-v4
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob
       # CORE
-      - name: Call check copyright for RCS V4
+      - name: Call check copyright for CORE V4
         uses: ./.github/actions/check-copyright
         with:
           checkoutBranch: ob-v4
