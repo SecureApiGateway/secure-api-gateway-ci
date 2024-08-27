@@ -138,6 +138,8 @@ jobs:
         with:
           checkoutCode: false
           repositoryName: ${{ inputs.componentName }}
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
       # Run Initial Tests
       - name: Run Pre Build Tests
         if: env.STEPS_PR_RUN_INITIAL_TESTS == 'true'
