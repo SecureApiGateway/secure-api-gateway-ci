@@ -85,13 +85,13 @@ jobs:
           if grep -q KUSTOMIZE_DIR_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
             case $sapigType in
               core)
-                kustomiseDir="core/kustomize/overlay/7.3.0/dev"
+                kustomiseDir="core/kustomize/overlay/dev"
                 ;;
               ob)
-                kustomiseDir="ob/kustomize/overlay/7.3.0/dev"
+                kustomiseDir="ob/kustomize/overlay/dev"
                 ;;
               test-trusted-directory)
-                kustomiseDir="test-trusted-directory/kustomize/dev"
+                kustomiseDir="test-trusted-directory/kustomize/overlay/dev"
                 ;;
             esac
             sed -i -e "s|KUSTOMIZE_DIR_REPLACE|$kustomiseDir|g" secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
