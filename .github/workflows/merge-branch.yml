@@ -53,7 +53,7 @@ jobs:
           cd ${{ inputs.componentName }}
           git config user.name fropenbanking
           git config user.email obst@forgerock.com
-          git rebase origin/${{ inputs.sourceBranch }} || { echo "Conflicts found, unable to rebase" && exit 1; }
+          git merge origin/${{ inputs.sourceBranch }} || { echo "Conflicts found, unable to rebase" && exit 1; }
           git push --force-with-lease
       # Get Webhook from GSM
       - name: Get Webhook URL from GSM
