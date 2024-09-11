@@ -148,6 +148,17 @@ jobs:
         run : |
           cd ${{ inputs.componentName }}
           ${{ env.STEPS_PR_RUN_INITIAL_TESTS_COMMAND }}
+      - name: Set Maven Config
+        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
+        if: env.STEPS_PR_SET_MAVEN_CONFIG == 'true'
+        with:
+          cache: ${{ env.CACHE }}
+          javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
+          javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
+          javaVersion: ${{ env.JAVA_VERSION }}
+          mavenServerID: forgerock-internal-snapshots
+          repositoryName: ${{ inputs.componentName }}
+          updateMavenServer: ${{ env.UPDATE_PR_MAVEN_SERVER_ID }}
       # Builds Docker Image
       - name: Build Image
         uses: ./secure-api-gateway-ci/.github/actions/build-image
