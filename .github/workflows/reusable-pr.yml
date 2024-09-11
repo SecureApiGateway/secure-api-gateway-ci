@@ -30,6 +30,19 @@ jobs:
         with:
           path: ${{ inputs.componentName }}
           repository: SecureApiGateway/${{ inputs.componentName }}
+      - uses: s4u/maven-settings-action@v3.0.0
+        with:
+          servers: |
+            [{
+              "id": "forgerock-internal-releases",
+              "username":"${env.FR_ARTIFACTORY_USER}",
+              "password":"${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}"
+            },
+            {
+              "id": "forgerock-internal-snapshot",
+              "username":"${env.FR_ARTIFACTORY_USER}",
+              "password":"${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}"
+            }]
       - name: Set Cache with Community Repository
         uses: actions/setup-java@v4
         with:
@@ -37,9 +50,6 @@ jobs:
           java-version: 17
           architecture: x64
           cache: maven
-          server-id: forgerock-internal-releases
-          server-username: FR_ARTIFACTORY_USER # placeholder variable for username in deploy
-          server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # placeholder variable for token in deploy
       - name: Test
         run: |
           cat /home/runner/.m2/settings.xml
