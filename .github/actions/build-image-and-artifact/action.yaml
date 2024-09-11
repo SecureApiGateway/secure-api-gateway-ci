@@ -80,6 +80,11 @@ runs:
     - name: Build Core Code + Test + Create Docker Image
       shell: bash
       run: |
+        # What IG Version to use - Template used in POM for Core at this time
+        if grep -q IG_VERSION_REPLACE ${{ inputs.repositoryName }}/pom.xml; then
+          igVersion=$(sed -n 's/^IG_VERSION=\(.*\)/\1/p' < secure-api-gateway-ci/component-config/${{ inputs.repositoryName }}.env)
+          sed -i -e 's/IG_VERSION_REPLACE/'$igVersion'/g' ${{ inputs.repositoryName }}/pom.xml
+        fi
         cd ${{ inputs.repositoryName }}
         ${{ inputs.dockerBuildCommands }}
       env:
