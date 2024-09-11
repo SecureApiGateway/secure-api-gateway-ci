@@ -15,178 +15,10 @@ on:
         required: false
         type: string
 jobs:
-  check-dcr:
-    runs-on: ubuntu-latest
-    container: golang:1.17-alpine3.15
-    name: Check DCR PR Integrity
-    if: inputs.componentName == 'conformance-dcr'
-    steps:
-      # Checkout CI Repo
-      - name: Checkout CI Repo
-        uses: actions/checkout@v4
-        with:
-          path: secure-api-gateway-ci
-          repository: SecureApiGateway/secure-api-gateway-ci
-      # Checkout Calling Repo
-      - name: Checkout Calling Repo
-        uses: actions/checkout@v4
-        with:
-          path: ${{ inputs.componentName }}
-          repository: SecureApiGateway/${{ inputs.componentName }}
-      # Prepare Environment
-      - name: Prepare Environment
-        run: |
-          grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
-      # Build Changes
-      - name: Install packages
-        run: |
-          cd ${{ inputs.componentName }}
-          apk update && apk add git make bash curl
-      - name: Make Tools
-        run: |
-          cd ${{ inputs.componentName }}
-          make tools
-      - name: Build Project
-        run: |
-          cd ${{ inputs.componentName }}
-          make build
-      - name: Test Project
-        run: |
-          cd ${{ inputs.componentName }}
-          make test
   build:
     runs-on: ubuntu-latest
     name: Build
-    if: ${{ always() }}
-    needs: check-dcr
     steps:
-      # Checkout CI Repo
-      - name: Checkout CI Repo
-        uses: actions/checkout@v4
-        with:
-          path: secure-api-gateway-ci
-          repository: SecureApiGateway/secure-api-gateway-ci
-          # Remove before merge
-          ref: 1472-use-latest-ig-in-sapig
-      # Checkout Calling Repo
-      - name: Checkout Calling Repo
-        uses: actions/checkout@v4
-        with:
-          path: ${{ inputs.componentName }}
-          repository: SecureApiGateway/${{ inputs.componentName }}
-      # Prepare Environment
-      - name: Prepare Environment
-        run: |
-          # Sapig Type is optional so need to set it as null if not in use
-          sapigType=${{ inputs.sapigType || null }}
-          # What Docker Tag to build
-          if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
-            sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
-          fi
-          # Kustomize folders can be different based off of what sapig type is being built
-          if grep -q KUSTOMIZE_DIR_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
-            case $sapigType in
-              core)
-                kustomiseDir="core/kustomize/overlay/dev"
-                ;;
-              ob)
-                kustomiseDir="ob/kustomize/overlay/dev"
-                ;;
-              test-trusted-directory)
-                kustomiseDir="test-trusted-directory/kustomize/overlay/dev"
-                ;;
-            esac
-            sed -i -e "s|KUSTOMIZE_DIR_REPLACE|$kustomiseDir|g" secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
-          fi
-          # Once all replacements are done, load all the variables in the .env file to github
-          grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
-      # Auth GCP, SDK & Artifact Registry
-      - name: Authentication
-        uses: ./secure-api-gateway-ci/.github/actions/authentication
-        if: env.STEPS_PR_AUTHENTICATE == 'true'
-        with:
-          gcpKey: ${{ secrets.DEV_GAR_KEY }}
-          garLocation: ${{ env.GAR_LOCATION }}
-      # Set Maven Config
-      - name: Set Maven Config
-        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
-        if: env.STEPS_PR_SET_MAVEN_CONFIG == 'true'
-        with:
-          cache: ${{ env.CACHE }}
-          javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
-          javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
-          javaVersion: ${{ env.JAVA_VERSION }}
-          mavenServerID: ${{ env.MAVEN_SERVER_ID }}
-          repositoryName: ${{ inputs.componentName }}
-          updateMavenServer: ${{ env.UPDATE_PR_MAVEN_SERVER_ID }}
-      # Set Node Config
-      - name: Set Node Config
-        uses: ./secure-api-gateway-ci/.github/actions/set-node-config
-        if: env.STEPS_PR_SET_NODE_CONFIG == 'true'
-        with:
-          cache: ${{ env.CACHE }}
-          cacheDependencyPath: ${{ env.CACHE_DEP_PATH }}
-          nodeVersion: ${{ env.NODE_VERSION }}
-      # Run Lint
-      - name: Run Lint
-        if: env.STEPS_PR_RUN_LINT == 'true'
-        working-directory: ${{ inputs.componentName }}
-        run : |
-          ${{ env.STEPS_PR_RUN_LINT_COMMAND }}
-      # Run Copyright Test
-      - name: Run Copyright Check
-        if: env.STEPS_PR_RUN_COPYRIGHT_TESTS == 'true'
-        uses: ./secure-api-gateway-ci/.github/actions/check-copyright
-        with:
-          checkoutCode: false
-          repositoryName: ${{ inputs.componentName }}
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-      # Run Initial Tests
-      - name: Run Pre Build Tests
-        if: env.STEPS_PR_RUN_INITIAL_TESTS == 'true'
-        run : |
-          cd ${{ inputs.componentName }}
-          ${{ env.STEPS_PR_RUN_INITIAL_TESTS_COMMAND }}
-      - name: Set Maven Config
-        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
-        if: env.STEPS_PR_SET_MAVEN_CONFIG == 'true'
-        with:
-          cache: ${{ env.CACHE }}
-          javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
-          javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
-          javaVersion: ${{ env.JAVA_VERSION }}
-          mavenServerID: forgerock-internal-snapshots
-          repositoryName: ${{ inputs.componentName }}
-          updateMavenServer: ${{ env.UPDATE_PR_MAVEN_SERVER_ID }}
-      # Builds Docker Image
-      - name: Build Image
-        uses: ./secure-api-gateway-ci/.github/actions/build-image
-        if: env.STEPS_PR_BUILD_DOCKER_IMAGE == 'true'
-        with:
-          checkoutCode: false
-          dockerBuildCommands: ${{ env.STEPS_PR_BUILD_DOCKER_COMMANDS }}
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          repositoryName: ${{ inputs.componentName }}
-        # Builds Maven Project
-      - name: Build Maven Project
-        uses: ./secure-api-gateway-ci/.github/actions/build-artifact
-        if: env.STEPS_PR_BUILD_MAVEN_PROJECT == 'true'
-        with:
-          checkoutCode: false
-          mavenBuildCommands: ${{ env.STEPS_PR_BUILD_MAVEN_COMMANDS }}
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          repositoryName: ${{ inputs.componentName }}
-          updateMavenServer: false
-  deploy:
-    runs-on: ubuntu-latest
-    name: Deploy
-    needs: build
-    if: always() && !cancelled() && !contains(needs.*.result, 'failure')
-    steps:
-      # Checkout CI Repo
       - name: Checkout CI Repo
         uses: actions/checkout@v4
         with:
@@ -198,54 +30,19 @@ jobs:
         with:
           path: ${{ inputs.componentName }}
           repository: SecureApiGateway/${{ inputs.componentName }}
-      # Prepare Environment
-      - name: Prepare Environment
+      - name: testing
         run: |
-          if [ -n ${{ inputs.sapigType }} ]; then
-            echo "SAPIG_TYPE=${{ inputs.sapigType }}" >> $GITHUB_ENV
-          fi
-          grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
-      - name: Get Branch Name
-        if: env.STEPS_PR_GET_BRANCH_NAME == 'true'
-        id: branch-name
-        uses: tj-actions/branch-names@v7
-      # Deploy to Environment
-      - name: Deploy to Environment
-        uses: ./secure-api-gateway-ci/.github/actions/deploy-to-env
-        if: env.STEPS_PR_DEPLOY_CHANGES == 'true' && github.actor != 'dependabot[bot]'
+          ls -la
+      - name: Set Cache with Community Repository
+        uses: actions/setup-java@v4
         with:
-          argoServiceName: ${{ env.ARGO_SERVICE_NAME }}
-          branchName: ${{ steps.branch-name.outputs.current_branch || null }}
-          cfAPIKey: ${{ secrets.CF_API_KEY }}
-          cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
-          cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
-          changeBranch: ${{ env.STEPS_PR_GET_BRANCH_NAME }}
-          dockerTag: ${{ inputs.dockerTag }}
-          gitTrigger: pr
-          serviceName: ${{ env.SERVICE_NAME }}
-          sapigType: ${{ env.SAPIG_TYPE }}
-          testTrustedDirectoryArgoServiceName: ${{ env.TEST_TRUSTED_DIRECTORY_ARGO_SERVICE_NAME || null }}
-          testTrustedDirectoryServiceName: ${{ env.TEST_TRUSTED_DIRECTORY_SERVICE_NAME || null }}
-      # Run Functional Tests
-      - name: Run Functional Tests
-        uses: ./secure-api-gateway-ci/.github/actions/run-functional-tests
-        if: env.STEPS_PR_RUN_FUNCTIONAL_TESTS == 'true' && github.actor != 'dependabot[bot]'
-        with:
-          cfAPIKey: ${{ secrets.CF_API_KEY }}
-          cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
-          cfPipelineName: ${{ env.CF_PIPELINE_NAME }}
-          cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
-          dockerTag: ${{ inputs.dockerTag }}
-          serviceName: pr/${{ env.SERVICE_NAME }}
-          testsVersion: ${{ env.TESTS_VERSION }}
-      # Run Conformance DCR Tests
-      - name: Run Conformance DCR
-        uses: ./secure-api-gateway-ci/.github/actions/run-conformance-dcr
-        if: env.STEPS_PR_RUN_DCR_TESTS == 'true' && github.actor != 'dependabot[bot]'
-        with:
-          cfAPIKey: ${{ secrets.CF_API_KEY }}
-          cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
-          cfPipelineName: ${{ env.CF_PIPELINE_NAME }}
-          cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
-          dockerTag: ${{ inputs.dockerTag }}
-          serviceName: pr/${{ env.SERVICE_NAME }}
+          distribution: zulu
+          java-version: 17
+          architecture: x64
+          cache: maven
+          server-id: forgerock-internal-releases
+          server-username: FR_ARTIFACTORY_USER # placeholder variable for username in deploy
+          server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # placeholder variable for token in deploy
+      - name: Test
+        run: |
+          echo settings.xml
