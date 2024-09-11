@@ -82,7 +82,7 @@ jobs:
           # What IG Version to use - Template used in POM for Core at this time
           if grep -q IG_VERSION_REPLACE ${{ inputs.componentName }}/pom.xml; then
             igVersion=$(sed -n 's/^IG_VERSION=\(.*\)/\1/p' < secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env)
-            echo $igVersion
+            echo "DEBUG: $igVersion"
             sed -i -e 's/IG_VERSION_REPLACE/'$igVersion'/g' ${{ inputs.componentName }}/pom.xml
           fi
           cat ${{ inputs.componentName }}/pom.xml
