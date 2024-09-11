@@ -78,10 +78,12 @@ jobs:
           # Sapig Type is optional so need to set it as null if not in use
           sapigType=${{ inputs.sapigType || null }}
           # What IG Version to use - Template used in POM for Core at this time
+          ${{ inputs.componentName }}/pom.xml
           if grep -q IG_VERSION_REPLACE ${{ inputs.componentName }}/pom.xml; then
             igVersion=$(sed -n 's/^IG_VERSION=\(.*\)/\1/p' < secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env)
             sed -i -e 's/IG_VERSION_REPLACE/'$igVersion'/g' ${{ inputs.componentName }}/pom.xml
           fi
+          cat ${{ inputs.componentName }}/pom.xml
           # What Docker Tag to build
           if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
             sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
