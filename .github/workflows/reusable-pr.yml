@@ -66,6 +66,8 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
+          # Remove before merge
+          ref: 1472-use-latest-ig-in-sapig
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
@@ -77,11 +79,6 @@ jobs:
         run: |
           # Sapig Type is optional so need to set it as null if not in use
           sapigType=${{ inputs.sapigType || null }}
-          # What IG Version to use - Template used in POM for Core at this time
-          if grep -q IG_VERSION_REPLACE ${{ inputs.componentName }}/pom.xml; then
-            igVersion=$(sed -n 's/^IG_VERSION=\(.*\)/\1/p' < secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env)
-            sed -i -e 's/IG_VERSION_REPLACE/'$igVersion'/g' ${{ inputs.componentName }}/pom.xml
-          fi
           # What Docker Tag to build
           if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
             sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
