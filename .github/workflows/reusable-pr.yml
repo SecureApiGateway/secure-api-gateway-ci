@@ -30,9 +30,6 @@ jobs:
         with:
           path: ${{ inputs.componentName }}
           repository: SecureApiGateway/${{ inputs.componentName }}
-      - name: testing
-        run: |
-          ls -la
       - name: Set Cache with Community Repository
         uses: actions/setup-java@v4
         with:
@@ -45,4 +42,4 @@ jobs:
           server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # placeholder variable for token in deploy
       - name: Test
         run: |
-          cat settings.xml
+          cat /home/runner/.m2/settings.xml
