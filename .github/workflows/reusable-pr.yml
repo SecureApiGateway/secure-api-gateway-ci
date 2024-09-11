@@ -124,10 +124,18 @@ jobs:
         with:
           servers: |
             [{
+              "id": "forgerock-internal-releases",
+              "username":"${env.FR_ARTIFACTORY_USER}",
+              "password":"${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}"
+            },
+            {
               "id": "forgerock-internal-snapshot",
               "username":"${env.FR_ARTIFACTORY_USER}",
               "password":"${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}"
             }]
+      - name: testing
+        run: |
+          cat /home/runner/.m2/settings.xml
       # Set Node Config
       - name: Set Node Config
         uses: ./secure-api-gateway-ci/.github/actions/set-node-config
