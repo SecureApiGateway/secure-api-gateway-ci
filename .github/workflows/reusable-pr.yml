@@ -45,4 +45,4 @@ jobs:
           server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # placeholder variable for token in deploy
       - name: Test
         run: |
-          echo settings.xml
+          cat settings.xml
