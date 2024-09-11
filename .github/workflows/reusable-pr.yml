@@ -109,30 +109,10 @@ jobs:
           garLocation: ${{ env.GAR_LOCATION }}
       # Set Maven Config
       - name: Set Maven Config
-        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
         if: env.STEPS_PR_SET_MAVEN_CONFIG == 'true'
-        with:
-          cache: ${{ env.CACHE }}
-          javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
-          javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
-          javaVersion: ${{ env.JAVA_VERSION }}
-          mavenServerID: ${{ env.MAVEN_SERVER_ID }}
-          repositoryName: ${{ inputs.componentName }}
-          updateMavenServer: ${{ env.UPDATE_PR_MAVEN_SERVER_ID }}
-      - name: Add Additional Maven Repo to Settings.xml
-        uses: s4u/maven-settings-action@v3.0.0
-        with:
-          servers: |
-            [{
-              "id": "forgerock-internal-releases",
-              "username":"${env.FR_ARTIFACTORY_USER}",
-              "password":"${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}"
-            },
-            {
-              "id": "forgerock-internal-snapshot",
-              "username":"${env.FR_ARTIFACTORY_USER}",
-              "password":"${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}"
-            }]
+        run: |
+          cd ${{ inputs.componentName }}
+          mv settings.xml /home/runner/.m2/
       - name: testing
         run: |
           cat /home/runner/.m2/settings.xml
