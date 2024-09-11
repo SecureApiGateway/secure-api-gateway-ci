@@ -112,6 +112,7 @@ jobs:
         if: env.STEPS_PR_SET_MAVEN_CONFIG == 'true'
         run: |
           cd ${{ inputs.componentName }}
+          mkdir -p /home/runner/.m2
           mv settings.xml /home/runner/.m2/
       - name: testing
         run: |
