@@ -27,8 +27,6 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
-          # Remove before merging
-          ref: 1472-use-latest-ig-in-sapig
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
@@ -68,6 +66,8 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
+          # Remove before merging
+          ref: 1472-use-latest-ig-in-sapig
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
