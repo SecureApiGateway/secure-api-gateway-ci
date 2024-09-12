@@ -27,4 +27,5 @@ runs:
       shell: bash
       run: |
         mkdir -p /home/runner/.m2
+        ls -la
         mv secure-api-gateway-ci/maven/settings.xml /home/runner/.m2/ || maven/settings.xml /home/runner/.m2/
