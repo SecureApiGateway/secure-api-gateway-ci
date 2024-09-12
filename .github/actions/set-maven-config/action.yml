@@ -13,9 +13,6 @@ inputs:
   cache:
     description: What cache to use
     required: true
-  mavenServerID:
-    description: What Server to connect too
-    required: true
 runs:
   using: composite
   steps:
