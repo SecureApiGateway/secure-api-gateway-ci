@@ -51,50 +51,11 @@ runs:
         repository: ${{ inputs.repositoryName }}
         path: ${{ inputs.repositoryName }}
         ref: ${{ inputs.checkoutBranch }}
-    - name: Set Cache with Protected Repository
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'zulu'
-        java-version: '17'
-        architecture: x64
-        cache: 'maven'
-        server-id: forgerock-internal-releases # protected repo id to get the protected dependencies
-        server-username: FR_ARTIFACTORY_USER # env variable for username in deploy
-        server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # env variable for token in deploy
-      env:
-        FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
-        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-    - name: Get Version
-      shell: bash
-      run: |
-        echo "VERSION=$( cd ${{ inputs.repositoryName }} && mvn help:evaluate -Dexpression=project.version -q -DforceStdout )" >> $GITHUB_ENV
-        echo "MAVEN_SERVER_COMMUNITY=maven.forgerock.org-community" >> $GITHUB_ENV
-      env:
-        FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
-        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-    - name: Push to community snapshot if version contains snapshot
-      if: contains( env.VERSION, 'SNAPSHOT')
-      shell: bash
-      run: |
-        echo "MAVEN_SERVER_COMMUNITY=maven.forgerock.org-community-snapshots" >> $GITHUB_ENV
     - name: Build Core Code + Test + Create Docker Image
       shell: bash
       run: |
         cd ${{ inputs.repositoryName }}
         ${{ inputs.dockerBuildCommands }}
-      env:
-        FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
-        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-    - name: Set Cache with Community Repository
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'zulu'
-        java-version: '17'
-        architecture: x64
-        cache: 'maven'
-        server-id: ${{ env.MAVEN_SERVER_COMMUNITY }} # community repo to publish the java artifact
-        server-username: FR_ARTIFACTORY_USER # env variable for username in deploy
-        server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # env variable for token in deploy
       env:
         FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
         FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}

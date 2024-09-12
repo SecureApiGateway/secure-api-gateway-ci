@@ -9,13 +9,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout CI Code
-        uses: actions/checkout@v4  
+        uses: actions/checkout@v4
+        with:
+          ref: 1472-use-latest-ig-in-sapig
       # Auth GCP, SDK & Artifact Registry
       - name: Call Authentication
         uses: ./.github/actions/authentication
         with: 
           gcpKey: ${{ secrets.DEV_GAR_KEY }}
           garLocation: ${{ vars.GAR_LOCATION }}
+      - name: Set Maven Config
+        uses: ./.github//actions/set-maven-config
+        with:
+          javaArchitecture: x64
+          javaDistribution: zulu
+          javaVersion: 17
       # Build V3 Components
       - name: Call build-image-and-artifact for Test Trusted Directory
         uses: ./.github/actions/build-image-and-artifact
@@ -54,7 +62,6 @@ jobs:
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -U install"
           repositoryName: SecureApiGateway/secure-api-gateway-parent
-          updateMavenServer: false
       - name: Call build-artifact for Common
         uses: ./.github/actions/build-artifact
         with:
@@ -64,7 +71,6 @@ jobs:
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy --file pom.xml"
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
-          updateMavenServer: false
       - name: Call build-image-and-artifact for RCS
         uses: ./.github/actions/build-image-and-artifact
         with:
@@ -122,7 +128,6 @@ jobs:
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -U install"
           repositoryName: SecureApiGateway/secure-api-gateway-parent
-          updateMavenServer: false
       - name: Call build-artifact for Common V4
         uses: ./.github/actions/build-artifact
         with:
@@ -132,7 +137,6 @@ jobs:
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy --file pom.xml"
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
-          updateMavenServer: false
       - name: Call build-image-and-artifact for RCS V4
         uses: ./.github/actions/build-image-and-artifact
         with:
@@ -162,6 +166,16 @@ jobs:
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-functional-tests
+      # Build Core with Latest IG
+      - name: Call build-image-and-artifact for Core with Latest IG
+        uses: ./.github/actions/build-image-and-artifact
+        with:
+          checkoutCode: true
+          dockerBuildCommands: make clean && make docker tag=latestig setlatest=false mavenArgs="-Dopenig.version=2024.9.0-SNAPSHOT" dockerArgs="--build-arg base_image=gcr.io/forgerock-io/ig/docker-build:latest"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "mvn -B deploy -DskipTests"
+          repositoryName: SecureApiGateway/secure-api-gateway-core
       # Auth GCP, SDK & Artifact Registry
       - name: Call Authentication
         if: failure()

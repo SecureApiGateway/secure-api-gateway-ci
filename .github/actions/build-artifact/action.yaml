@@ -19,9 +19,6 @@ inputs:
   repositoryName:
     description: The repository name to checkout
     required: true
-  updateMavenServer:
-    description: Wherever or not the maven server should try get updated
-    required: true
 runs:
   using: composite
   steps:
@@ -51,33 +48,6 @@ runs:
         repository: ${{ inputs.repositoryName }}
         path: ${{ inputs.repositoryName }}
         ref: ${{ inputs.checkoutBranch }}
-    - name: Get Version
-      shell: bash
-      if: inputs.updateMavenServer == 'true'
-      run: |
-        echo "VERSION=$( cd ${{ inputs.repositoryName }} && mvn help:evaluate -Dexpression=project.version -q -DforceStdout )" >> $GITHUB_ENV
-        echo "MAVEN_SERVER_COMMUNITY=maven.forgerock.org-community" >> $GITHUB_ENV
-      env:
-        FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
-        FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ inputs.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-    - name: Push to community snapshot if version contains snapshot
-      if: contains( env.VERSION, 'SNAPSHOT')
-      shell: bash
-      run: |
-        if [ ${{ inputs.updateMavenServer }} == 'true' ]; then
-          echo "MAVEN_SERVER_COMMUNITY=maven.forgerock.org-community-snapshots" >> $GITHUB_ENV
-        fi
-    - name: Set Cache with Community Repository
-      uses: actions/setup-java@v4
-      if: inputs.updateMavenServer == 'true'
-      with:
-        distribution: 'zulu'
-        java-version: '17'
-        architecture: x64
-        cache: 'maven'
-        server-id: ${{ env.MAVEN_SERVER_COMMUNITY }} # community repo to publish the java artifact
-        server-username: FR_ARTIFACTORY_USER # placeholder variable for username in deploy
-        server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # placeholder variable for token in deploy
     - name: Deploy Core Maven Artifact Package
       shell: bash
       run: |

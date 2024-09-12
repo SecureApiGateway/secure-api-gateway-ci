@@ -66,6 +66,8 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
+          # Remove before merge
+          ref: 1472-use-latest-ig-in-sapig
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
@@ -114,9 +116,6 @@ jobs:
           javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
           javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
           javaVersion: ${{ env.JAVA_VERSION }}
-          mavenServerID: ${{ env.MAVEN_SERVER_ID }}
-          repositoryName: ${{ inputs.componentName }}
-          updateMavenServer: ${{ env.UPDATE_PR_MAVEN_SERVER_ID }}
       # Set Node Config
       - name: Set Node Config
         uses: ./secure-api-gateway-ci/.github/actions/set-node-config

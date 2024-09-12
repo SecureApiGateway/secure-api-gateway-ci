@@ -72,9 +72,6 @@ jobs:
           javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
           javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
           javaVersion: ${{ env.JAVA_VERSION }}
-          mavenServerID: ${{ env.MAVEN_SERVER_ID }}
-          repositoryName: ${{ inputs.componentName }}
-          updateMavenServer: ${{ env.UPDATE_RELEASE_MAVEN_SERVER_ID }}
       # https://github.com/crazy-max/ghaction-import-gpg
       # https://httgp.com/signing-commits-in-github-actions/
       # Prepare the environment to sign the commits
@@ -126,18 +123,6 @@ jobs:
           ref: v${{ inputs.releaseVersion }}
           repository: SecureApiGateway/${{ inputs.componentName }}
           token: ${{ secrets.RELEASE_PAT }}
-      # Set Maven Config
-      - name: Set Maven Config
-        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
-        if: env.STEPS_RELEASE_SET_MAVEN_CONFIG_SECOND == 'true'
-        with:
-          cache: ${{ env.CACHE }}
-          javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
-          javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
-          javaVersion: ${{ env.JAVA_VERSION }}
-          mavenServerID: ${{ env.MAVEN_SERVER_ID_SECOND }}
-          repositoryName: ${{ inputs.componentName }}
-          updateMavenServer: ${{ env.UPDATE_RELEASE_MAVEN_SERVER_ID_SECOND }}
       # Build and Push Artifacts to Maven
       - name: Build and Push Artifacts to Maven
         uses: ./secure-api-gateway-ci/.github/actions/build-artifact
@@ -148,7 +133,6 @@ jobs:
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: ${{ inputs.componentName }}
-          updateMavenServer: false
       # Build and Push Image to Artifact Registry
       - name: Build and Push Image to Artifact Registry
         uses: ./secure-api-gateway-ci/.github/actions/build-image
