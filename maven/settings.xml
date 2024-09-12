@@ -8,7 +8,7 @@
             <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
         </server>
         <server>
-            <id>forgerock-internal-snapshot</id>
+            <id>forgerock-internal-snapshots</id>
             <username>${env.FR_ARTIFACTORY_USER}</username>
             <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
         </server>
