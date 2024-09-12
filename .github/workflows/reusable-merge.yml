@@ -75,7 +75,6 @@ jobs:
           javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
           javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
           javaVersion: ${{ env.JAVA_VERSION }}
-          mavenServerID: ${{ env.MAVEN_SERVER_ID }}
       # Run Initial Tests
       - name: Run Pre Build Tests
         if: env.STEPS_MERGE_RUN_INITIAL_TESTS == 'true'

@@ -124,7 +124,6 @@ jobs:
           cache: ${{ env.CACHE }}
           cacheDependencyPath: ${{ env.CACHE_DEP_PATH }}
           nodeVersion: ${{ env.NODE_VERSION }}
-          mavenServerID: ${{ env.MAVEN_SERVER_ID }}
       # Run Lint
       - name: Run Lint
         if: env.STEPS_PR_RUN_LINT == 'true'

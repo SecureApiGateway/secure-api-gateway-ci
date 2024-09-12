@@ -26,9 +26,6 @@ runs:
         java-version: ${{ inputs.javaVersion }}
         architecture: ${{ inputs.javaArchitecture }}
         cache: ${{ inputs.cache }}
-        server-id: ${{ env.MAVEN_SERVER_ID }}
-        server-username: FR_ARTIFACTORY_USER # placeholder variable for username in deploy
-        server-password: FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD # placeholder variable for token in deploy
     - name: Move Settings.xml
       shell: bash
       run: |

@@ -72,7 +72,6 @@ jobs:
           javaArchitecture: ${{ env.JAVA_ARCHITECTURE }}
           javaDistribution: ${{ env.JAVA_DISTRIBUTION }}
           javaVersion: ${{ env.JAVA_VERSION }}
-          mavenServerID: ${{ env.MAVEN_SERVER_ID }}
       # https://github.com/crazy-max/ghaction-import-gpg
       # https://httgp.com/signing-commits-in-github-actions/
       # Prepare the environment to sign the commits
