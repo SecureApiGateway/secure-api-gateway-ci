@@ -10,8 +10,6 @@ jobs:
     steps:
       - name: Checkout CI Code
         uses: actions/checkout@v4
-        with:
-          ref: 1472-use-latest-ig-in-sapig
       # Auth GCP, SDK & Artifact Registry
       - name: Call Authentication
         uses: ./.github/actions/authentication
