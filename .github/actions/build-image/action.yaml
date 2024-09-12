@@ -53,6 +53,7 @@ runs:
       run: |
         cd ${{ inputs.repositoryName }}
         cat /home/runner/.m2/settings.xml
+        echo ${{ env.FR_ARTIFACTORY_USER }}
         ${{ inputs.dockerBuildCommands }}
       env:
         FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
