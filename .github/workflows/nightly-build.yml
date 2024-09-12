@@ -174,7 +174,7 @@ jobs:
         uses: ./.github/actions/build-image-and-artifact
         with:
           checkoutCode: true
-          dockerBuildCommands: "make clean && make docker tag=latestIG setlatest=false env=dev mavenArgs='-Dopenig.version=2024.9.0-SNAPSHOT' dockerArgs='--build-arg base_image=gcr.io/forgerock-io/ig/docker-build:latest'"
+          dockerBuildCommands: "make clean && make docker tag=latestIG setlatest=false mavenArgs='-Dopenig.version=2024.9.0-SNAPSHOT' dockerArgs='--build-arg base_image=gcr.io/forgerock-io/ig/docker-build:latest'"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy -DskipTests"
