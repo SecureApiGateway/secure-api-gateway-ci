@@ -32,6 +32,27 @@ jobs:
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy -DskipTests"
           repositoryName: SecureApiGateway/secure-api-gateway-core
+      # Build OB V3 & V4 with Latest Core Components
+      - name: Call build-image-and-artifact for OB with latest IG
+        uses: ./.github/actions/build-image-and-artifact
+        with:
+          checkoutBranch: master
+          checkoutCode: true
+          dockerBuildCommands: make docker tag=latestig setlatest=false mavenArgs="-Dsecure-api-gateway.version=3.2.1-SNAPSHOT" dockerArgs="--build-arg base_image=gcr.io/forgerock-io/ig/docker-build:latest"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "mvn -B deploy -DskipTests"
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
+      - name: Call build-image-and-artifact for OB V4 with latest IG
+        uses: ./.github/actions/build-image-and-artifact
+        with:
+          checkoutBranch: ob-v4
+          checkoutCode: true
+          dockerBuildCommands: make docker tag=latestig-v4 setlatest=false mavenArgs="-Dsecure-api-gateway.version=3.2.1-SNAPSHOT" dockerArgs="--build-arg base_image=gcr.io/forgerock-io/ig/docker-build:latest"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "mvn -B deploy -DskipTests"
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
       # Build V3 Components
       - name: Call build-image-and-artifact for Test Trusted Directory
         uses: ./.github/actions/build-image-and-artifact
