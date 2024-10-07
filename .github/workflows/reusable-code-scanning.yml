@@ -57,4 +57,3 @@ jobs:
           language: ${{ inputs.language }}
           mavenServerID: ${{ env.MAVEN_SERVER_ID }}
           repositoryName: ${{ inputs.componentName }}
-          updateMavenServer: false

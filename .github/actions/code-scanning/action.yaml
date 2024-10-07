@@ -77,7 +77,6 @@ runs:
         javaVersion: ${{ inputs.javaVersion }}
         mavenServerID: ${{ inputs.mavenServerID }}
         repositoryName: ${{ inputs.repositoryName }}
-        updateMavenServer: false
     # Set Maven Config
     - name: Set Maven Config
       uses: ./.github/actions/set-maven-config
@@ -89,7 +88,6 @@ runs:
         javaVersion: ${{ inputs.javaVersion }}
         mavenServerID: ${{ inputs.mavenServerID }}
         repositoryName: ${{ inputs.repositoryName }}
-        updateMavenServer: false
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
