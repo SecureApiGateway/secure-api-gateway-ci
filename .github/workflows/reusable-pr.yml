@@ -177,6 +177,7 @@ jobs:
           repositoryName: ${{ inputs.componentName }}
         # Output the snapshot version in the log
       - name: Output Snapshot Version
+        if: env.STEPS_PR_OUTPUT_SNAPSHOT_VERSION == 'true'
         run: |
           echo Version uploaded to maven: $STEPS_PR_SNAPSHOT_VERSION
   deploy:
