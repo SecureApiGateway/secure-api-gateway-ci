@@ -96,6 +96,16 @@ jobs:
             esac
             sed -i -e "s|KUSTOMIZE_DIR_REPLACE|$kustomiseDir|g" secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
+          # Override snapshot version if artifacts are being uploaded
+          if grep -q SNAPSHOT_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            # Create the snapshot version '[VERSION]-[PR_NUMBER]-SNAPSHOT'
+            pomVersion=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+            if [[ "$pomVersion" =~ "-SNAPSHOT" ]]; then
+              pomVersion=${pomVersion/-SNAPSHOT/""}
+            fi
+            pomVersion="$pomVersion-${{ inputs.dockerTag}}-SNAPSHOT"
+            sed -i -e 's/SNAPSHOT_REPLACE/'$pomVersion'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+          fi
           # Once all replacements are done, load all the variables in the .env file to github
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Auth GCP, SDK & Artifact Registry
@@ -163,7 +173,6 @@ jobs:
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: ${{ inputs.componentName }}
-          updateMavenServer: false
   deploy:
     runs-on: ubuntu-latest
     name: Deploy
