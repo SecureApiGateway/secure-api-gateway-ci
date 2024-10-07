@@ -99,7 +99,7 @@ jobs:
           # Override snapshot version if artifacts are being uploaded
           if grep -q SNAPSHOT_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
             # Create the snapshot version '[VERSION]-[PR_NUMBER]-SNAPSHOT'
-            pomVersion=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+            pomVersion=$(cd ${{ inputs.componentName }} && mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
             if [[ "$pomVersion" =~ "-SNAPSHOT" ]]; then
               pomVersion=${pomVersion/-SNAPSHOT/""}
             fi
