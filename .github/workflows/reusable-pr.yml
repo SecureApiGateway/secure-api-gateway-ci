@@ -33,6 +33,7 @@ jobs:
         with:
           path: ${{ inputs.componentName }}
           repository: SecureApiGateway/${{ inputs.componentName }}
+          ref: 1543-pr-artifact-upload
       # Prepare Environment
       - name: Prepare Environment
         run: |
