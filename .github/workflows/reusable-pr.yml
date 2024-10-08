@@ -102,7 +102,7 @@ jobs:
           if grep -q SNAPSHOT_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
             echo "DEBUG: hello"
             # Create the snapshot version '[VERSION]-[PR_NUMBER]-SNAPSHOT'
-            pomVersion=$(cd ${{ inputs.componentName }} && mvn help:evaluate -Dexpression=revision)
+            cd ${{ inputs.componentName }} && mvn help:evaluate -Dexpression=revision
             echo "DEBUG: $pomVersion"
             if [[ "$pomVersion" =~ "-SNAPSHOT" ]]; then
               pomVersion=${pomVersion/-SNAPSHOT/""}
