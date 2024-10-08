@@ -105,8 +105,8 @@ jobs:
             fi
             pomVersion="$pomVersion-${{ inputs.dockerTag}}-SNAPSHOT"
             sed -i -e 's/SNAPSHOT_REPLACE/'$pomVersion'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
-            STEPS_PR_OUTPUT_SNAPSHOT_VERSION="true" >> $GITHUB_ENV
-            STEPS_PR_SNAPSHOT_VERSION=$pomVersion >> $GITHUB_ENV
+            echo STEPS_PR_OUTPUT_SNAPSHOT_VERSION="true" >> $GITHUB_ENV
+            echo STEPS_PR_SNAPSHOT_VERSION=$pomVersion >> $GITHUB_ENV
           fi
           # Once all replacements are done, load all the variables in the .env file to github
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
