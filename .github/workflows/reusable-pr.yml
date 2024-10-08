@@ -77,7 +77,6 @@ jobs:
       # Prepare Environment
       - name: Prepare Environment
         run: |
-          mvn -v
           # Sapig Type is optional so need to set it as null if not in use
           sapigType=${{ inputs.sapigType || null }}
           # What Docker Tag to build
