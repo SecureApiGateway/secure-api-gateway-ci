@@ -66,8 +66,6 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
-          ref: 1543-pr-artifact-upload
-
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
