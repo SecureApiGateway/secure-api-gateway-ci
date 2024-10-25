@@ -27,7 +27,7 @@ jobs:
         uses: ./.github/actions/build-image-and-artifact
         with:
           checkoutCode: true
-          dockerBuildCommands: make clean && make docker tag=latestig setlatest=false mavenArgs="-Dopenig.version=2024.9.0-SNAPSHOT" dockerArgs="--build-arg base_image=gcr.io/forgerock-io/ig/docker-build:latest"
+          dockerBuildCommands: make clean && make docker tag=latestig setlatest=false mavenArgs="-Dopenig.version=${{ vars.LATEST_IG_ARTIFACT_VERSION }}" dockerArgs="--build-arg base_image=${{ vars.LATEST_IG_DOCKER_IMAGE }}"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy -DskipTests"
@@ -38,7 +38,7 @@ jobs:
         with:
           checkoutBranch: master
           checkoutCode: true
-          dockerBuildCommands: make docker tag=latestig setlatest=false mavenArgs="-Dsecure-api-gateway.version=3.2.1-SNAPSHOT" dockerArgs="--build-arg base_image=gcr.io/forgerock-io/ig/docker-build:latest"
+          dockerBuildCommands: make docker tag=latestig setlatest=false mavenArgs="-Dsecure-api-gateway.version=${{ vars.LATEST_CORE_ARTIFACT_VERSION }}" dockerArgs="--build-arg base_image=${{ vars.LATEST_IG_DOCKER_IMAGE }}"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy -DskipTests"
@@ -48,7 +48,7 @@ jobs:
         with:
           checkoutBranch: ob-v4
           checkoutCode: true
-          dockerBuildCommands: make docker tag=latestig-v4 setlatest=false mavenArgs="-Dsecure-api-gateway.version=3.2.1-SNAPSHOT" dockerArgs="--build-arg base_image=gcr.io/forgerock-io/ig/docker-build:latest"
+          dockerBuildCommands: make docker tag=latestig-v4 setlatest=false mavenArgs="-Dsecure-api-gateway.version=${{ vars.LATEST_CORE_ARTIFACT_VERSION }}" dockerArgs="--build-arg base_image=${{ vars.LATEST_IG_DOCKER_IMAGE }}"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy -DskipTests"
