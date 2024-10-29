@@ -84,8 +84,6 @@ jobs:
           javaArchitecture: x64
           javaDistribution: zulu
           javaVersion: 17
-          mavenServerID: forgerock-internal-releases
-          repositoryName: secure-api-gateway-core
       # CORE
       - name: Call check copyright for CORE V3
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
@@ -124,8 +122,6 @@ jobs:
           javaDistribution: 'zulu'
           javaVersion: '17'
           language: 'java-kotlin'
-          mavenServerID: 'forgerock-internal-releases'
-          repositoryName: SecureApiGateway/secure-api-gateway-core
       - name: Set Var if Failure
         if: failure()
         run: |
@@ -156,8 +152,6 @@ jobs:
           javaDistribution: 'zulu'
           javaVersion: '17'
           language: 'java-kotlin'
-          mavenServerID: 'forgerock-internal-releases'
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
       - name: Set Var if Failure
         if: failure()
         run: |
@@ -188,8 +182,6 @@ jobs:
           javaDistribution: 'zulu'
           javaVersion: '17'
           language: 'java-kotlin'
-          mavenServerID: 'forgerock-internal-releases'
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
       - name: Set Var if Failure
         if: failure()
         run: |
@@ -220,8 +212,6 @@ jobs:
           javaDistribution: 'zulu'
           javaVersion: '17'
           language: 'java-kotlin'
-          mavenServerID: 'forgerock-internal-releases'
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
       - name: Set Var if Failure
         if: failure()
         run: |
@@ -252,8 +242,6 @@ jobs:
           javaDistribution: 'zulu'
           javaVersion: '17'
           language: 'java-kotlin'
-          mavenServerID: 'forgerock-internal-releases'
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
       - name: Set Var if Failure
         if: failure()
         run: |
@@ -284,8 +272,6 @@ jobs:
           javaDistribution: 'zulu'
           javaVersion: '17'
           language: 'java-kotlin'
-          mavenServerID: 'forgerock-internal-releases'
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
       - name: Set Var if Failure
         if: failure()
         run: |
@@ -316,8 +302,6 @@ jobs:
           javaDistribution: 'zulu'
           javaVersion: '17'
           language: 'java-kotlin'
-          mavenServerID: 'forgerock-internal-releases'
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
       - name: Set Var if Failure
         if: failure()
         run: |
