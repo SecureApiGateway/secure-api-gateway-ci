@@ -118,10 +118,14 @@ jobs:
             echo STEPS_PR_OUTPUT_SNAPSHOT_VERSION="true" >> $GITHUB_ENV
             echo STEPS_PR_SNAPSHOT_VERSION=$pomVersion >> $GITHUB_ENV
           fi
-          # If there are maven args specified from the inputs, then we need to override MAVEN_ARG_OVERRIDE in the env file
-          if [[ -n "$mavenArg" ]]; then
-            if grep -q MAVEN_ARG_OVERRIDE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+          
+          # Replace the MAVEN_ARG_OVERRIDE placeholder if it exists
+          if grep -q MAVEN_ARG_OVERRIDE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
+            if [[ -n "$mavenArg" ]]; then
               sed -i -e 's/MAVEN_ARG_OVERRIDE/'mavenArgs=\"-Dopenig.version=${{ inputs.mavenArg }}\"'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+            else
+                # Delete the MAVEN_ARG_OVERRIDE if no mavenArg input has been supplied
+                sed -i -e 's/MAVEN_ARG_OVERRIDE//g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
             fi
           fi
           # Once all replacements are done, load all the variables in the .env file to github
