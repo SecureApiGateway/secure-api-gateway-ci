@@ -84,7 +84,6 @@ jobs:
           javaArchitecture: x64
           javaDistribution: zulu
           javaVersion: 17
-          repositoryName: secure-api-gateway-core
       # CORE
       - name: Call check copyright for CORE V3
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
