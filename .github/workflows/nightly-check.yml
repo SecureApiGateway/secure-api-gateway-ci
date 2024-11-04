@@ -84,6 +84,7 @@ jobs:
           javaArchitecture: x64
           javaDistribution: zulu
           javaVersion: 17
+          repositoryName: secure-api-gateway-core
       # CORE
       - name: Call check copyright for CORE V3
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
@@ -115,7 +116,6 @@ jobs:
           cache: 'maven'
           checkoutBranch: main
           checkoutCode: true
-          componentName: secure-api-gateway-core
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           actionTrigger: nightly
@@ -123,6 +123,7 @@ jobs:
           javaDistribution: 'zulu'
           javaVersion: '17'
           language: 'java-kotlin'
+          repositoryName: SecureApiGateway/secure-api-gateway-core
       - name: Set Var if Failure
         if: failure()
         run: |
@@ -153,6 +154,7 @@ jobs:
           javaDistribution: 'zulu'
           javaVersion: '17'
           language: 'java-kotlin'
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
       - name: Set Var if Failure
         if: failure()
         run: |
@@ -183,6 +185,7 @@ jobs:
           javaDistribution: 'zulu'
           javaVersion: '17'
           language: 'java-kotlin'
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
       - name: Set Var if Failure
         if: failure()
         run: |
@@ -213,6 +216,7 @@ jobs:
           javaDistribution: 'zulu'
           javaVersion: '17'
           language: 'java-kotlin'
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
       - name: Set Var if Failure
         if: failure()
         run: |
@@ -243,6 +247,7 @@ jobs:
           javaDistribution: 'zulu'
           javaVersion: '17'
           language: 'java-kotlin'
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
       - name: Set Var if Failure
         if: failure()
         run: |
@@ -273,6 +278,7 @@ jobs:
           javaDistribution: 'zulu'
           javaVersion: '17'
           language: 'java-kotlin'
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
       - name: Set Var if Failure
         if: failure()
         run: |
@@ -303,6 +309,7 @@ jobs:
           javaDistribution: 'zulu'
           javaVersion: '17'
           language: 'java-kotlin'
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
       - name: Set Var if Failure
         if: failure()
         run: |
