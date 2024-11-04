@@ -31,9 +31,6 @@ inputs:
   language:
     description: The language to use for the scanning
     required: true
-  mavenServerID:
-    description: What Server to connect too
-    required: true
   repositoryName:
     description: The repository name to checkout
     required: true
@@ -75,8 +72,6 @@ runs:
         javaArchitecture: ${{ inputs.javaArchitecture }}
         javaDistribution: ${{ inputs.javaDistribution }}
         javaVersion: ${{ inputs.javaVersion }}
-        mavenServerID: ${{ inputs.mavenServerID }}
-        repositoryName: ${{ inputs.repositoryName }}
     # Set Maven Config
     - name: Set Maven Config
       uses: ./.github/actions/set-maven-config
@@ -86,8 +81,6 @@ runs:
         javaArchitecture: ${{ inputs.javaArchitecture }}
         javaDistribution: ${{ inputs.javaDistribution }}
         javaVersion: ${{ inputs.javaVersion }}
-        mavenServerID: ${{ inputs.mavenServerID }}
-        repositoryName: ${{ inputs.repositoryName }}
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
