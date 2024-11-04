@@ -31,9 +31,6 @@ inputs:
   language:
     description: The language to use for the scanning
     required: true
-  mavenServerID:
-    description: What Server to connect too
-    required: true
   repositoryName:
     description: The repository name to checkout
     required: true
