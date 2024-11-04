@@ -115,6 +115,7 @@ jobs:
           cache: 'maven'
           checkoutBranch: main
           checkoutCode: true
+          componentName: secure-api-gateway-core
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           actionTrigger: nightly
