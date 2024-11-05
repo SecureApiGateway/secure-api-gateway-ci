@@ -26,6 +26,7 @@ jobs:
       - name: Call build-image-and-artifact for Core with Latest IG
         uses: ./.github/actions/build-image-and-artifact
         with:
+          checkoutBranch: ${{ vars.LATEST_CORE_SAPIG_BRANCH }}
           checkoutCode: true
           dockerBuildCommands: make clean && make docker tag=latestig setlatest=false mavenArgs="-Dopenig.version=${{ vars.LATEST_IG_ARTIFACT_VERSION }}" dockerArgs="--build-arg base_image=${{ vars.LATEST_IG_DOCKER_IMAGE }}"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
