@@ -63,7 +63,7 @@ jobs:
         with:
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: github-actions-trigger-functionaltest-latest
-          cfPipelineName: SAPIG-devenvlatest-core-functional-tests
+          cfPipelineName: SAPIG-devenv/latest-core-functional-tests
           cfPipelineBranch: master
           dockerTag: pr-46
           serviceName: pr/uk-core-functional-tests
