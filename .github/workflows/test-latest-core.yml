@@ -1,4 +1,4 @@
-name: Latest Core Build, Deploy & Test
+name: Latest Core - Build, Deploy & Test
 on:
   workflow_dispatch:
 jobs:
@@ -44,14 +44,31 @@ jobs:
       - name: Call Authentication
         uses: ./.github/actions/authentication
         with:
-          gcpKey: ${{ secrets.DEV_GAR_KEY }}
+          gcpKey: ${{ secrets.DEV_GCP_KEY }}
           garLocation: ${{ vars.GAR_LOCATION }}
+      # Auth GKE
+      - name: Authenticate to GKE
+        uses: google-github-actions/get-gke-credentials@db150f2cc60d1716e61922b832eae71d2a45938f
+        with:
+          cluster_name: devenvs
+          location: europe-west4
+          project_id: sbat-dev
+      # Set IP to Whitelist
+      - name: Add Build Runner IP to Whitelist
+        run: |
+          RUNNER_IP=$(curl -s ipinfo.io/ip)
+          OLD_CIDR=$(gcloud container clusters describe devenvs --region=europe-west4 --project sbat-dev --format json | jq -r '.masterAuthorizedNetworksConfig.cidrBlocks[] | .cidrBlock' | tr '\n' ',')
+          if [[ $OLD_CIDR != *$RUNNER_IP* ]]; then
+            gcloud container clusters update devenvs --region=europe-west4 --project sbat-dev --enable-master-authorized-networks --master-authorized-networks="$OLD_CIDR$RUNNER_IP/32"
+          fi
       # Delete Current IG Pod from Cluster
       - name: Delete Current IG Pod
         run: |
           kubectl delete deployment ig -n latest-core --wait=true
-  test:
-    name: Test
+      # Remove IP from Whitelist - to be aded in
+
+  test-functional:
+    name: Test - Functional
     runs-on: ubuntu-latest
     if: needs.deploy.result == 'success'
     needs: deploy
@@ -64,7 +81,26 @@ jobs:
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: github-actions-trigger-functionaltest-latest
           cfPipelineName: SAPIG-devenv/latest-core-functional-tests
-          cfPipelineBranch: master
+          cfPipelineBranch: main
           dockerTag: pr-46
           serviceName: pr/uk-core-functional-tests
           testsVersion: test
+  test-dcr:
+    name: Test - DCR
+    runs-on: ubuntu-latest
+    if: needs.deploy.result == 'success'
+    needs: deploy
+    steps:
+      - name: Checkout CI Code
+        uses: actions/checkout@v4
+      # Run Conformance DCR Tests
+      - name: Run Conformance DCR
+        uses: ./.github/actions/run-conformance-dcr
+        with:
+          cfAPIKey: ${{ secrets.CF_API_KEY }}
+          cfTriggerName: github-actions-trigger-dcrtest-latest
+          cfPipelineName: SAPIG-devenv/latest-core-dcr-conformance-tests
+          cfPipelineBranch: sbat-master
+          dockerTag: pr-66
+          serviceName: pr/uk-conformance-dcr
+          sortCFTrigger: false

@@ -269,6 +269,7 @@ jobs:
           cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
           dockerTag: ${{ inputs.dockerTag }}
           serviceName: pr/${{ env.SERVICE_NAME }}
+          sortCFTrigger: true
   pre-merge:
     runs-on: ubuntu-latest
     name: Pre Merge Checks
