@@ -85,3 +85,13 @@ jobs:
           dockerTag: pr-46
           serviceName: pr/uk-core-functional-tests
           testsVersion: test
+      # Run Conformance DCR Tests
+      - name: Run Conformance DCR
+        uses: ./.github/actions/run-conformance-dcr
+        with:
+          cfAPIKey: ${{ secrets.CF_API_KEY }}
+          cfTriggerName: github-actions-trigger-dcrtest-latest
+          cfPipelineName: SAPIG-devenv/latest-core-dcr-conformance-tests
+          cfPipelineBranch: sbat-master
+          dockerTag: pr-66
+          serviceName: pr/uk-conformance-dcr
