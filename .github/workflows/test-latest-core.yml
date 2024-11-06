@@ -67,8 +67,8 @@ jobs:
           kubectl delete deployment ig -n latest-core --wait=true
       # Remove IP from Whitelist - to be aded in
 
-  test:
-    name: Test
+  test-functional:
+    name: Test - Functional
     runs-on: ubuntu-latest
     if: needs.deploy.result == 'success'
     needs: deploy
@@ -85,6 +85,12 @@ jobs:
           dockerTag: pr-46
           serviceName: pr/uk-core-functional-tests
           testsVersion: test
+  test-dcr:
+    name: Test - DCR
+    runs-on: ubuntu-latest
+    if: needs.deploy.result == 'success'
+    needs: deploy
+    steps:
       # Run Conformance DCR Tests
       - name: Run Conformance DCR
         uses: ./.github/actions/run-conformance-dcr
