@@ -95,3 +95,4 @@ jobs:
           cfPipelineBranch: sbat-master
           dockerTag: pr-66
           serviceName: pr/uk-conformance-dcr
+          sortCFTrigger: false
