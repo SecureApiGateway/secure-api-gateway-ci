@@ -1,4 +1,4 @@
-name: Latest Core Build, Deploy & Test
+name: Latest Core - Build, Deploy & Test
 on:
   workflow_dispatch:
 jobs:
