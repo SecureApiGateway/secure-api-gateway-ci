@@ -1,0 +1,70 @@
+name: Latest Core Build, Deploy & Test
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CI Code
+        uses: actions/checkout@v4
+      # Auth GCP, SDK & Artifact Registry
+      - name: Call Authentication
+        uses: ./.github/actions/authentication
+        with:
+          gcpKey: ${{ secrets.DEV_GAR_KEY }}
+          garLocation: ${{ vars.GAR_LOCATION }}
+      # Set Maven Config
+      - name: Set Maven Config
+        uses: ./.github//actions/set-maven-config
+        with:
+          javaArchitecture: x64
+          javaDistribution: zulu
+          javaVersion: 17
+      # Build Core with Latest IG
+      - name: Call build-image-and-artifact for Core with Latest IG
+        uses: ./.github/actions/build-image-and-artifact
+        with:
+          checkoutBranch: ${{ vars.LATEST_CORE_SAPIG_BRANCH }}
+          checkoutCode: true
+          dockerBuildCommands: make clean && make docker tag=latestig setlatest=false mavenArgs="-Dopenig.version=${{ vars.LATEST_IG_ARTIFACT_VERSION }}" dockerArgs="--build-arg base_image=${{ vars.LATEST_IG_DOCKER_IMAGE }}"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "mvn -B deploy -DskipTests"
+          repositoryName: SecureApiGateway/secure-api-gateway-core
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    if: needs.build.result == 'success'
+    needs: build
+    steps:
+      - name: Checkout CI Code
+        uses: actions/checkout@v4
+      # Auth GCP, SDK & Artifact Registry
+      - name: Call Authentication
+        uses: ./.github/actions/authentication
+        with:
+          gcpKey: ${{ secrets.DEV_GAR_KEY }}
+          garLocation: ${{ vars.GAR_LOCATION }}
+      # Delete Current IG Pod from Cluster
+      - name: Delete Current IG Pod
+        run: |
+          kubectl delete deployment ig -n latest-core --wait=true
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    if: needs.deploy.result == 'success'
+    needs: deploy
+    steps:
+      - name: Checkout CI Code
+        uses: actions/checkout@v4
+      - name: Run Functional Tests
+        uses: ./.github/actions/run-functional-tests
+        with:
+          cfAPIKey: ${{ secrets.CF_API_KEY }}
+          cfTriggerName: github-actions-trigger-functionaltest-latest
+          cfPipelineName: SAPIG-devenvlatest-core-functional-tests
+          cfPipelineBranch: master
+          dockerTag: pr-46
+          serviceName: pr/uk-core-functional-tests
+          testsVersion: test
