@@ -39,7 +39,7 @@ runs:
     - name: 'Run Conformance DCR Tests'
       uses: codefresh-io/codefresh-pipeline-runner@master
       with:
-        args: '-v IMAGE_REPO=securebanking/${{ inputs.serviceName }} -v TAG=${{ inputs.dockerTag }}'
+        args: '-v IMAGE_REPO=europe-west4-docker.pkg.dev/sbat-gcr-develop/sapig-docker-artifact/securebanking/${{ inputs.serviceName }} -v TAG=${{ inputs.dockerTag }}'
       env:
         PIPELINE_NAME: ${{ env.cfPipelineName || inputs.cfPipelineName }}
         CF_API_KEY: ${{ inputs.cfAPIKey }}
