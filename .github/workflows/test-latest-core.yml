@@ -46,6 +46,13 @@ jobs:
         with:
           gcpKey: ${{ secrets.DEV_GCP_KEY }}
           garLocation: ${{ vars.GAR_LOCATION }}
+      # Auth GKE
+      - name: Authenticate to GKE
+        uses: google-github-actions/get-gke-credentials@db150f2cc60d1716e61922b832eae71d2a45938f
+        with:
+          cluster_name: devenvs
+          location: europe-west4
+          project_id: sbat-dev
       # Delete Current IG Pod from Cluster
       - name: Delete Current IG Pod
         run: |
