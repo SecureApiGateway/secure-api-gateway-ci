@@ -91,6 +91,8 @@ jobs:
     if: needs.deploy.result == 'success'
     needs: deploy
     steps:
+      - name: Checkout CI Code
+        uses: actions/checkout@v4
       # Run Conformance DCR Tests
       - name: Run Conformance DCR
         uses: ./.github/actions/run-conformance-dcr
