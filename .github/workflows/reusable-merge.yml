@@ -134,14 +134,14 @@ jobs:
           if [ -n ${{ inputs.sapigType }} ]; then
             echo "SAPIG_TYPE=${{ inputs.sapigType }}" >> $GITHUB_ENV
           fi
-          # Need to know if the change is for Dev or Nightly
+          # Need to know if the change is for Dev-CDK or Dev-AIC
           if [[ "${{ inputs.componentBranch }}" ]]; then
             if [[ "${{ inputs.componentBranch }}" =~ v[0-9] ]]; then
               branch=$(echo ${{ inputs.componentBranch }} | grep -oP "v[0-9]{1,3}")
-              echo "TARGET_ENV=dev" >> $GITHUB_ENV
+              echo "TARGET_ENV=dev-cdk" >> $GITHUB_ENV
               echo "LATEST_TAG=latest-$branch" >> $GITHUB_ENV
             else
-              echo "TARGET_ENV=nightly" >> $GITHUB_ENV
+              echo "TARGET_ENV=dev-aic" >> $GITHUB_ENV
               echo "LATEST_TAG=latest" >> $GITHUB_ENV
             fi
           fi
