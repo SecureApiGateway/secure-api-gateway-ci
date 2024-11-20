@@ -65,8 +65,15 @@ jobs:
       - name: Delete Current IG Pod
         run: |
           kubectl delete deployment ig -n latest-core --wait=true
-      # Remove IP from Whitelist - to be aded in
-
+      # Remove IP from Whitelist - to be added in
+      - name: Remove Build Runner IP from Whitelist
+        run: |
+          RUNNER_IP=$(curl -s ipinfo.io/ip)
+          CURRENT_CIDR=$(gcloud container clusters describe devenvs --region=europe-west4 --project sbat-dev --format json | jq -r '.masterAuthorizedNetworksConfig.cidrBlocks[] | .cidrBlock' | tr '\n' ',')
+          if [[ CURRENT_CIDR != *$RUNNER_IP* ]]; then
+            NEW_CIDR=$(echo $CURRENT_CIDR | sed s#$RUNNER_IP/32,##)
+            gcloud container clusters update devenvs --region=europe-west4 --project sbat-dev --enable-master-authorized-networks --master-authorized-networks="$NEW_CIDR"
+          fi
   test-functional:
     name: Test - Functional
     runs-on: ubuntu-latest
