@@ -70,7 +70,7 @@ jobs:
         run: |
           RUNNER_IP=$(curl -s ipinfo.io/ip)
           CIDR=$(gcloud container clusters describe devenvs --region=europe-west4 --project sbat-dev --format json | jq -r '.masterAuthorizedNetworksConfig.cidrBlocks[] | .cidrBlock' | tr '\n' ',')
-          if [[ CIDR == *$RUNNER_IP* ]]; then
+          if [[ $CIDR == *$RUNNER_IP* ]]; then
             NEW_CIDR=$(echo $CIDR | sed s#$RUNNER_IP/32,##)
             gcloud container clusters update devenvs --region=europe-west4 --project sbat-dev --enable-master-authorized-networks --master-authorized-networks="$NEW_CIDR"
           fi
