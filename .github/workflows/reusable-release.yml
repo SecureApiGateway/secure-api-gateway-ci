@@ -46,7 +46,7 @@ jobs:
             sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
           if grep -q VERSION_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
-            sed -i -e 's/VERSION_REPLACE/'${{ inputs.releaseVersion }}-SNAPSHOT'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
+            sed -i -e 's/VERSION_REPLACE/'${{ inputs.releaseVersion }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Perform Checks on Settings
