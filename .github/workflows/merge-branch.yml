@@ -25,8 +25,14 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
+      # Prepare Environment
+      - name: Prepare Environment
+        run: |
+          # Once all replacements are done, load all the variables in the .env file to github
+          grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Checkout Calling Repo Target Branch
       - name: Checkout Calling Repo
+        if: env.STEPS_REBASE_ENABLED == 'true'
         uses: actions/checkout@v4
         with:
           repository: SecureApiGateway/${{ inputs.componentName }}
@@ -36,11 +42,13 @@ jobs:
           token: ${{ secrets.RELEASE_PAT }}
       # Auth GCP, SDK & Artifact Registry
       - name: Call Authentication
+        if: env.STEPS_REBASE_ENABLED == 'true'
         uses: ./secure-api-gateway-ci/.github/actions/authentication
         with:
           gcpKey: ${{ secrets.GCP_SECRET_READ }}
           garLocation: ${{ vars.GAR_LOCATION }}
       - name: Import GPG Key
+        if: env.STEPS_REBASE_ENABLED == 'true'
         uses: crazy-max/ghaction-import-gpg@v5
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY_BOT }}
@@ -48,11 +56,6 @@ jobs:
           git_commit_gpgsign: true
           passphrase: ${{ secrets.GPG_KEY_PASSPHRASE_BOT }}
           workdir: ${{ inputs.componentName }}
-      # Prepare Environment
-      - name: Prepare Environment
-        run: |
-          # Once all replacements are done, load all the variables in the .env file to github
-          grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       - name: Perform Rebase
         if: env.STEPS_REBASE_ENABLED == 'true'
         run: |
