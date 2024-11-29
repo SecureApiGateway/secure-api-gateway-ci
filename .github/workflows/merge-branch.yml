@@ -48,7 +48,13 @@ jobs:
           git_commit_gpgsign: true
           passphrase: ${{ secrets.GPG_KEY_PASSPHRASE_BOT }}
           workdir: ${{ inputs.componentName }}
+      # Prepare Environment
+      - name: Prepare Environment
+        run: |
+          # Once all replacements are done, load all the variables in the .env file to github
+          grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       - name: Perform Rebase
+        if: env.STEPS_REBASE_ENABLED == 'true'
         run: |
           cd ${{ inputs.componentName }}
           git config user.name fropenbanking
