@@ -33,7 +33,7 @@ jobs:
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy -DskipTests"
           repositoryName: SecureApiGateway/secure-api-gateway-core
-      # Build OB V3 & V4 with Latest Core Components
+      # Build OB V3 with Latest Core Components
       - name: Call build-image-and-artifact for OB with latest IG
         uses: ./.github/actions/build-image-and-artifact
         with:
@@ -44,17 +44,25 @@ jobs:
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy -DskipTests"
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
-      - name: Call build-image-and-artifact for OB V4 with latest IG
-        uses: ./.github/actions/build-image-and-artifact
+      # Build V3 Components
+      - name: Call build-artifact for Parent
+        uses: ./.github/actions/build-artifact
         with:
-          checkoutBranch: ob-v4
+          checkoutBranch: master
           checkoutCode: true
-          dockerBuildCommands: make docker tag=latestig-v4 setlatest=false mavenArgs="-Dsecure-api-gateway.version=${{ vars.LATEST_CORE_ARTIFACT_VERSION }}" dockerArgs="--build-arg base_image=${{ vars.LATEST_IG_DOCKER_IMAGE }}"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          mavenBuildCommands: "mvn -B deploy -DskipTests"
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
-      # Build V3 Components
+          mavenBuildCommands: "mvn -U install"
+          repositoryName: SecureApiGateway/secure-api-gateway-parent
+      - name: Call build-artifact for Common
+        uses: ./.github/actions/build-artifact
+        with:
+          checkoutBranch: master
+          checkoutCode: true
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "mvn -B deploy --file pom.xml"
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
       - name: Call build-image-and-artifact for Test Trusted Directory
         uses: ./.github/actions/build-image-and-artifact
         with:
@@ -83,24 +91,6 @@ jobs:
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy -DskipTests"
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
-      - name: Call build-artifact for Parent
-        uses: ./.github/actions/build-artifact
-        with:
-          checkoutBranch: master
-          checkoutCode: true
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          mavenBuildCommands: "mvn -U install"
-          repositoryName: SecureApiGateway/secure-api-gateway-parent
-      - name: Call build-artifact for Common
-        uses: ./.github/actions/build-artifact
-        with:
-          checkoutBranch: master
-          checkoutCode: true
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          mavenBuildCommands: "mvn -B deploy --file pom.xml"
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
       - name: Call build-image-and-artifact for RCS
         uses: ./.github/actions/build-image-and-artifact
         with:
@@ -135,64 +125,6 @@ jobs:
           checkoutBranch: master
           checkoutCode: true
           dockerBuildCommands: "make docker tag=latest"
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-functional-tests
-      # Build V4 Components
-      - name: Call build-image-and-artifact for OB V4
-        uses: ./.github/actions/build-image-and-artifact
-        with:
-          checkoutBranch: ob-v4
-          checkoutCode: true
-          dockerBuildCommands: "make clean docker tag=latest-v4 && make clean docker tag=dev-v4 env=dev"
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          mavenBuildCommands: "mvn -B deploy -DskipTests"
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
-      - name: Call build-artifact for Parent V4
-        uses: ./.github/actions/build-artifact
-        with:
-          checkoutBranch: ob-v4
-          checkoutCode: true
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          mavenBuildCommands: "mvn -U install"
-          repositoryName: SecureApiGateway/secure-api-gateway-parent
-      - name: Call build-artifact for Common V4
-        uses: ./.github/actions/build-artifact
-        with:
-          checkoutBranch: ob-v4
-          checkoutCode: true
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          mavenBuildCommands: "mvn -B deploy --file pom.xml"
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
-      - name: Call build-image-and-artifact for RCS V4
-        uses: ./.github/actions/build-image-and-artifact
-        with:
-          checkoutBranch: ob-v4
-          checkoutCode: true
-          dockerBuildCommands: "make docker tag=latest-v4"
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          mavenBuildCommands: "make verify && mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
-      - name: Call build-image-and-artifact for RS V4
-        uses: ./.github/actions/build-image-and-artifact
-        with:
-          checkoutBranch: ob-v4
-          checkoutCode: true
-          dockerBuildCommands: "make docker tag=latest-v4"
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          mavenBuildCommands: "mvn -B deploy -DskipTests -DskipITs -DdockerCompose.skip -Ddockerfile.skip"
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
-      - name: Call build-image for OB Functional Tests V4
-        uses: ./.github/actions/build-image
-        with:
-          checkoutBranch: ob-v4
-          checkoutCode: true
-          dockerBuildCommands: "make docker tag=latest-v4"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-functional-tests
