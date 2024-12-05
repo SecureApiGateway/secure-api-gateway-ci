@@ -52,8 +52,10 @@ runs:
         else
           if [ "${{ inputs.targetEnv }}" == "dev-cdk" ]; then
             echo "GITHUB_USER=dev-cdk" >> ${GITHUB_ENV}
-          else
+          elif [ "${{ inputs.targetEnv }}" == "dev-aic" ]; then
             echo "GITHUB_USER=dev-aic" >> ${GITHUB_ENV}
+          else
+            echo "GITHUB_USER=both" >> ${GITHUB_ENV}
           fi
         fi
         
@@ -93,10 +95,10 @@ runs:
         else
           echo "ARGO_DEPLOY_ARG=TAG=${{ inputs.dockerTag }}" >> ${GITHUB_ENV}
         fi
-
+    # Deploy to env when feature branches are being used (dev-cdk and dev-aic get split at this point)
     - name: 'Update OB Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
-      if: env.DEPLOYOB == 'true'
+      if: env.DEPLOYOB == 'true' && env.GITHUB_USER != 'both'
       with:
         args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-ob'
       env:
@@ -104,12 +106,55 @@ runs:
         CF_API_KEY: ${{ inputs.cfAPIKey }}
         TRIGGER_NAME: ${{ inputs.cfTriggerName }}
         CF_BRANCH: ${{ inputs.cfPipelineBranch }}
+    # Deploy to envs when feature branches are not being used (dev-cdk and dev-aic both need tp be updated)
+    - name: 'Update CDK-OB Environment'
+      uses: codefresh-io/codefresh-pipeline-runner@master
+      if: env.DEPLOYOB == 'true' && env.GITHUB_USER == 'both'
+      with:
+        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-cdk-ob'
+      env:
+        PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
+        CF_API_KEY: ${{ inputs.cfAPIKey }}
+        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
+        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
+    - name: 'Update AIC-OB Environment'
+      uses: codefresh-io/codefresh-pipeline-runner@master
+      if: env.DEPLOYOB == 'true' && env.GITHUB_USER == 'both'
+      with:
+        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-aic-ob'
+      env:
+        PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
+        CF_API_KEY: ${{ inputs.cfAPIKey }}
+        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
+        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
 
+    # Deploy to env when feature branches are being used (dev-cdk and dev-aic get split at this point)
     - name: 'Update Core Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
-      if: env.DEPLOYCORE == 'true'
+      if: env.DEPLOYCORE == 'true' && env.GITHUB_USER != 'both'
       with:
         args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-core'
+      env:
+        PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
+        CF_API_KEY: ${{ inputs.cfAPIKey }}
+        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
+        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
+    # Deploy to envs when feature branches are not being used (dev-cdk and dev-aic both need tp be updated)
+    - name: 'Update Core Environment'
+      uses: codefresh-io/codefresh-pipeline-runner@master
+      if: env.DEPLOYCORE == 'true' && env.GITHUB_USER == 'both'
+      with:
+        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-cdk-core'
+      env:
+        PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
+        CF_API_KEY: ${{ inputs.cfAPIKey }}
+        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
+        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
+    - name: 'Update Core Environment'
+      uses: codefresh-io/codefresh-pipeline-runner@master
+      if: env.DEPLOYCORE == 'true' && env.GITHUB_USER == 'both'
+      with:
+        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-aic-core'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
