@@ -64,7 +64,7 @@ jobs:
       # Delete Current IG Pod from Cluster
       - name: Delete Current IG Pod
         run: |
-          kubectl delete deployment ig -n latest-core --wait=true
+          kubectl delete deployment ig -n openig-nightly-core --wait=true
       # Remove IP from Whitelist - to be added in
       - name: Remove Build Runner IP from Whitelist
         run: |
@@ -87,7 +87,7 @@ jobs:
         with:
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: github-actions-trigger-functionaltest-latest
-          cfPipelineName: SAPIG-devenv/latest-core-functional-tests
+          cfPipelineName: SAPIG-devenv/openig-nightly-core-functional-tests
           cfPipelineBranch: main
           dockerTag: pr-46
           serviceName: pr/uk-core-functional-tests
@@ -106,7 +106,7 @@ jobs:
         with:
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: github-actions-trigger-dcrtest-latest
-          cfPipelineName: SAPIG-devenv/latest-core-dcr-conformance-tests
+          cfPipelineName: SAPIG-devenv/openig-nightly-core-dcr-conformance-tests
           cfPipelineBranch: sbat-master
           dockerTag: pr-66
           serviceName: pr/uk-conformance-dcr
