@@ -134,7 +134,7 @@ jobs:
           if [ -n ${{ inputs.sapigType }} ]; then
             echo "SAPIG_TYPE=${{ inputs.sapigType }}" >> $GITHUB_ENV
           fi
-          # Need to know if the change is for Dev-CDK or Dev-AIC
+          # Need to know if the change is for Dev-cdk or Dev-aic
           if [[ "${{ inputs.componentBranch }}" ]]; then
             if [[ "${{ inputs.componentBranch }}" =~ v[0-9] ]]; then
               branch=$(echo ${{ inputs.componentBranch }} | grep -oP "v[0-9]{1,3}")
