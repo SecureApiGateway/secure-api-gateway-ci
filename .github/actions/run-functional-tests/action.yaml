@@ -28,22 +28,22 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: 'Decide what trigger to run, dev or nightly'
+    - name: 'Decide what trigger to run, dev-cdk or dev-aic'
       shell: bash
       run: |
         # Check if the OB or Core functional tests are being ran
-        if [ "${{ inputs.cfPipelineName }}" == "SAPIG-devenv/dev-ob-functional-tests" ]; then
-          # Check if the target env is dev or nightly
-          if [ "${{ inputs.targetEnv }}" == "nightly" ]; then
-            echo "cfPipelineName=SAPIG-devenv/nightly-ob-functional-tests" >> ${GITHUB_ENV}
+        if [ "${{ inputs.cfPipelineName }}" == "SAPIG-devenv/dev-cdk-ob-functional-tests" ]; then
+          # Check if the target env is dev-cdk or dev-aic
+          if [ "${{ inputs.targetEnv }}" == "dev-aic" ]; then
+            echo "cfPipelineName=SAPIG-devenv/dev-aic-ob-functional-tests" >> ${GITHUB_ENV}
             echo "cfPipelineBranch=master" >> ${GITHUB_ENV}
           else
             echo "cfPipelineName=${{ inputs.cfPipelineName }}" >> ${GITHUB_ENV}
             echo "cfPipelineBranch=${{ inputs.cfPipelineBranch }}" >> ${GITHUB_ENV}
           fi
         else
-          if [ "${{ inputs.targetEnv }}" == "nightly" ]; then
-            echo "cfPipelineName=SAPIG-devenv/nightly-core-functional-tests" >> ${GITHUB_ENV}
+          if [ "${{ inputs.targetEnv }}" == "dev-aic" ]; then
+            echo "cfPipelineName=SAPIG-devenv/dev-aic-core-functional-tests" >> ${GITHUB_ENV}
             echo "cfPipelineBranch=master" >> ${GITHUB_ENV}
           else
             echo "cfPipelineName=${{ inputs.cfPipelineName }}" >> ${GITHUB_ENV}

@@ -75,7 +75,7 @@ runs:
     # Set Maven Config
     - name: Set Maven Config
       uses: ./.github/actions/set-maven-config
-      if: inputs.actionTrigger == 'nightly'
+      if: inputs.actionTrigger == 'dev-aic'
       with:
         cache: ${{ inputs.cache }}
         javaArchitecture: ${{ inputs.javaArchitecture }}

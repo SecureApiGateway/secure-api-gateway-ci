@@ -50,10 +50,10 @@ runs:
         if [ "${{ inputs.gitTrigger }}" == "pr" ]; then
           echo "GITHUB_USER=$(echo ${{github.actor}} | tr '[:upper:]' '[:lower:]')" >> ${GITHUB_ENV}
         else
-          if [ "${{ inputs.targetEnv }}" == "dev" ]; then
-            echo "GITHUB_USER=dev" >> ${GITHUB_ENV}
+          if [ "${{ inputs.targetEnv }}" == "dev-cdk" ]; then
+            echo "GITHUB_USER=dev-cdk" >> ${GITHUB_ENV}
           else
-            echo "GITHUB_USER=nightly" >> ${GITHUB_ENV}
+            echo "GITHUB_USER=dev-aic" >> ${GITHUB_ENV}
           fi
         fi
         
