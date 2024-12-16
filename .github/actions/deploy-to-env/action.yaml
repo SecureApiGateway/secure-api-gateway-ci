@@ -76,7 +76,7 @@ runs:
           echo ARGOSERVICENAME=${{ inputs.argoServiceName }} >> ${GITHUB_ENV}
           echo SERVICENAME=${{ inputs.serviceName }} >> ${GITHUB_ENV}
         elif [[ ${{ inputs.sapigType }} == "test-trusted-directory" ]]; then
-          echo DEPLOYOB=false >> ${GITHUB_ENV}
+          echo DEPLOYOB=true >> ${GITHUB_ENV}
           echo DEPLOYCORE=true >> ${GITHUB_ENV}
           echo ARGOSERVICENAME=${{ inputs.testTrustedDirectoryArgoServiceName }} >> ${GITHUB_ENV}
           echo SERVICENAME=${{ inputs.testTrustedDirectoryServiceName }} >> ${GITHUB_ENV}
@@ -140,7 +140,7 @@ runs:
         TRIGGER_NAME: ${{ inputs.cfTriggerName }}
         CF_BRANCH: ${{ inputs.cfPipelineBranch }}
     # Deploy to envs when feature branches are not being used (dev-cdk and dev-aic both need tp be updated)
-    - name: 'Update Core Environment'
+    - name: 'Update CDK-Core Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYCORE == 'true' && env.GITHUB_USER == 'both'
       with:
@@ -150,7 +150,7 @@ runs:
         CF_API_KEY: ${{ inputs.cfAPIKey }}
         TRIGGER_NAME: ${{ inputs.cfTriggerName }}
         CF_BRANCH: ${{ inputs.cfPipelineBranch }}
-    - name: 'Update Core Environment'
+    - name: 'Update AIC-Core Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYCORE == 'true' && env.GITHUB_USER == 'both'
       with:
