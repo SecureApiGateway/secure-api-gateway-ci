@@ -20,7 +20,7 @@ on:
         type: string
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: Build
     steps:
       # Checkout CI Repo
@@ -112,7 +112,7 @@ jobs:
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: ${{ inputs.componentName }}
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: Deploy
     needs: build
     steps:

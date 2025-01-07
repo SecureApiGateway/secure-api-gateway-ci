@@ -20,7 +20,7 @@ on:
         type: string
 jobs:
   check-dcr:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     container: golang:1.17-alpine3.15
     name: Check DCR PR Integrity
     if: inputs.componentName == 'conformance-dcr'
@@ -59,7 +59,7 @@ jobs:
           cd ${{ inputs.componentName }}
           make test
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: Build
     if: ${{ always() }}
     needs: check-dcr
@@ -201,7 +201,7 @@ jobs:
         run: |
           echo Version uploaded to maven: $STEPS_PR_SNAPSHOT_VERSION
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: Deploy
     needs: build
     if: always() && !cancelled() && !contains(needs.*.result, 'failure')
@@ -271,7 +271,7 @@ jobs:
           serviceName: pr/${{ env.SERVICE_NAME }}
           sortCFTrigger: true
   pre-merge:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: Pre Merge Checks
     needs: deploy
     if: always() && !cancelled() && !contains(needs.*.result, 'failure')

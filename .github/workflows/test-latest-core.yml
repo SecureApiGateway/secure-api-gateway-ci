@@ -4,7 +4,7 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout CI Code
         uses: actions/checkout@v4
@@ -34,7 +34,7 @@ jobs:
           repositoryName: SecureApiGateway/secure-api-gateway-core
   deploy:
     name: Deploy
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: needs.build.result == 'success'
     needs: build
     steps:
@@ -76,7 +76,7 @@ jobs:
           fi
   test-functional:
     name: Test - Functional
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: needs.deploy.result == 'success'
     needs: deploy
     steps:
@@ -94,7 +94,7 @@ jobs:
           testsVersion: test
   test-dcr:
     name: Test - DCR
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: needs.deploy.result == 'success'
     needs: deploy
     steps:
