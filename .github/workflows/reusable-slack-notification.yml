@@ -16,7 +16,7 @@ on:
         required: true
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: Push Slack Notification
     steps:
       # Checkout Code

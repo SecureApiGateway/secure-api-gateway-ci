@@ -6,7 +6,7 @@ on:
 jobs:
   copyright:
     name: Copyright
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout CI Code
         uses: actions/checkout@v4
@@ -70,7 +70,7 @@ jobs:
           echo FAILUREINBUILD=true >> ${GITHUB_ENV}
   analyze-core:
     name: Analyze Core
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-22.04'
     timeout-minutes: 360
     permissions:
       security-events: write
@@ -101,7 +101,7 @@ jobs:
           echo FAILUREINBUILD=true >> ${GITHUB_ENV}
   analyze-common:
     name: Analyze Common
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-22.04'
     timeout-minutes: 360
     permissions:
       security-events: write
@@ -132,7 +132,7 @@ jobs:
           echo FAILUREINBUILD=true >> ${GITHUB_ENV}
   analyze-rs:
     name: Analyze RS
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-22.04'
     timeout-minutes: 360
     permissions:
       security-events: write
@@ -163,7 +163,7 @@ jobs:
           echo FAILUREINBUILD=true >> ${GITHUB_ENV}
   analyze-rcs:
     name: Analyze RCS
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-22.04'
     timeout-minutes: 360
     permissions:
       security-events: write
@@ -194,7 +194,7 @@ jobs:
           echo FAILUREINBUILD=true >> ${GITHUB_ENV}
   check-for-failure:
     name: Check for failure & Notify
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-22.04'
     needs: [copyright, analyze-core,analyze-common,analyze-rs,analyze-rcs]
     if: ${{ always() && contains(needs.*.result, 'failure') }}
     steps:
