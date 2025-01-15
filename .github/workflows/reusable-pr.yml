@@ -96,9 +96,6 @@ jobs:
               ob)
                 kustomiseDir="ob/kustomize/overlay/dev-cdk"
                 ;;
-              test-trusted-directory)
-                kustomiseDir="test-trusted-directory/core/kustomize/overlay/dev-cdk"
-                ;;
             esac
             sed -i -e "s|KUSTOMIZE_DIR_REPLACE|$kustomiseDir|g" secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi

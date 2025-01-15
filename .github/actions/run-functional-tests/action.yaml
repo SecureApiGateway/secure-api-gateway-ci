@@ -53,7 +53,7 @@ runs:
     - name: 'Run Functional Tests'
       uses: codefresh-io/codefresh-pipeline-runner@master
       with:
-        args: '-v IMAGE_REPO=securebanking/${{ inputs.serviceName }} -v TAG=${{ inputs.dockerTag }} -v TEST_TASK=${{ inputs.testsVersion }} -v BRANCH=${{ env.cfPipelineBranch }}'
+        args: '-v IMAGE_REPO=core/${{ inputs.serviceName }} -v TAG=${{ inputs.dockerTag }} -v TEST_TASK=${{ inputs.testsVersion }} -v BRANCH=${{ env.cfPipelineBranch }}'
       env:
         PIPELINE_NAME: ${{ env.cfPipelineName }}
         CF_API_KEY: ${{ inputs.cfAPIKey }}
