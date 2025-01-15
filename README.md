@@ -70,7 +70,7 @@ This will allow us to spot any potential issues from changes made in dependant r
 
 ## CI/CD
 
-Within this repo, there is the idea of having reusable workflows, which our individual components repo will use when performing actions, such as `PR`, `Merge`, `Rebase` & `Release`. 
+Within this repo, there is the idea of having reusable workflows, which our individual components repo will use when performing actions, such as `PR`, `Merge` & `Release`. 
 
 The individual components check out this repo, as well as their own. The workflow for the individual components are as basic as can be. For example;
 
