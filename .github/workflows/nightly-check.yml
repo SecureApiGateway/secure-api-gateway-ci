@@ -38,8 +38,8 @@ jobs:
       - name: Checkout OB Repo
         uses: actions/checkout@v4
         with:
-          path: secure-api-gateway-ob
-          repository: SecureApiGateway/secure-api-gateway-ob
+          path: secure-api-gateway-ob-uk
+          repository: SecureApiGateway/secure-api-gateway-ob-uk
           ref: main
       # Set Maven Config
       - name: Set Maven Config
