@@ -40,7 +40,7 @@ jobs:
         with:
           path: secure-api-gateway-ob-uk
           repository: SecureApiGateway/secure-api-gateway-ob-uk
-          ref: main
+          ref: master
       # Set Maven Config
       - name: Set Maven Config
         uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
