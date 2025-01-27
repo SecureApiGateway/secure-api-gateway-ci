@@ -34,13 +34,13 @@ jobs:
           checkoutBranch: master
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
-      # OB
-      - name: Call check copyright for OB V3
-        uses: ./secure-api-gateway-ci/.github/actions/check-copyright
+      # Checkout OB Repo
+      - name: Checkout OB Repo
+        uses: actions/checkout@v4
         with:
-          checkoutBranch: master
-          checkoutCode: true
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
+          path: secure-api-gateway-ob-uk
+          repository: SecureApiGateway/secure-api-gateway-ob-uk
+          ref: master
       # Checkout Core Repo
       - name: Checkout Core Repo
         uses: actions/checkout@v4
@@ -56,6 +56,15 @@ jobs:
           javaArchitecture: x64
           javaDistribution: zulu
           javaVersion: 17
+      # OB
+      - name: Call check copyright for OB V3
+        uses: ./secure-api-gateway-ci/.github/actions/check-copyright
+        with:
+          checkoutBranch: master
+          checkoutCode: true
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
       # CORE
       - name: Call check copyright for CORE V3
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
