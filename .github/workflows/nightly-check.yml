@@ -13,14 +13,6 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
-      # Set Maven Config
-      - name: Set Maven Config
-        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
-        with:
-          cache: maven
-          javaArchitecture: x64
-          javaDistribution: zulu
-          javaVersion: 17
       # Common
       - name: Call check copyright for Common V3
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
@@ -42,6 +34,21 @@ jobs:
           checkoutBranch: master
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
+      # Checkout OB Repo
+      - name: Checkout OB Repo
+        uses: actions/checkout@v4
+        with:
+          path: secure-api-gateway-ob
+          repository: SecureApiGateway/secure-api-gateway-ob
+          ref: main
+      # Set Maven Config
+      - name: Set Maven Config
+        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
+        with:
+          cache: maven
+          javaArchitecture: x64
+          javaDistribution: zulu
+          javaVersion: 17
       # OB
       - name: Call check copyright for OB V3
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
@@ -56,6 +63,14 @@ jobs:
           path: secure-api-gateway-core
           repository: SecureApiGateway/secure-api-gateway-core
           ref: main
+      # Set Maven Config
+      - name: Set Maven Config
+        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
+        with:
+          cache: maven
+          javaArchitecture: x64
+          javaDistribution: zulu
+          javaVersion: 17
       # CORE
       - name: Call check copyright for CORE V3
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
