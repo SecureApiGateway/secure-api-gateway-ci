@@ -4,8 +4,8 @@ on:
     - cron: '0 3 * * 1-5' # UTC
   workflow_dispatch:
 jobs:
-  build:
-    name: Build
+  build-openig-nightly:
+    name: Build OpenIG Nightly
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout CI Code
@@ -44,6 +44,24 @@ jobs:
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy -DskipTests"
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
+  build-sapig-nightly:
+    name: Build SAPIG Nightly
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout CI Code
+        uses: actions/checkout@v4
+      # Auth GCP, SDK & Artifact Registry
+      - name: Call Authentication
+        uses: ./.github/actions/authentication
+        with:
+          gcpKey: ${{ secrets.DEV_GAR_KEY }}
+          garLocation: ${{ vars.GAR_LOCATION }}
+      - name: Set Maven Config
+        uses: ./.github//actions/set-maven-config
+        with:
+          javaArchitecture: x64
+          javaDistribution: zulu
+          javaVersion: 17
       # Build V3 Components
       - name: Call build-artifact for Parent
         uses: ./.github/actions/build-artifact
