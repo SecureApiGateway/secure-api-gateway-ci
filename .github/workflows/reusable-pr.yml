@@ -31,6 +31,8 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
+          # SH-ToDo = Revert
+          ref: OPENIG-8961-separate-ig-instance-deployments-for-authorisation-server-and-resource-server
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
@@ -70,6 +72,8 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
+          # SH-ToDo = Revert
+          ref: OPENIG-8961-separate-ig-instance-deployments-for-authorisation-server-and-resource-server
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
@@ -209,6 +213,8 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
+          # SH-ToDo = Revert
+          ref: OPENIG-8961-separate-ig-instance-deployments-for-authorisation-server-and-resource-server
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
@@ -279,6 +285,8 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
+          # SH-ToDo = Revert
+          ref: OPENIG-8961-separate-ig-instance-deployments-for-authorisation-server-and-resource-server
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
