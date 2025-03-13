@@ -1,0 +1,13 @@
+name: OpenIG - Shaun Testing
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout CI Code
+        uses: actions/checkout@v4
+      - name: Clone BitBucket
+        run: |
+          git clone https://${{ secrets.BITBUCKET_USERNAME }}@bitbucket.org/${{ secrets.BITBUCKET_ACCESS_KEY }}
