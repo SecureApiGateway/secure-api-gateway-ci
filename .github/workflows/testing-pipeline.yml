@@ -10,7 +10,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Clone BitBucket
         run: |
-          git -c "http.extraHeader=Authorization: Bearer ${{ secrets.BITBUCKET_ACCESS_KEY }}" clone ${{ secrets.BITBUCKET_OPENIG_REPO }}
-          cd openig
-          git fetch && git checkout dan.badham.OPENIG-8576-api-client-jwks-caching
+          git -c "http.extraHeader=Authorization: Bearer ${{ secrets.BITBUCKET_ACCESS_KEY }}" clone -b ${{ vars.BITBUCKET_OPENIG_BRANCH }} ${{ secrets.BITBUCKET_OPENIG_REPO }}
+          dan.badham.OPENIG-8576-api-client-jwks-caching
           ls -la
