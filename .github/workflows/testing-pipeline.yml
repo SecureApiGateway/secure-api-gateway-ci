@@ -10,4 +10,4 @@ jobs:
         uses: actions/checkout@v4
       - name: Clone BitBucket
         run: |
-          git -c "http.extraHeader=Authorization: Bearer ${{ secrets.BITBUCKET_ACCESS_KEY }}" clone https://stash.forgerock.org/scm/openig/openig.git
+          git -c "http.extraHeader=Authorization: Bearer ${{ secrets.BITBUCKET_ACCESS_KEY }}" clone ${{ secrets.BITBUCKET_OPENIG_REPO }}
