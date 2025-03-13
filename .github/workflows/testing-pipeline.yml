@@ -11,4 +11,5 @@ jobs:
       - name: Clone BitBucket
         run: |
           git -c "http.extraHeader=Authorization: Bearer ${{ secrets.BITBUCKET_ACCESS_KEY }}" clone -b ${{ vars.BITBUCKET_OPENIG_BRANCH }} ${{ secrets.BITBUCKET_OPENIG_REPO }}
+          cd openig
           ls -la
