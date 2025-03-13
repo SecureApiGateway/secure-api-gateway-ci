@@ -11,3 +11,5 @@ jobs:
       - name: Clone BitBucket
         run: |
           git -c "http.extraHeader=Authorization: Bearer ${{ secrets.BITBUCKET_ACCESS_KEY }}" clone ${{ secrets.BITBUCKET_OPENIG_REPO }}
+          git checkout dan.badham.OPENIG-8576-api-client-jwks-caching
+          ls -la
