@@ -12,4 +12,4 @@ jobs:
         run: |
           git -c "http.extraHeader=Authorization: Bearer ${{ secrets.BITBUCKET_ACCESS_KEY }}" clone -b ${{ vars.BITBUCKET_OPENIG_BRANCH }} ${{ vars.BITBUCKET_OPENIG_REPO }}
           cd openig
-          ls -la
+          mvn -pl openig-standalone exec:java@run -Dexec.args=$HOME/.openig
