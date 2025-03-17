@@ -224,8 +224,9 @@ jobs:
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       - name: Get Branch Name
         if: env.STEPS_PR_GET_BRANCH_NAME == 'true'
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         id: branch-name
-        uses: tj-actions/branch-names@v7
       # Deploy to Environment
       - name: Deploy to Environment
         uses: ./secure-api-gateway-ci/.github/actions/deploy-to-env
