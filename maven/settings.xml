@@ -1,16 +1,106 @@
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xsi:schemaLocation="https://maven.apache.org/SETTINGS/1.1.0 https://maven.apache.org/xsd/settings-1.1.0.xsd" xmlns="https://maven.apache.org/SETTINGS/1.1.0"
+          xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance">
     <servers>
         <server>
-            <id>forgerock-internal-releases</id>
             <username>${env.FR_ARTIFACTORY_USER}</username>
             <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-internal-snapshots</id>
         </server>
         <server>
-            <id>forgerock-internal-snapshots</id>
             <username>${env.FR_ARTIFACTORY_USER}</username>
             <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-internal-snapshots-mirror</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-internal-releases</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-internal-releases-mirror</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-internal-staging-mirror</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-staging-repository</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-staging-repository-mirror</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-snapshots-repo</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-staging-repo-mirror</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-internal</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-internal-mirror</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-private-snapshots</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-private-snapshots-mirror</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-private-releases</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-private-releases-mirror</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-third-party</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-plugins-repository</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>forgerock-plugins-repository-mirror</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>maven.forgerock.org</id>
+        </server>
+        <server>
+            <username>${env.FR_ARTIFACTORY_USER}</username>
+            <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
+            <id>maven.forgerock.org-mirror</id>
         </server>
         <server>
             <id>maven.forgerock.org-community</id>
@@ -23,4 +113,66 @@
             <password>${env.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD}</password>
         </server>
     </servers>
+    <mirrors>
+        <mirror>
+            <id>forgerock-internal-releases-mirror</id>
+            <name>ForgeRock Internal Releases Repository mirror</name>
+            <url>https://maven.forgerock.org/artifactory/internal-releases</url>
+            <mirrorOf>forgerock-internal-releases</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>forgerock-internal-snapshots-mirror</id>
+            <name>ForgeRock Internal Snapshots Repository mirror</name>
+            <url>https://maven.forgerock.org/artifactory/internal-snapshots</url>
+            <mirrorOf>forgerock-internal-snapshots</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>forgerock-internal-staging-mirror</id>
+            <name>ForgeRock Internal Snapshots Repository mirror</name>
+            <url>https://maven.forgerock.org/artifactory/internal-staging</url>
+            <mirrorOf>forgerock-internal-staging</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>forgerock-staging-repository-mirror</id>
+            <name>ForgeRock Internal Staging Repository mirror</name>
+            <url>https://maven.forgerock.org/artifactory/internal-staging</url>
+            <mirrorOf>forgerock-staging-repository</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>forgerock-staging-repo-mirror</id>
+            <name>ForgeRock Internal Staging Repository mirror</name>
+            <url>https://maven.forgerock.org/artifactory/internal-staging</url>
+            <mirrorOf>forgerock-staging-repo</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>forgerock-private-releases-mirror</id>
+            <name>ForgeRock Private Releases Repository mirror</name>
+            <url>https://maven.forgerock.org/artifactory/private-releases</url>
+            <mirrorOf>forgerock-private-releases</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>forgerock-private-snapshots-mirror</id>
+            <name>ForgeRock Private Snapshots Repository mirror</name>
+            <url>https://maven.forgerock.org/artifactory/private-snapshots</url>
+            <mirrorOf>forgerock-private-snapshots</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>forgerock-internal-mirror</id>
+            <name>ForgeRock Internal Repository mirror</name>
+            <url>https://maven.forgerock.org/artifactory/internal</url>
+            <mirrorOf>forgerock-internal</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>forgerock-plugins-repository-mirror</id>
+            <name>ForgeRock Plugins Repository mirror</name>
+            <url>https://maven.forgerock.org/artifactory/plugins</url>
+            <mirrorOf>forgerock-plugins-repository</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>maven.forgerock.org-mirror</id>
+            <name>ForgeRock OpenAM Dependencies Repository mirror</name>
+            <url>https://maven.forgerock.org/artifactory/openam-dependencies</url>
+            <mirrorOf>maven.forgerock.org</mirrorOf>
+        </mirror>
+    </mirrors>
 </settings>

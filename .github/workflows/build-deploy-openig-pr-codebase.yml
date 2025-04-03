@@ -1,0 +1,78 @@
+name: OpenIG - Build and Deploy OpenIG PR Codebase
+on:
+  workflow_dispatch:
+    inputs:
+      bitbucketRepoUsername:
+        default: openig
+        description: IG repo user
+        required: true
+        type: string
+      bibucketBranch:
+        default: master
+        description: IG branch
+        required: true
+        type: string
+      sapigBranch:
+        default: main
+        description: SAPIG core branch
+        required: true
+        type: string
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-22.04
+    steps:
+      # Checkout CI Repo
+      - name: Checkout CI Code
+        uses: actions/checkout@v4
+      # Auth GCP, SDK & Artifact Registry
+      - name: Call Authentication
+        uses: ./.github/actions/authentication
+        with:
+          gcpKey: ${{ secrets.DEV_GAR_KEY }}
+          garLocation: ${{ vars.GAR_LOCATION }}
+      # Set Maven Config
+      - name: Set Maven Config
+        uses: ./.github//actions/set-maven-config
+        with:
+          javaArchitecture: x64
+          javaDistribution: zulu
+          javaVersion: 17
+      # Checkout Bitbucket repo
+      - name: Clone BitBucket
+        run: |
+          git -c "http.extraHeader=Authorization: Bearer ${{ secrets.BITBUCKET_ACCESS_KEY }}" clone -b ${{ inputs.bibucketBranch }} https://stash.forgerock.org/scm/${{ inputs.bitbucketRepoUsername }}/openig.git
+      # Build IG
+      - name: Build IG
+        env:
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+        run: |
+          cd openig
+          mvn clean install -DskipTests -Popenig-docker,fapi
+      # Build Core and upload image
+      - name: Build Core
+        uses: ./.github/actions/build-image-and-artifact
+        with:
+          checkoutBranch: ${{ inputs.sapigBranch }}
+          checkoutCode: true
+          dockerBuildCommands: make docker tag=ga-openig-${{ github.run_number }} dockerArgs="--build-arg base_image=gcr.io/forgerock-io/ig/docker-build:$(docker images --filter 'reference=gcr.io/forgerock-io/ig/docker-build:*fapi' --format '{{.Tag}}')"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "mvn -B deploy -DskipTests"
+          repositoryName: SecureApiGateway/secure-api-gateway-core
+      - name: Deploy to Environment
+        uses: ./.github/actions/deploy-to-env
+        with:
+          argoServiceName: "ig"
+          branchName: ${{ steps.branch-name.outputs.current_branch || null }}
+          cfAPIKey: ${{ secrets.CF_API_KEY }}
+          cfTriggerName: "github-actions-trigger-core"
+          cfPipelineBranch: "main"
+          changeBranch: "false"
+          dockerTag: "ga-openig-${{ github.run_number }}"
+          gitTrigger: pr
+          serviceName: "ig"
+          sapigType: "core"
+          testTrustedDirectoryArgoServiceName: ${{ env.TEST_TRUSTED_DIRECTORY_ARGO_SERVICE_NAME || null }}
+          testTrustedDirectoryServiceName: ${{ env.TEST_TRUSTED_DIRECTORY_SERVICE_NAME || null }}

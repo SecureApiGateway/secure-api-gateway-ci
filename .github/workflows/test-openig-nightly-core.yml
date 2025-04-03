@@ -1,4 +1,4 @@
-name: Latest Core - Build, Deploy & Test
+name: OpenIG Nightly Core - Build, Deploy & Test
 on:
   workflow_dispatch:
 jobs:
@@ -50,29 +50,29 @@ jobs:
       - name: Authenticate to GKE
         uses: google-github-actions/get-gke-credentials@db150f2cc60d1716e61922b832eae71d2a45938f
         with:
-          cluster_name: devenvs
-          location: europe-west4
-          project_id: sbat-dev
+          cluster_name: ${{ vars.CLUSTER_NAME }}
+          location: ${{ vars.CLUSTER_REGION }}
+          project_id: ${{ vars.CLUSTER_PROJECT }}
       # Set IP to Whitelist
       - name: Add Build Runner IP to Whitelist
         run: |
           RUNNER_IP=$(curl -s ipinfo.io/ip)
-          CIDR=$(gcloud container clusters describe devenvs --region=europe-west4 --project sbat-dev --format json | jq -r '.masterAuthorizedNetworksConfig.cidrBlocks[] | .cidrBlock' | tr '\n' ',')
+          CIDR=$(gcloud container clusters describe ${{ vars.CLUSTER_NAME }} --region=${{ vars.CLUSTER_REGION }} --project ${{ vars.CLUSTER_PROJECT }} --format json | jq -r '.masterAuthorizedNetworksConfig.cidrBlocks[] | .cidrBlock' | tr '\n' ',')
           if [[ $CIDR != *$RUNNER_IP* ]]; then
-            gcloud container clusters update devenvs --region=europe-west4 --project sbat-dev --enable-master-authorized-networks --master-authorized-networks="$CIDR$RUNNER_IP/32"
+            gcloud container clusters update ${{ vars.CLUSTER_NAME }} --region=${{ vars.CLUSTER_REGION }} --project ${{ vars.CLUSTER_PROJECT }} --enable-master-authorized-networks --master-authorized-networks="$CIDR$RUNNER_IP/32"
           fi
       # Delete Current IG Pod from Cluster
       - name: Delete Current IG Pod
         run: |
-          kubectl delete deployment ig -n openig-nightly-core --wait=true
+          kubectl delete deployment ${{ vars.OPENIG_NIGHTLY_CORE_POD }} -n ${{ vars.OPENIG_NIGHTLY_CORE_NAMESPACE }} --wait=true
       # Remove IP from Whitelist - to be added in
       - name: Remove Build Runner IP from Whitelist
         run: |
           RUNNER_IP=$(curl -s ipinfo.io/ip)
-          CIDR=$(gcloud container clusters describe devenvs --region=europe-west4 --project sbat-dev --format json | jq -r '.masterAuthorizedNetworksConfig.cidrBlocks[] | .cidrBlock' | tr '\n' ',')
+          CIDR=$(gcloud container clusters describe ${{ vars.CLUSTER_NAME }} --region=${{ vars.CLUSTER_REGION }} --project ${{ vars.CLUSTER_PROJECT }} --format json | jq -r '.masterAuthorizedNetworksConfig.cidrBlocks[] | .cidrBlock' | tr '\n' ',')
           if [[ $CIDR == *$RUNNER_IP* ]]; then
             NEW_CIDR=$(echo $CIDR | sed s#$RUNNER_IP/32,##)
-            gcloud container clusters update devenvs --region=europe-west4 --project sbat-dev --enable-master-authorized-networks --master-authorized-networks="$NEW_CIDR"
+            gcloud container clusters update ${{ vars.CLUSTER_NAME }} --region=${{ vars.CLUSTER_REGION }} --project ${{ vars.CLUSTER_PROJECT }} --enable-master-authorized-networks --master-authorized-networks="$NEW_CIDR"
           fi
   test-functional:
     name: Test - Functional
@@ -89,8 +89,8 @@ jobs:
           cfTriggerName: github-actions-trigger-functionaltest-latest
           cfPipelineName: SAPIG-devenv/openig-nightly-core-functional-tests
           cfPipelineBranch: main
-          dockerTag: pr-46
-          serviceName: pr/uk-core-functional-tests
+          dockerTag: latest
+          serviceName: uk-core-functional-tests
           testsVersion: test
   test-dcr:
     name: Test - DCR
@@ -108,6 +108,6 @@ jobs:
           cfTriggerName: github-actions-trigger-dcrtest-latest
           cfPipelineName: SAPIG-devenv/openig-nightly-core-dcr-conformance-tests
           cfPipelineBranch: sbat-master
-          dockerTag: pr-66
-          serviceName: pr/uk-conformance-dcr
+          dockerTag: latest
+          serviceName: uk-conformance-dcr
           sortCFTrigger: false
