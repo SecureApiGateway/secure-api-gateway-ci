@@ -75,8 +75,8 @@ jobs:
       # Delete Current IG Pod from Cluster
       - name: Delete Current IG Pod
         run: |
-          kubectl delete deployment ${{ vars.OPENIG_NIGHTLY_FAPI_PEP_AS_POD }} -n ${{ vars.OPENIG_NIGHTLYCORE_NAMESPACE }} --wait=true
-          kubectl delete deployment ${{ vars.OPENIG_NIGHTLY_FAPI_PEP_RS_CORE_POD }} -n ${{ vars.OPENIG_NIGHTLYCORE_NAMESPACE }} --wait=true
+          kubectl delete deployment ${{ vars.OPENIG_NIGHTLY_FAPI_PEP_AS_POD }} -n ${{ vars.OPENIG_NIGHTLY_CORE_NAMESPACE }} --wait=true
+          kubectl delete deployment ${{ vars.OPENIG_NIGHTLY_FAPI_PEP_RS_CORE_POD }} -n ${{ vars.OPENIG_NIGHTLY_CORE_NAMESPACE }} --wait=true
       # Remove IP from Whitelist - to be added in
       - name: Remove Build Runner IP from Whitelist
         run: |
