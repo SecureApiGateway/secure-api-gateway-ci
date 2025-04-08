@@ -92,7 +92,7 @@ jobs:
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy --file pom.xml"
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
-      - name: Call build-image-and-artifact for Core
+      - name: Call build-image-and-artifact for FAPI-PEP-AS
         uses: ./.github/actions/build-image-and-artifact
         with:
           checkoutCode: true
@@ -100,7 +100,16 @@ jobs:
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy -DskipTests"
-          repositoryName: SecureApiGateway/secure-api-gateway-core
+          repositoryName: SecureApiGateway/secure-api-gateway-fapi-pep-as
+      - name: Call build-image-and-artifact for FAPI-PEP-RS-CORE
+        uses: ./.github/actions/build-image-and-artifact
+        with:
+          checkoutCode: true
+          dockerBuildCommands: "make clean docker tag=latest && make clean docker tag=dev env=dev"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "mvn -B deploy -DskipTests"
+          repositoryName: SecureApiGateway/secure-api-gateway-fapi-pep-rs-core
       - name: Call build-image-and-artifact for Test Trusted Directory
         uses: ./.github/actions/build-image-and-artifact
         with:
