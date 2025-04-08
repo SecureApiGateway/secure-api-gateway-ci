@@ -50,7 +50,7 @@ jobs:
         run: |
           cd openig
           mvn clean install -DskipTests -Popenig-docker,fapi
-      # Build Core and upload image
+      # Build FAPI PEP AS and upload image
       - name: Build Core
         uses: ./.github/actions/build-image-and-artifact
         with:
@@ -60,11 +60,22 @@ jobs:
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy -DskipTests"
-          repositoryName: SecureApiGateway/secure-api-gateway-core
+          repositoryName: SecureApiGateway/secure-api-gateway-fapi-pep-as
+      # Build FAPI PEP RS Core and upload image
+      - name: Build Core
+        uses: ./.github/actions/build-image-and-artifact
+        with:
+          checkoutBranch: ${{ inputs.sapigBranch }}
+          checkoutCode: true
+          dockerBuildCommands: make docker tag=ga-openig-${{ github.run_number }} dockerArgs="--build-arg base_image=gcr.io/forgerock-io/ig/docker-build:$(docker images --filter 'reference=gcr.io/forgerock-io/ig/docker-build:*fapi' --format '{{.Tag}}')"
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          mavenBuildCommands: "mvn -B deploy -DskipTests"
+          repositoryName: SecureApiGateway/secure-api-gateway-fapi-pep-rs-core
       - name: Deploy to Environment
         uses: ./.github/actions/deploy-to-env
         with:
-          argoServiceName: "ig"
+          argoServiceName: "fapiPepAS"
           branchName: ${{ steps.branch-name.outputs.current_branch || null }}
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: "github-actions-trigger-core"
@@ -72,7 +83,22 @@ jobs:
           changeBranch: "false"
           dockerTag: "ga-openig-${{ github.run_number }}"
           gitTrigger: pr
-          serviceName: "ig"
+          serviceName: "fapi-pep-as"
+          sapigType: "core"
+          testTrustedDirectoryArgoServiceName: ${{ env.TEST_TRUSTED_DIRECTORY_ARGO_SERVICE_NAME || null }}
+          testTrustedDirectoryServiceName: ${{ env.TEST_TRUSTED_DIRECTORY_SERVICE_NAME || null }}
+      - name: Deploy to Environment
+        uses: ./.github/actions/deploy-to-env
+        with:
+          argoServiceName: "fapiPepRS"
+          branchName: ${{ steps.branch-name.outputs.current_branch || null }}
+          cfAPIKey: ${{ secrets.CF_API_KEY }}
+          cfTriggerName: "github-actions-trigger-core"
+          cfPipelineBranch: "main"
+          changeBranch: "false"
+          dockerTag: "ga-openig-${{ github.run_number }}"
+          gitTrigger: pr
+          serviceName: "fapi-pep-rs"
           sapigType: "core"
           testTrustedDirectoryArgoServiceName: ${{ env.TEST_TRUSTED_DIRECTORY_ARGO_SERVICE_NAME || null }}
           testTrustedDirectoryServiceName: ${{ env.TEST_TRUSTED_DIRECTORY_SERVICE_NAME || null }}

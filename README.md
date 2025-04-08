@@ -10,10 +10,14 @@ NOTE:This repository is for internal PingID use only, and not designed for custo
 ### sapig-openbanking-uk-developer-envs
 [![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/sapig-openbanking-uk-developer-envs/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/sapig-openbanking-uk-developer-envs/actions/workflows/release.yml)
 [![Check Json Order](https://github.com/SecureApiGateway/sapig-openbanking-uk-developer-envs/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/sapig-openbanking-uk-developer-envs/actions/workflows/merge.yml)
-### secure-api-gateway-core
-[![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/merge.yml)
-[![Merge - Perform Code Scan](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/codeql.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/codeql.yml)
-[![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-core/actions/workflows/release.yml)
+### secure-api-gateway-fapi-pep-as
+[![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-as/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-as/actions/workflows/merge.yml)
+[![Merge - Perform Code Scan](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-as/actions/workflows/codeql.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-as/actions/workflows/codeql.yml)
+[![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-as/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-as/actions/workflows/release.yml)
+### secure-api-gateway-fapi-pep-rs-core
+[![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-core/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-core/actions/workflows/merge.yml)
+[![Merge - Perform Code Scan](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-core/actions/workflows/codeql.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-core/actions/workflows/codeql.yml)
+[![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-core/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-core/actions/workflows/release.yml)
 ### secure-api-gateway-functional-test-framework
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/merge.yml)
 [![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/release.yml)
@@ -88,7 +92,7 @@ jobs:
     uses: SecureApiGateway/secure-api-gateway-ci/.github/workflows/reusable-pr.yml@main
     secrets: inherit
     with:
-      componentName: secure-api-gateway-core
+      componentName: secure-api-gateway-fapi-pep-as
       dockerTag: pr-${{ github.event.number }}
 ```
 
@@ -99,7 +103,7 @@ What may differ from repo to repo is
 
 There is no versioning within this part of the workflow by design. This is so that within the secure-api-gateway-ci repo, there is a `component-config` folder, which has many `.env` files. The reusable workflows use the `componentName` passed from the calling workflow, to retrieve the corresponding .env file within the folder. The `.env` files will have various different variables within, such as `JAVA_DISTRIBUTION`,`SERVICE_NAME` and `SAPIG_TYPE`. There are also `STEPS_PR_*` and `STEPS_MERGE_*` variables which control which actions in the reusable workflow are ran. 
 
-For example using our `Core` repo again, we need to build a docker image, and build the maven project os that we get artifacts produced. Within the `.env` file we have `STEPS_MERGE_BUILD_DOCKER_IMAGE`,`STEPS_MERGE_BUILD_MAVEN_PROJECT` set to `true`. We don't want functional tests to run so `STEPS_MERGE_RUN_FUNCTIONAL_TESTS` is set to `false`. 
+For example using our `FAPI-PEP-AS` repo again, we need to build a docker image, and build the maven project os that we get artifacts produced. Within the `.env` file we have `STEPS_MERGE_BUILD_DOCKER_IMAGE`,`STEPS_MERGE_BUILD_MAVEN_PROJECT` set to `true`. We don't want functional tests to run so `STEPS_MERGE_RUN_FUNCTIONAL_TESTS` is set to `false`. 
 
 The main improvement for this way of structuring our workflows, is that if a change is needed to go to a newer version of Java for example, instead of checking out each individual component repository which uses java, making the change, creating a PR, getting the PR approved, and finally merging, we can create one PR with in the CI repo, with one PR.
 
