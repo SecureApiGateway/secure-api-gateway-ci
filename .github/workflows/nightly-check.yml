@@ -92,39 +92,8 @@ jobs:
         if: failure()
         run: |
           echo FAILUREINBUILD=true >> ${GITHUB_ENV}
-  analyze-ob:
-    name: Analyze OB
-    runs-on: 'ubuntu-22.04'
-    timeout-minutes: 360
-    permissions:
-      security-events: write
-      actions: read
-      contents: read
-    strategy:
-      fail-fast: false
-    steps:
-      - name: Checkout CI Code
-        uses: actions/checkout@v4
-      - name: Call code-scanning on OB
-        uses: ./.github/actions/code-scanning
-        with:
-          cache: 'maven'
-          checkoutBranch: master
-          checkoutCode: true
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          actionTrigger: nightly
-          javaArchitecture: x64
-          javaDistribution: 'zulu'
-          javaVersion: '17'
-          language: 'java-kotlin'
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
-      - name: Set Var if Failure
-        if: failure()
-        run: |
-          echo FAILUREINBUILD=true >> ${GITHUB_ENV}
   analyze-fapi-pep-as:
-    name: Analyze FAPI-PEP-AS
+    name: Analyze FAPI-PEP-AS - IG Extension
     runs-on: 'ubuntu-22.04'
     timeout-minutes: 360
     permissions:
@@ -150,37 +119,6 @@ jobs:
           javaVersion: '17'
           language: 'java-kotlin'
           repositoryName: SecureApiGateway/secure-api-gateway-fapi-pep-as
-      - name: Set Var if Failure
-        if: failure()
-        run: |
-          echo FAILUREINBUILD=true >> ${GITHUB_ENV}
-  analyze-fapi-pep-rs-core:
-    name: Analyze FAPI-PEP-RS-CORE
-    runs-on: 'ubuntu-22.04'
-    timeout-minutes: 360
-    permissions:
-      security-events: write
-      actions: read
-      contents: read
-    strategy:
-      fail-fast: false
-    steps:
-      - name: Checkout CI Code
-        uses: actions/checkout@v4
-      - name: Call code-scanning on FAPI-PEP-AS
-        uses: ./.github/actions/code-scanning
-        with:
-          cache: 'maven'
-          checkoutBranch: main
-          checkoutCode: true
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          actionTrigger: nightly
-          javaArchitecture: x64
-          javaDistribution: 'zulu'
-          javaVersion: '17'
-          language: 'java-kotlin'
-          repositoryName: SecureApiGateway/secure-api-gateway-fapi-pep-rs-core
       - name: Set Var if Failure
         if: failure()
         run: |
@@ -281,7 +219,7 @@ jobs:
   check-for-failure:
     name: Check for failure & Notify
     runs-on: 'ubuntu-22.04'
-    needs: [copyright, analyze-ob,analyze-fapi-pep-as,analyze-fapi-pep-rs-core,analyze-common,analyze-rs,analyze-rcs]
+    needs: [copyright,analyze-fapi-pep-as,analyze-fapi-pep-rs-core,analyze-common,analyze-rs,analyze-rcs]
     if: ${{ always() && contains(needs.*.result, 'failure') }}
     steps:
       # Checkout CI Repo
