@@ -140,7 +140,7 @@ jobs:
         uses: ./.github/actions/code-scanning
         with:
           cache: 'maven'
-          checkoutBranch: main
+          checkoutBranch: 1676-split-ig-to-as-rs
           checkoutCode: true
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
