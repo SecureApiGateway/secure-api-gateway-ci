@@ -14,21 +14,21 @@ jobs:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
       # Common
-      - name: Call check copyright for Common V3
+      - name: Call check copyright for Common
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
         with:
           checkoutBranch: master
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
         # RS
-      - name: Call check copyright for RS V3
+      - name: Call check copyright for RS
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
         with:
           checkoutBranch: master
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
       # RCS
-      - name: Call check copyright for RCS V3
+      - name: Call check copyright for RCS
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
         with:
           checkoutBranch: master
@@ -41,12 +41,19 @@ jobs:
           path: secure-api-gateway-ob-uk
           repository: SecureApiGateway/secure-api-gateway-ob-uk
           ref: master
-      # Checkout Core Repo
+      # Checkout FAPI PEP AS Repo
       - name: Checkout Core Repo
         uses: actions/checkout@v4
         with:
-          path: secure-api-gateway-core
-          repository: SecureApiGateway/secure-api-gateway-core
+          path: secure-api-gateway-fapi-pep-as
+          repository: SecureApiGateway/secure-api-gateway-fapi-pep-as
+          ref: main
+      # Checkout FAPI PEP RS Repo
+      - name: Checkout Core Repo
+        uses: actions/checkout@v4
+        with:
+          path: secure-api-gateway-fapi-pep-rs-core
+          repository: SecureApiGateway/secure-api-gateway-fapi-pep-rs-core
           ref: main
       # Set Maven Config
       - name: Set Maven Config
@@ -57,7 +64,7 @@ jobs:
           javaDistribution: zulu
           javaVersion: 17
       # OB
-      - name: Call check copyright for OB V3
+      - name: Call check copyright for OB
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
         with:
           checkoutBranch: master
@@ -65,20 +72,28 @@ jobs:
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
-      # CORE
-      - name: Call check copyright for CORE V3
+      # FAPI PEP AS
+      - name: Call check copyright for FAPI-PEP-AS
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
         with:
           checkoutCode: false
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          repositoryName: secure-api-gateway-core
+          repositoryName: secure-api-gateway-fapi-pep-as
+      # FAPI PEP RS Core
+      - name: Call check copyright for FAPI-PEP-RS-Core
+        uses: ./secure-api-gateway-ci/.github/actions/check-copyright
+        with:
+          checkoutCode: false
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          repositoryName: secure-api-gateway-fapi-pep-rs-core
       - name: Set Var if Failure
         if: failure()
         run: |
           echo FAILUREINBUILD=true >> ${GITHUB_ENV}
-  analyze-core:
-    name: Analyze Core
+  analyze-ob:
+    name: Analyze OB
     runs-on: 'ubuntu-22.04'
     timeout-minutes: 360
     permissions:
@@ -90,7 +105,7 @@ jobs:
     steps:
       - name: Checkout CI Code
         uses: actions/checkout@v4
-      - name: Call code-scanning on Core
+      - name: Call code-scanning on OB
         uses: ./.github/actions/code-scanning
         with:
           cache: 'maven'
@@ -103,7 +118,69 @@ jobs:
           javaDistribution: 'zulu'
           javaVersion: '17'
           language: 'java-kotlin'
-          repositoryName: SecureApiGateway/secure-api-gateway-core
+          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
+      - name: Set Var if Failure
+        if: failure()
+        run: |
+          echo FAILUREINBUILD=true >> ${GITHUB_ENV}
+  analyze-fapi-pep-as:
+    name: Analyze FAPI-PEP-AS
+    runs-on: 'ubuntu-22.04'
+    timeout-minutes: 360
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout CI Code
+        uses: actions/checkout@v4
+      - name: Call code-scanning on FAPI-PEP-AS
+        uses: ./.github/actions/code-scanning
+        with:
+          cache: 'maven'
+          checkoutBranch: main
+          checkoutCode: true
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          actionTrigger: nightly
+          javaArchitecture: x64
+          javaDistribution: 'zulu'
+          javaVersion: '17'
+          language: 'java-kotlin'
+          repositoryName: SecureApiGateway/secure-api-gateway-fapi-pep-as
+      - name: Set Var if Failure
+        if: failure()
+        run: |
+          echo FAILUREINBUILD=true >> ${GITHUB_ENV}
+  analyze-fapi-pep-rs-core:
+    name: Analyze FAPI-PEP-RS-CORE
+    runs-on: 'ubuntu-22.04'
+    timeout-minutes: 360
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout CI Code
+        uses: actions/checkout@v4
+      - name: Call code-scanning on FAPI-PEP-AS
+        uses: ./.github/actions/code-scanning
+        with:
+          cache: 'maven'
+          checkoutBranch: main
+          checkoutCode: true
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+          actionTrigger: nightly
+          javaArchitecture: x64
+          javaDistribution: 'zulu'
+          javaVersion: '17'
+          language: 'java-kotlin'
+          repositoryName: SecureApiGateway/secure-api-gateway-fapi-pep-rs-core
       - name: Set Var if Failure
         if: failure()
         run: |
@@ -204,7 +281,7 @@ jobs:
   check-for-failure:
     name: Check for failure & Notify
     runs-on: 'ubuntu-22.04'
-    needs: [copyright, analyze-core,analyze-common,analyze-rs,analyze-rcs]
+    needs: [copyright, analyze-ob,analyze-fapi-pep-as,analyze-fapi-pep-rs-core,analyze-common,analyze-rs,analyze-rcs]
     if: ${{ always() && contains(needs.*.result, 'failure') }}
     steps:
       # Checkout CI Repo
