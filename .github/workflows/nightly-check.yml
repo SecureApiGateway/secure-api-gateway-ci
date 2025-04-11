@@ -219,7 +219,7 @@ jobs:
   check-for-failure:
     name: Check for failure & Notify
     runs-on: 'ubuntu-22.04'
-    needs: [copyright,analyze-fapi-pep-as,analyze-fapi-pep-rs-core,analyze-common,analyze-rs,analyze-rcs]
+    needs: [copyright,analyze-fapi-pep-as,analyze-common,analyze-rs,analyze-rcs]
     if: ${{ always() && contains(needs.*.result, 'failure') }}
     steps:
       # Checkout CI Repo
