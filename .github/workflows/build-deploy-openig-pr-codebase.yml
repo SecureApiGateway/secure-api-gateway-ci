@@ -75,7 +75,7 @@ jobs:
       - name: Deploy to Environment
         uses: ./.github/actions/deploy-to-env
         with:
-          argoServiceName: "fapiPepAS"
+          argoServiceName: "fapiPepAs"
           branchName: ${{ steps.branch-name.outputs.current_branch || null }}
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: "github-actions-trigger-core"
@@ -90,7 +90,7 @@ jobs:
       - name: Deploy to Environment
         uses: ./.github/actions/deploy-to-env
         with:
-          argoServiceName: "fapiPepRS"
+          argoServiceName: "fapiPepRs"
           branchName: ${{ steps.branch-name.outputs.current_branch || null }}
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: "github-actions-trigger-core"
