@@ -12,10 +12,10 @@ NOTE:This repository is for internal PingID use only, and not designed for custo
 [![Check Json Order](https://github.com/SecureApiGateway/sapig-openbanking-uk-developer-envs/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/sapig-openbanking-uk-developer-envs/actions/workflows/merge.yml)
 ### secure-api-gateway-fapi-pep-as
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-as/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-as/actions/workflows/merge.yml)
+[![Merge - Perform Code Scan](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-as/actions/workflows/codeql.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-as/actions/workflows/codeql.yml)
 [![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-as/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-as/actions/workflows/release.yml)
 ### secure-api-gateway-fapi-pep-rs-core
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-core/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-core/actions/workflows/merge.yml)
-[![Merge - Perform Code Scan](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-core/actions/workflows/codeql.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-core/actions/workflows/codeql.yml)
 [![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-core/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-core/actions/workflows/release.yml)
 ### secure-api-gateway-functional-test-framework
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/merge.yml)
