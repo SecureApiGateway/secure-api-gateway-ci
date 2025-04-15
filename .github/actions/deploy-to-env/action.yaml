@@ -67,18 +67,22 @@ runs:
           echo SERVICENAME=${{ inputs.serviceName }} >> ${GITHUB_ENV}
           echo TRIGGERNAMECORE=github-actions-trigger-core >> ${GITHUB_ENV}
           echo TRIGGERNAMEOB=github-actions-trigger-gateway >> ${GITHUB_ENV}
+          echo TRIGGERBRANCHCORE=main >> ${GITHUB_ENV}
+          echo TRIGGERBRANCHOB=master >> ${GITHUB_ENV}
         elif [[ ${{ inputs.sapigType }} == "ob" ]]; then
           echo DEPLOYOB=true >> ${GITHUB_ENV}
           echo DEPLOYCORE=false >> ${GITHUB_ENV}
           echo ARGOSERVICENAME=${{ inputs.argoServiceName }} >> ${GITHUB_ENV}
           echo SERVICENAME=${{ inputs.serviceName }} >> ${GITHUB_ENV}
           echo TRIGGERNAMEOB=github-actions-trigger-gateway >> ${GITHUB_ENV}
+          echo TRIGGERBRANCHOB=master >> ${GITHUB_ENV}
         elif [[ ${{ inputs.sapigType }} == "core" ]]; then
           echo DEPLOYOB=false >> ${GITHUB_ENV}
           echo DEPLOYCORE=true >> ${GITHUB_ENV}
           echo ARGOSERVICENAME=${{ inputs.argoServiceName }} >> ${GITHUB_ENV}
           echo SERVICENAME=${{ inputs.serviceName }} >> ${GITHUB_ENV}
           echo TRIGGERNAMECORE=github-actions-trigger-core >> ${GITHUB_ENV}
+          echo TRIGGERBRANCHCORE=main >> ${GITHUB_ENV}
         elif [[ ${{ inputs.sapigType }} == "test-trusted-directory" ]]; then
           echo DEPLOYOB=true >> ${GITHUB_ENV}
           echo DEPLOYCORE=true >> ${GITHUB_ENV}
@@ -86,6 +90,8 @@ runs:
           echo SERVICENAME=${{ inputs.testTrustedDirectoryServiceName }} >> ${GITHUB_ENV}
           echo TRIGGERNAMECORE=github-actions-trigger-core >> ${GITHUB_ENV}
           echo TRIGGERNAMEOB=github-actions-trigger-gateway >> ${GITHUB_ENV}
+          echo TRIGGERBRANCHCORE=main >> ${GITHUB_ENV}
+          echo TRIGGERBRANCHOB=master >> ${GITHUB_ENV}
         elif [[ ${{ inputs.sapigType }} == "none" ]]; then
           echo DEPLOYOB=false >> ${GITHUB_ENV}
           echo DEPLOYCORE=false >> ${GITHUB_ENV}
@@ -111,7 +117,7 @@ runs:
         PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
         TRIGGER_NAME: ${{ env.TRIGGERNAMEOB }}
-        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
+        CF_BRANCH: ${{ env.TRIGGERBRANCHOB }}
     # Deploy to envs when feature branches are not being used (dev-cdk and dev-aic both need tp be updated)
     - name: 'Update CDK-OB Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
@@ -122,7 +128,7 @@ runs:
         PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
         TRIGGER_NAME: ${{ env.TRIGGERNAMEOB }}
-        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
+        CF_BRANCH: ${{ env.TRIGGERBRANCHOB }}
     - name: 'Update AIC-OB Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYOB == 'true' && env.GITHUB_USER == 'both'
@@ -132,8 +138,7 @@ runs:
         PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
         TRIGGER_NAME: ${{ env.TRIGGERNAMEOB }}
-        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
-
+        CF_BRANCH: ${{ env.TRIGGERBRANCHOB }}
     # Deploy to env when feature branches are being used (dev-cdk and dev-aic get split at this point)
     - name: 'Update Core Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
@@ -144,7 +149,7 @@ runs:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
         TRIGGER_NAME: ${{ env.TRIGGERNAMECORE }}
-        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
+        CF_BRANCH: ${{ env.TRIGGERBRANCHCORE }}
     # Deploy to envs when feature branches are not being used (dev-cdk and dev-aic both need tp be updated)
     - name: 'Update CDK-Core Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
@@ -155,7 +160,7 @@ runs:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
         TRIGGER_NAME: ${{ env.TRIGGERNAMECORE }}
-        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
+        CF_BRANCH: ${{ env.TRIGGERBRANCHCORE }}
     - name: 'Update AIC-Core Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYCORE == 'true' && env.GITHUB_USER == 'both'
@@ -165,4 +170,4 @@ runs:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
         TRIGGER_NAME: ${{ env.TRIGGERNAMECORE }}
-        CF_BRANCH: ${{ inputs.cfPipelineBranch }}
+        CF_BRANCH: ${{ env.TRIGGERBRANCHCORE }}
