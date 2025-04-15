@@ -109,7 +109,7 @@ jobs:
         uses: ./.github/actions/code-scanning
         with:
           cache: 'maven'
-          checkoutBranch: 1676-split-ig-to-as-rs
+          checkoutBranch: main
           checkoutCode: true
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
@@ -136,7 +136,7 @@ jobs:
     steps:
       - name: Checkout CI Code
         uses: actions/checkout@v4
-      - name: Call code-scanning on Core
+      - name: Call code-scanning on Common
         uses: ./.github/actions/code-scanning
         with:
           cache: 'maven'
@@ -167,7 +167,7 @@ jobs:
     steps:
       - name: Checkout CI Code
         uses: actions/checkout@v4
-      - name: Call code-scanning on Core
+      - name: Call code-scanning on RS
         uses: ./.github/actions/code-scanning
         with:
           cache: 'maven'
@@ -198,7 +198,7 @@ jobs:
     steps:
       - name: Checkout CI Code
         uses: actions/checkout@v4
-      - name: Call code-scanning on Core
+      - name: Call code-scanning on RCS
         uses: ./.github/actions/code-scanning
         with:
           cache: 'maven'
