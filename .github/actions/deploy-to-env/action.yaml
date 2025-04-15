@@ -65,21 +65,27 @@ runs:
           echo DEPLOYCORE=true >> ${GITHUB_ENV}
           echo ARGOSERVICENAME=${{ inputs.argoServiceName }} >> ${GITHUB_ENV}
           echo SERVICENAME=${{ inputs.serviceName }} >> ${GITHUB_ENV}
+          echo TRIGGERNAMECORE=github-actions-trigger-core >> ${GITHUB_ENV}
+          echo TRIGGERNAMEOB=github-actions-trigger-gateway >> ${GITHUB_ENV}
         elif [[ ${{ inputs.sapigType }} == "ob" ]]; then
           echo DEPLOYOB=true >> ${GITHUB_ENV}
           echo DEPLOYCORE=false >> ${GITHUB_ENV}
           echo ARGOSERVICENAME=${{ inputs.argoServiceName }} >> ${GITHUB_ENV}
           echo SERVICENAME=${{ inputs.serviceName }} >> ${GITHUB_ENV}
+          echo TRIGGERNAMEOB=github-actions-trigger-gateway >> ${GITHUB_ENV}
         elif [[ ${{ inputs.sapigType }} == "core" ]]; then
           echo DEPLOYOB=false >> ${GITHUB_ENV}
           echo DEPLOYCORE=true >> ${GITHUB_ENV}
           echo ARGOSERVICENAME=${{ inputs.argoServiceName }} >> ${GITHUB_ENV}
           echo SERVICENAME=${{ inputs.serviceName }} >> ${GITHUB_ENV}
+          echo TRIGGERNAMECORE=github-actions-trigger-core >> ${GITHUB_ENV}
         elif [[ ${{ inputs.sapigType }} == "test-trusted-directory" ]]; then
           echo DEPLOYOB=true >> ${GITHUB_ENV}
           echo DEPLOYCORE=true >> ${GITHUB_ENV}
           echo ARGOSERVICENAME=${{ inputs.testTrustedDirectoryArgoServiceName }} >> ${GITHUB_ENV}
           echo SERVICENAME=${{ inputs.testTrustedDirectoryServiceName }} >> ${GITHUB_ENV}
+          echo TRIGGERNAMECORE=github-actions-trigger-core >> ${GITHUB_ENV}
+          echo TRIGGERNAMEOB=github-actions-trigger-gateway >> ${GITHUB_ENV}
         elif [[ ${{ inputs.sapigType }} == "none" ]]; then
           echo DEPLOYOB=false >> ${GITHUB_ENV}
           echo DEPLOYCORE=false >> ${GITHUB_ENV}
@@ -104,7 +110,7 @@ runs:
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
-        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
+        TRIGGER_NAME: ${{ env.TRIGGERNAMEOB }}
         CF_BRANCH: ${{ inputs.cfPipelineBranch }}
     # Deploy to envs when feature branches are not being used (dev-cdk and dev-aic both need tp be updated)
     - name: 'Update CDK-OB Environment'
@@ -115,7 +121,7 @@ runs:
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
-        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
+        TRIGGER_NAME: ${{ env.TRIGGERNAMEOB }}
         CF_BRANCH: ${{ inputs.cfPipelineBranch }}
     - name: 'Update AIC-OB Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
@@ -125,7 +131,7 @@ runs:
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
-        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
+        TRIGGER_NAME: ${{ env.TRIGGERNAMEOB }}
         CF_BRANCH: ${{ inputs.cfPipelineBranch }}
 
     # Deploy to env when feature branches are being used (dev-cdk and dev-aic get split at this point)
@@ -137,7 +143,7 @@ runs:
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
-        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
+        TRIGGER_NAME: ${{ env.TRIGGERNAMECORE }}
         CF_BRANCH: ${{ inputs.cfPipelineBranch }}
     # Deploy to envs when feature branches are not being used (dev-cdk and dev-aic both need tp be updated)
     - name: 'Update CDK-Core Environment'
@@ -148,7 +154,7 @@ runs:
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
-        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
+        TRIGGER_NAME: ${{ env.TRIGGERNAMECORE }}
         CF_BRANCH: ${{ inputs.cfPipelineBranch }}
     - name: 'Update AIC-Core Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
@@ -158,5 +164,5 @@ runs:
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
-        TRIGGER_NAME: ${{ inputs.cfTriggerName }}
+        TRIGGER_NAME: ${{ env.TRIGGERNAMECORE }}
         CF_BRANCH: ${{ inputs.cfPipelineBranch }}
