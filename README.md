@@ -20,9 +20,9 @@ NOTE:This repository is for internal PingID use only, and not designed for custo
 ### secure-api-gateway-functional-test-framework
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/merge.yml)
 [![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-functional-test-framework/actions/workflows/release.yml)
-### secure-api-gateway-ob-uk
-[![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk/actions/workflows/merge.yml)
-[![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk/actions/workflows/release.yml)
+### secure-api-gateway-fapi-pep-rs-ob
+[![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-ob/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-ob/actions/workflows/merge.yml)
+[![Release - Build, Deploy & Create Release](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-ob/actions/workflows/release.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-ob/actions/workflows/release.yml)
 ### secure-api-gateway-ob-uk-common
 [![Merge - Build and Deploy](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-common/actions/workflows/merge.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-common/actions/workflows/merge.yml)
 [![CodeQL](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-common/actions/workflows/codeql.yml/badge.svg)](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-common/actions/workflows/codeql.yml)
