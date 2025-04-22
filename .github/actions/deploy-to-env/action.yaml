@@ -68,14 +68,14 @@ runs:
           echo TRIGGERNAMECORE=github-actions-trigger-core >> ${GITHUB_ENV}
           echo TRIGGERNAMEOB=github-actions-trigger-gateway >> ${GITHUB_ENV}
           echo TRIGGERBRANCHCORE=main >> ${GITHUB_ENV}
-          echo TRIGGERBRANCHOB=master >> ${GITHUB_ENV}
+          echo TRIGGERBRANCHOB=main >> ${GITHUB_ENV}
         elif [[ ${{ inputs.sapigType }} == "ob" ]]; then
           echo DEPLOYOB=true >> ${GITHUB_ENV}
           echo DEPLOYCORE=false >> ${GITHUB_ENV}
           echo ARGOSERVICENAME=${{ inputs.argoServiceName }} >> ${GITHUB_ENV}
           echo SERVICENAME=${{ inputs.serviceName }} >> ${GITHUB_ENV}
           echo TRIGGERNAMEOB=github-actions-trigger-gateway >> ${GITHUB_ENV}
-          echo TRIGGERBRANCHOB=master >> ${GITHUB_ENV}
+          echo TRIGGERBRANCHOB=main >> ${GITHUB_ENV}
         elif [[ ${{ inputs.sapigType }} == "core" ]]; then
           echo DEPLOYOB=false >> ${GITHUB_ENV}
           echo DEPLOYCORE=true >> ${GITHUB_ENV}
@@ -91,7 +91,7 @@ runs:
           echo TRIGGERNAMECORE=github-actions-trigger-core >> ${GITHUB_ENV}
           echo TRIGGERNAMEOB=github-actions-trigger-gateway >> ${GITHUB_ENV}
           echo TRIGGERBRANCHCORE=main >> ${GITHUB_ENV}
-          echo TRIGGERBRANCHOB=master >> ${GITHUB_ENV}
+          echo TRIGGERBRANCHOB=main >> ${GITHUB_ENV}
         elif [[ ${{ inputs.sapigType }} == "none" ]]; then
           echo DEPLOYOB=false >> ${GITHUB_ENV}
           echo DEPLOYCORE=false >> ${GITHUB_ENV}
