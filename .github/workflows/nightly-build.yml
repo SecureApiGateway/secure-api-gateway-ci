@@ -45,7 +45,7 @@ jobs:
           mavenBuildCommands: "mvn -B deploy -DskipTests"
           repositoryName: SecureApiGateway/secure-api-gateway-fapi-pep-rs-core
       # Build OB with Latest Core Components
-      - name: Call build-image-and-artifact for OB with latest IG
+      - name: Call build-image-and-artifact for FAPI-PEP-RS-OB with latest IG
         uses: ./.github/actions/build-image-and-artifact
         with:
           checkoutBranch: master
@@ -54,7 +54,7 @@ jobs:
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy -DskipTests"
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
+          repositoryName: SecureApiGateway/secure-api-gateway-fapi-pep-rs-ob
   build-sapig-nightly:
     name: Build SAPIG Nightly
     runs-on: ubuntu-22.04
@@ -119,7 +119,7 @@ jobs:
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy -DskipTests"
           repositoryName: SecureApiGateway/secure-api-gateway-test-trusted-directory
-      - name: Call build-image-and-artifact for OB
+      - name: Call build-image-and-artifact for FAPI-PEP-RS-OB
         uses: ./.github/actions/build-image-and-artifact
         with:
           checkoutBranch: master
@@ -128,7 +128,7 @@ jobs:
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           mavenBuildCommands: "mvn -B deploy -DskipTests"
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
+          repositoryName: SecureApiGateway/secure-api-gateway-fapi-pep-rs-ob
       - name: Call build-image-and-artifact for RCS
         uses: ./.github/actions/build-image-and-artifact
         with:

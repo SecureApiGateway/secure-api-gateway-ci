@@ -35,11 +35,11 @@ jobs:
           checkoutCode: true
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
       # Checkout OB Repo
-      - name: Checkout OB Repo
+      - name: Checkout FAPI-PEP-RS-OB Repo
         uses: actions/checkout@v4
         with:
-          path: secure-api-gateway-ob-uk
-          repository: SecureApiGateway/secure-api-gateway-ob-uk
+          path: secure-api-gateway-fapi-pep-rs-ob
+          repository: SecureApiGateway/secure-api-gateway-fapi-pep-rs-ob
           ref: master
       # Checkout FAPI PEP AS Repo
       - name: Checkout Core Repo
@@ -64,14 +64,14 @@ jobs:
           javaDistribution: zulu
           javaVersion: 17
       # OB
-      - name: Call check copyright for OB
+      - name: Call check copyright for FAPI-PEP-RS-OB
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
         with:
           checkoutBranch: master
           checkoutCode: true
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          repositoryName: SecureApiGateway/secure-api-gateway-ob-uk
+          repositoryName: SecureApiGateway/secure-api-gateway-fapi-pep-rs-ob
       # FAPI PEP AS
       - name: Call check copyright for FAPI-PEP-AS
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
