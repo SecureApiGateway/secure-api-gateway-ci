@@ -40,7 +40,7 @@ jobs:
         with:
           path: secure-api-gateway-fapi-pep-rs-ob
           repository: SecureApiGateway/secure-api-gateway-fapi-pep-rs-ob
-          ref: master
+          ref: main
       # Checkout FAPI PEP AS Repo
       - name: Checkout Core Repo
         uses: actions/checkout@v4
@@ -67,7 +67,7 @@ jobs:
       - name: Call check copyright for FAPI-PEP-RS-OB
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
         with:
-          checkoutBranch: master
+          checkoutBranch: main
           checkoutCode: true
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}

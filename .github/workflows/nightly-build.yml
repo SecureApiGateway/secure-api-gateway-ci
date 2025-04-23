@@ -48,7 +48,7 @@ jobs:
       - name: Call build-image-and-artifact for FAPI-PEP-RS-OB with latest IG
         uses: ./.github/actions/build-image-and-artifact
         with:
-          checkoutBranch: master
+          checkoutBranch: main
           checkoutCode: true
           dockerBuildCommands: make docker tag=latestig setlatest=false mavenArgs="-Dsecure-api-gateway.version=${{ vars.LATEST_FAPI_PEP_AS_ARTIFACT_VERSION }}" dockerArgs="--build-arg base_image=${{ vars.LATEST_IG_DOCKER_IMAGE }}"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
@@ -122,7 +122,7 @@ jobs:
       - name: Call build-image-and-artifact for FAPI-PEP-RS-OB
         uses: ./.github/actions/build-image-and-artifact
         with:
-          checkoutBranch: master
+          checkoutBranch: main
           checkoutCode: true
           dockerBuildCommands: "make clean docker tag=latest && make clean docker tag=dev env=dev"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
