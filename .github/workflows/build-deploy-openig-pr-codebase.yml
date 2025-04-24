@@ -90,8 +90,6 @@ jobs:
           gitTrigger: pr
           serviceName: "fapi-pep-as"
           sapigType: "core"
-          testTrustedDirectoryArgoServiceName: ${{ env.TEST_TRUSTED_DIRECTORY_ARGO_SERVICE_NAME || null }}
-          testTrustedDirectoryServiceName: ${{ env.TEST_TRUSTED_DIRECTORY_SERVICE_NAME || null }}
       - name: Deploy to Environment
         uses: ./.github/actions/deploy-to-env
         with:
@@ -105,5 +103,3 @@ jobs:
           gitTrigger: pr
           serviceName: "fapi-pep-rs"
           sapigType: "core"
-          testTrustedDirectoryArgoServiceName: ${{ env.TEST_TRUSTED_DIRECTORY_ARGO_SERVICE_NAME || null }}
-          testTrustedDirectoryServiceName: ${{ env.TEST_TRUSTED_DIRECTORY_SERVICE_NAME || null }}

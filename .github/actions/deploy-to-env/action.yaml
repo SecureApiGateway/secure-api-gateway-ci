@@ -34,12 +34,6 @@ inputs:
   targetEnv:
     description: What environment is being targeted
     required: true
-  testTrustedDirectoryArgoServiceName:
-    description: The parameter name(s) of the test trusted directory in Argo
-    required: false
-  testTrustedDirectoryServiceName:
-    description: The Service name for the test trusted directory
-    required: false
 runs:
   using: composite
   steps:
@@ -83,22 +77,13 @@ runs:
           echo SERVICENAME=${{ inputs.serviceName }} >> ${GITHUB_ENV}
           echo TRIGGERNAMECORE=github-actions-trigger-core >> ${GITHUB_ENV}
           echo TRIGGERBRANCHCORE=main >> ${GITHUB_ENV}
-        elif [[ ${{ inputs.sapigType }} == "test-trusted-directory" ]]; then
-          echo DEPLOYOB=true >> ${GITHUB_ENV}
-          echo DEPLOYCORE=true >> ${GITHUB_ENV}
-          echo ARGOSERVICENAME=${{ inputs.testTrustedDirectoryArgoServiceName }} >> ${GITHUB_ENV}
-          echo SERVICENAME=${{ inputs.testTrustedDirectoryServiceName }} >> ${GITHUB_ENV}
-          echo TRIGGERNAMECORE=github-actions-trigger-core >> ${GITHUB_ENV}
-          echo TRIGGERNAMEOB=github-actions-trigger-gateway >> ${GITHUB_ENV}
-          echo TRIGGERBRANCHCORE=main >> ${GITHUB_ENV}
-          echo TRIGGERBRANCHOB=main >> ${GITHUB_ENV}
         elif [[ ${{ inputs.sapigType }} == "none" ]]; then
           echo DEPLOYOB=false >> ${GITHUB_ENV}
           echo DEPLOYCORE=false >> ${GITHUB_ENV}
           echo ARGOSERVICENAME=${{ inputs.argoServiceName }} >> ${GITHUB_ENV}
           echo SERVICENAME=${{ inputs.serviceName }} >> ${GITHUB_ENV}
         else
-          echo "Unexpected value for sapigType, use 'ob','core','both','test-trusted-directory' or 'none'"
+          echo "Unexpected value for sapigType, use 'ob','core','both' or 'none'"
         fi
         
         # Wherever to sync the branch of a tag in argo CD (Kustomise)
