@@ -302,7 +302,7 @@ jobs:
           javaVersion: ${{ env.JAVA_VERSION }}
       # PR Artifacts Build
       - name: Check for PR Artifacts
-        if: env.STEPS_PR_SET_MAVEN_CONFIG == 'true'
+        if: env.STEPS_PR_RUN_PRE_MERGE_CHECKS == 'true'
         run: |
           pomVersion=$(cd ${{ inputs.componentName }} && mvn help:evaluate -Dexpression=revision -q -DforceStdout)
           commonBomVersion=$(cd ${{ inputs.componentName }} && mvn help:evaluate -Dexpression=uk.bom.version -q -DforceStdout)
@@ -310,4 +310,15 @@ jobs:
           if [[ "$pomVersion" =~ "pr-" || "$commonBomVersion" =~ "pr-" || "$rsConsentVersion" =~ "pr-" ]]; then
             echo "Error: PR Atrifact version detected, failing the pre merge checks"
             exit 1
+          fi
+      # Dockerfile Build
+      - name: Check for PR in Dockerfile
+        if: env.STEPS_PR_RUN_PRE_MERGE_CHECKS == 'true'
+        run: |
+          if [ -f ${{ inputs.componentName }}-docker/Dockerfile ]; then
+            dockerfile=`cat ${{ inputs.componentName }}-docker/Dockerfile | grep "ARG base_image"
+            if [[ "$dockerfile" =~ "pr" ]]; then
+              echo "Error: PR Atrifact version detected, failing the pre merge checks"
+              exit 1
+            fi
           fi
