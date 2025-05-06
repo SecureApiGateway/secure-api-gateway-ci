@@ -242,8 +242,6 @@ jobs:
           gitTrigger: pr
           serviceName: ${{ env.SERVICE_NAME }}
           sapigType: ${{ env.SAPIG_TYPE }}
-          testTrustedDirectoryArgoServiceName: ${{ env.TEST_TRUSTED_DIRECTORY_ARGO_SERVICE_NAME || null }}
-          testTrustedDirectoryServiceName: ${{ env.TEST_TRUSTED_DIRECTORY_SERVICE_NAME || null }}
       # Run Functional Tests
       - name: Run Functional Tests
         uses: ./secure-api-gateway-ci/.github/actions/run-functional-tests
