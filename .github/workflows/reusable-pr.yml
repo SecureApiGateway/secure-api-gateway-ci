@@ -316,7 +316,7 @@ jobs:
         if: env.STEPS_PR_RUN_PRE_MERGE_CHECKS == 'true'
         run: |
           if [ -f ${{ inputs.componentName }}-docker/Dockerfile ]; then
-            dockerfile=`cat ${{ inputs.componentName }}-docker/Dockerfile | grep "ARG base_image"
+            dockerfile=`cat ${{ inputs.componentName }}-docker/Dockerfile | grep "ARG base_image"`
             if [[ "$dockerfile" =~ "pr" ]]; then
               echo "Error: PR Atrifact version detected, failing the pre merge checks"
               exit 1
