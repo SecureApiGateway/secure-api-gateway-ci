@@ -52,7 +52,7 @@ runs:
         fi
         # If version contains a ',' then its likely come from a GitHub build and we want to remove it
         if [[ "${{ inputs.testsVersion }}" == *","* ]]; then
-          updatedVersion=$(echo ${{ inputs.testsVersion }}" | sed "s/,/ /")
+          updatedVersion=$(echo "${{ inputs.testsVersion }}" | sed "s/,/ /")
           echo "version=$updatedVersion" >> ${GITHUB_ENV}
         else
         else
