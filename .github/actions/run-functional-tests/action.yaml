@@ -50,10 +50,18 @@ runs:
             echo "cfPipelineBranch=${{ inputs.cfPipelineBranch }}" >> ${GITHUB_ENV}
           fi        
         fi
+        # If version contains a ',' then its likely come from a GitHub build and we want to remove it
+        if [[ "${{testsVersion}}" == *","* ]]; then
+          updatedVersion=$(echo ${{testsVersion}}" | sed "s/,/ /")
+          echo "version=$updatedVersion" >> ${GITHUB_ENV}
+        else
+        else
+          echo "version=${{testsVersion}}" >> ${GITHUB_ENV}
+        fi
     - name: 'Run Functional Tests'
       uses: codefresh-io/codefresh-pipeline-runner@master
       with:
-        args: '-v IMAGE_REPO=securebanking/${{ inputs.serviceName }} -v TAG=${{ inputs.dockerTag }} -v TEST_TASK=${{ inputs.testsVersion }} -v BRANCH=${{ env.cfPipelineBranch }}'
+        args: '-v IMAGE_REPO=securebanking/${{ inputs.serviceName }} -v TAG=${{ inputs.dockerTag }} -v TEST_TASK=${{ env.version }} -v BRANCH=${{ env.cfPipelineBranch }}'
       env:
         PIPELINE_NAME: ${{ env.cfPipelineName }}
         CF_API_KEY: ${{ inputs.cfAPIKey }}
