@@ -55,7 +55,6 @@ runs:
           updatedVersion=$(echo "${{ inputs.testsVersion }}" | sed "s/,/ /")
           echo "version=$updatedVersion" >> ${GITHUB_ENV}
         else
-        else
           echo "version=${{ inputs.testsVersion }}" >> ${GITHUB_ENV}
         fi
     - name: 'Run Functional Tests'
