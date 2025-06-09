@@ -51,12 +51,12 @@ runs:
           fi        
         fi
         # If version contains a ',' then its likely come from a GitHub build and we want to remove it
-        if [[ "${{testsVersion}}" == *","* ]]; then
-          updatedVersion=$(echo ${{testsVersion}}" | sed "s/,/ /")
+        if [[ "${{ inputs.testsVersion }}" == *","* ]]; then
+          updatedVersion=$(echo ${{ inputs.testsVersion }}" | sed "s/,/ /")
           echo "version=$updatedVersion" >> ${GITHUB_ENV}
         else
         else
-          echo "version=${{testsVersion}}" >> ${GITHUB_ENV}
+          echo "version=${{ inputs.testsVersion }}" >> ${GITHUB_ENV}
         fi
     - name: 'Run Functional Tests'
       uses: codefresh-io/codefresh-pipeline-runner@master
