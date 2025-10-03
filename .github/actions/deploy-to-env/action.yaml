@@ -86,29 +86,31 @@ runs:
           echo "Unexpected value for sapigType, use 'ob','core','both' or 'none'"
         fi
         
-        # Wherever to sync the branch of a tag in argo CD (Kustomise)
+        # Wherever to sync a new branch or use HEAD
         if [ "${{ inputs.changeBranch }}" == "true" ]; then
-          echo "ARGO_DEPLOY_ARG=NEWBRANCH=${{ inputs.branchName }}" >> ${GITHUB_ENV}
+          echo "ARGO_DEPLOY_BRANCH=NEWBRANCH=${{ inputs.branchName }}" >> ${GITHUB_ENV}
         else
-          echo "ARGO_DEPLOY_ARG=TAG=${{ inputs.dockerTag }}" >> ${GITHUB_ENV}
+          echo "ARGO_DEPLOY_BRANCH=NEWBRANCH=HEAD" >> ${GITHUB_ENV}
         fi
-    # Deploy to env when feature branches are being used (dev-cdk and dev-aic get split at this point)
+        # Sync the tag regardless
+        echo "ARGO_DEPLOY_TAG=TAG=${{ inputs.dockerTag }}" >> ${GITHUB_ENV}
+    # Deploy to OB Individual Environment
     - name: 'Update OB Individual Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYOB == 'true' && env.GITHUB_USER != 'both'
       with:
-        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-ob'
+        args: '-v ${{ env.ARGO_DEPLOY_TAG }} -v ${{ env.ARGO_DEPLOY_BRANCH }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-ob'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
         TRIGGER_NAME: ${{ env.TRIGGERNAMEOB }}
         CF_BRANCH: ${{ env.TRIGGERBRANCHOB }}
-    # Deploy to envs when feature branches are not being used (dev-cdk and dev-aic both need tp be updated)
+    # Deploy to OB Dev-CDK & Dev-AIC
     - name: 'Update CDK-OB Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYOB == 'true' && env.GITHUB_USER == 'both'
       with:
-        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-cdk-ob'
+        args: '-v ${{ env.ARGO_DEPLOY_TAG }} -v ${{ env.ARGO_DEPLOY_BRANCH }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-cdk-ob'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
@@ -118,29 +120,29 @@ runs:
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYOB == 'true' && env.GITHUB_USER == 'both'
       with:
-        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-aic-ob'
+        args: '-v ${{ env.ARGO_DEPLOY_TAG }} -v ${{ env.ARGO_DEPLOY_BRANCH }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-aic-ob'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
         TRIGGER_NAME: ${{ env.TRIGGERNAMEOB }}
         CF_BRANCH: ${{ env.TRIGGERBRANCHOB }}
-    # Deploy to env when feature branches are being used (dev-cdk and dev-aic get split at this point)
+    # Deploy to Core Individual Environment
     - name: 'Update Core Individual Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYCORE == 'true' && env.GITHUB_USER != 'both'
       with:
-        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-core'
+        args: '-v ${{ env.ARGO_DEPLOY_TAG }} -v ${{ env.ARGO_DEPLOY_BRANCH }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=${{ env.GITHUB_USER }}-core'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
         TRIGGER_NAME: ${{ env.TRIGGERNAMECORE }}
         CF_BRANCH: ${{ env.TRIGGERBRANCHCORE }}
-    # Deploy to envs when feature branches are not being used (dev-cdk and dev-aic both need tp be updated)
+    # Deploy to Dev-CDK & Dev-AIC
     - name: 'Update CDK-Core Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYCORE == 'true' && env.GITHUB_USER == 'both'
       with:
-        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-cdk-core'
+        args: '-v ${{ env.ARGO_DEPLOY_TAG }} -v ${{ env.ARGO_DEPLOY_BRANCH }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-cdk-core'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
@@ -150,7 +152,7 @@ runs:
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYCORE == 'true' && env.GITHUB_USER == 'both'
       with:
-        args: '-v ${{ env.ARGO_DEPLOY_ARG }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-aic-core'
+        args: '-v ${{ env.ARGO_DEPLOY_TAG }} -v ${{ env.ARGO_DEPLOY_BRANCH }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-aic-core'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
