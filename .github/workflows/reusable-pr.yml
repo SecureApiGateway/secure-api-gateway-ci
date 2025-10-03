@@ -233,7 +233,7 @@ jobs:
         if: env.STEPS_PR_DEPLOY_CHANGES == 'true' && github.actor != 'dependabot[bot]'
         with:
           argoServiceName: ${{ env.ARGO_SERVICE_NAME }}
-          branchName: ${{ steps.branch-name.outputs.current_branch || null }}
+          branchName: ${{ steps.branch-name.outputs.branch || null }}
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
           cfPipelineBranch: ${{ env.CF_PIPELINE_BRANCH }}
