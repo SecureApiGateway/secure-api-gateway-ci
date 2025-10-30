@@ -92,7 +92,9 @@ runs:
         else
           echo "ARGO_DEPLOY_BRANCH=NEWBRANCH=HEAD" >> ${GITHUB_ENV}
         fi
-        # Sync the tag regardless
+        # Sync the tag regardless, we want cdk envs to always be dev image so that studio doesn't get removed, latest is a prod image so that goes to AIC, and individual envs will be using a PR build
+        echo "ARGO_CDK_DEPLOY_TAG=TAG=dev" >> ${GITHUB_ENV}
+        echo "ARGO_AIC_DEPLOY_TAG=TAG=latest" >> ${GITHUB_ENV}
         echo "ARGO_DEPLOY_TAG=TAG=${{ inputs.dockerTag }}" >> ${GITHUB_ENV}
     # Deploy to OB Individual Environment
     - name: 'Update OB Individual Environment'
@@ -110,7 +112,7 @@ runs:
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYOB == 'true' && env.GITHUB_USER == 'both'
       with:
-        args: '-v ${{ env.ARGO_DEPLOY_TAG }} -v ${{ env.ARGO_DEPLOY_BRANCH }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-cdk-ob'
+        args: '-v ${{ env.ARGO_CDK_DEPLOY_TAG }} -v ${{ env.ARGO_DEPLOY_BRANCH }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-cdk-ob'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
@@ -120,7 +122,7 @@ runs:
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYOB == 'true' && env.GITHUB_USER == 'both'
       with:
-        args: '-v ${{ env.ARGO_DEPLOY_TAG }} -v ${{ env.ARGO_DEPLOY_BRANCH }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-aic-ob'
+        args: '-v ${{ env.ARGO_AIC_DEPLOY_TAG }} -v ${{ env.ARGO_DEPLOY_BRANCH }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-aic-ob'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-ob-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
@@ -142,7 +144,7 @@ runs:
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYCORE == 'true' && env.GITHUB_USER == 'both'
       with:
-        args: '-v ${{ env.ARGO_DEPLOY_TAG }} -v ${{ env.ARGO_DEPLOY_BRANCH }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-cdk-core'
+        args: '-v ${{ env.ARGO_CDK_DEPLOY_TAG }} -v ${{ env.ARGO_DEPLOY_BRANCH }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-cdk-core'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
@@ -152,7 +154,7 @@ runs:
       uses: codefresh-io/codefresh-pipeline-runner@master
       if: env.DEPLOYCORE == 'true' && env.GITHUB_USER == 'both'
       with:
-        args: '-v ${{ env.ARGO_DEPLOY_TAG }} -v ${{ env.ARGO_DEPLOY_BRANCH }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-aic-core'
+        args: '-v ${{ env.ARGO_AIC_DEPLOY_TAG }} -v ${{ env.ARGO_DEPLOY_BRANCH }} -v ARGO_VALUES_PREFIX=${{ env.ARGOSERVICENAME }} -v SERVICE_NAME=${{ env.SERVICENAME }} -v ENVIRONMENT=dev-aic-core'
       env:
         PIPELINE_NAME: SAPIG-devenv/dev-core-service-build
         CF_API_KEY: ${{ inputs.cfAPIKey }}
