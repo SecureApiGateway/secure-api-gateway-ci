@@ -93,9 +93,15 @@ runs:
           echo "ARGO_DEPLOY_BRANCH=NEWBRANCH=HEAD" >> ${GITHUB_ENV}
         fi
         # Sync the tag regardless, we want cdk envs to always be dev image so that studio doesn't get removed, latest is a prod image so that goes to AIC, and individual envs will be using a PR build
-        echo "ARGO_CDK_DEPLOY_TAG=TAG=dev" >> ${GITHUB_ENV}
-        echo "ARGO_AIC_DEPLOY_TAG=TAG=latest" >> ${GITHUB_ENV}
-        echo "ARGO_DEPLOY_TAG=TAG=${{ inputs.dockerTag }}" >> ${GITHUB_ENV}
+        if [[ "${{ inputs.serviceName }}" == "fapiPepAs" || "${{ inputs.serviceName }}" == "fapiPepRs" || "${{ inputs.serviceName }}" == "testTrustedDirectory" ]]; then
+          echo "ARGO_CDK_DEPLOY_TAG=TAG=dev" >> ${GITHUB_ENV}
+          echo "ARGO_AIC_DEPLOY_TAG=TAG=latest" >> ${GITHUB_ENV}
+          echo "ARGO_DEPLOY_TAG=TAG=${{ inputs.dockerTag }}" >> ${GITHUB_ENV}
+        else
+          echo "ARGO_CDK_DEPLOY_TAG=TAG=latest" >> ${GITHUB_ENV}
+          echo "ARGO_AIC_DEPLOY_TAG=TAG=latest" >> ${GITHUB_ENV}
+          echo "ARGO_DEPLOY_TAG=TAG=${{ inputs.dockerTag }}" >> ${GITHUB_ENV}
+        fi
     # Deploy to OB Individual Environment
     - name: 'Update OB Individual Environment'
       uses: codefresh-io/codefresh-pipeline-runner@master
