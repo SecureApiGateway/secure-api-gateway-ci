@@ -92,37 +92,6 @@ jobs:
         if: failure()
         run: |
           echo FAILUREINBUILD=true >> ${GITHUB_ENV}
-  analyze-fapi-pep-as:
-    name: Analyze FAPI-PEP-AS - IG Extension
-    runs-on: 'ubuntu-22.04'
-    timeout-minutes: 360
-    permissions:
-      security-events: write
-      actions: read
-      contents: read
-    strategy:
-      fail-fast: false
-    steps:
-      - name: Checkout CI Code
-        uses: actions/checkout@v4
-      - name: Call code-scanning on FAPI-PEP-AS
-        uses: ./.github/actions/code-scanning
-        with:
-          cache: 'maven'
-          checkoutBranch: main
-          checkoutCode: true
-          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
-          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          actionTrigger: nightly
-          javaArchitecture: x64
-          javaDistribution: 'zulu'
-          javaVersion: '17'
-          language: 'java-kotlin'
-          repositoryName: SecureApiGateway/secure-api-gateway-fapi-pep-as
-      - name: Set Var if Failure
-        if: failure()
-        run: |
-          echo FAILUREINBUILD=true >> ${GITHUB_ENV}
   analyze-common:
     name: Analyze Common
     runs-on: 'ubuntu-22.04'
