@@ -172,6 +172,9 @@ jobs:
         run : |
           cd ${{ inputs.componentName }}
           ${{ env.STEPS_PR_RUN_INITIAL_TESTS_COMMAND }}
+        with:
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
       # Builds Docker Image
       - name: Build Image
         uses: ./secure-api-gateway-ci/.github/actions/build-image
