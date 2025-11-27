@@ -13,6 +13,27 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
+      # Checkout OB Repo
+      - name: Checkout FAPI-PEP-RS-OB Repo
+        uses: actions/checkout@v4
+        with:
+          path: secure-api-gateway-fapi-pep-rs-ob
+          repository: SecureApiGateway/secure-api-gateway-fapi-pep-rs-ob
+          ref: main
+      # Checkout FAPI PEP AS Repo
+      - name: Checkout Core Repo
+        uses: actions/checkout@v4
+        with:
+          path: secure-api-gateway-fapi-pep-as
+          repository: SecureApiGateway/secure-api-gateway-fapi-pep-as
+          ref: main
+      # Checkout FAPI PEP RS Repo
+      - name: Checkout Core Repo
+        uses: actions/checkout@v4
+        with:
+          path: secure-api-gateway-fapi-pep-rs-core
+          repository: SecureApiGateway/secure-api-gateway-fapi-pep-rs-core
+          ref: main
       # Set Maven Config
       - name: Set Maven Config
         uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
@@ -48,27 +69,6 @@ jobs:
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
-      # Checkout OB Repo
-      - name: Checkout FAPI-PEP-RS-OB Repo
-        uses: actions/checkout@v4
-        with:
-          path: secure-api-gateway-fapi-pep-rs-ob
-          repository: SecureApiGateway/secure-api-gateway-fapi-pep-rs-ob
-          ref: main
-      # Checkout FAPI PEP AS Repo
-      - name: Checkout Core Repo
-        uses: actions/checkout@v4
-        with:
-          path: secure-api-gateway-fapi-pep-as
-          repository: SecureApiGateway/secure-api-gateway-fapi-pep-as
-          ref: main
-      # Checkout FAPI PEP RS Repo
-      - name: Checkout Core Repo
-        uses: actions/checkout@v4
-        with:
-          path: secure-api-gateway-fapi-pep-rs-core
-          repository: SecureApiGateway/secure-api-gateway-fapi-pep-rs-core
-          ref: main
       # OB
       - name: Call check copyright for FAPI-PEP-RS-OB
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
