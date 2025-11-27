@@ -19,6 +19,8 @@ jobs:
         with:
           checkoutBranch: master
           checkoutCode: true
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
         # RS
       - name: Call check copyright for RS
@@ -26,6 +28,8 @@ jobs:
         with:
           checkoutBranch: master
           checkoutCode: true
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
       # RCS
       - name: Call check copyright for RCS
@@ -33,6 +37,8 @@ jobs:
         with:
           checkoutBranch: master
           checkoutCode: true
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
       # Checkout OB Repo
       - name: Checkout FAPI-PEP-RS-OB Repo
