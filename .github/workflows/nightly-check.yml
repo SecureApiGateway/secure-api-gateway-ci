@@ -13,6 +13,14 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
+      # Set Maven Config
+      - name: Set Maven Config
+        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
+        with:
+          cache: maven
+          javaArchitecture: x64
+          javaDistribution: zulu
+          javaVersion: 17
       # Common
       - name: Call check copyright for Common
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
@@ -61,14 +69,6 @@ jobs:
           path: secure-api-gateway-fapi-pep-rs-core
           repository: SecureApiGateway/secure-api-gateway-fapi-pep-rs-core
           ref: main
-      # Set Maven Config
-      - name: Set Maven Config
-        uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
-        with:
-          cache: maven
-          javaArchitecture: x64
-          javaDistribution: zulu
-          javaVersion: 17
       # OB
       - name: Call check copyright for FAPI-PEP-RS-OB
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
