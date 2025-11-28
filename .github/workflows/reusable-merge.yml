@@ -81,6 +81,9 @@ jobs:
         run : |
           cd ${{ inputs.componentName }}
           ${{ env.STEPS_MERGE_RUN_INITIAL_TESTS_COMMAND }}
+        env:
+          FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
+          FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
       # Build Maven Project
       - name: Build Maven Project
         uses: ./secure-api-gateway-ci/.github/actions/build-artifact
