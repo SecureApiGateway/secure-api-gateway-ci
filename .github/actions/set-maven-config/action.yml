@@ -18,6 +18,7 @@ runs:
   steps:
     - name: Set Cache with Community Repository
       uses: actions/setup-java@v4
+      continue-on-error: true
       with:
         distribution: ${{ inputs.javaDistribution }}
         java-version: ${{ inputs.javaVersion }}
