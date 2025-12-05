@@ -24,6 +24,7 @@ runs:
         architecture: ${{ inputs.javaArchitecture }}
         cache: ${{ inputs.cache || null }}
     - name: Move Settings.xml
+      if: always()
       shell: bash
       run: |
         mkdir -p /home/runner/.m2
