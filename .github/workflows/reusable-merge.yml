@@ -53,10 +53,12 @@ jobs:
               exit 1
             fi
           fi
+          
           # What Docker Tag to build
           if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
             sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
+          
           # Once all replacements are done, load all the variables in the .env file to github
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Auth GCP, SDK & Artifact Registry
@@ -141,6 +143,7 @@ jobs:
       # Decide Where To Deploy
       - name: Where To Deploy
         run: |
+          # Only in use if more than one main branch being used within repo
           if [[ "${{ env.STEPS_MERGE_DEPLOY_FEATURE_BRANCH }}" == "true" ]]; then
             # Need to know if the change is for Dev-cdk or Dev-aic
             if [[ "${{ inputs.componentBranch }}" ]]; then

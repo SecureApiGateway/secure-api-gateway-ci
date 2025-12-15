@@ -81,7 +81,7 @@ jobs:
         run: |
           # Sapig Type is optional so need to set it as null if not in use
           sapigType=${{ inputs.sapigType || null }}
-          # Maven Args is optional so need to set itas null if not in use
+          # Maven Args is optional so need to set it as null if not in use
           mavenArg=${{ inputs.mavenArg || null }}
           # Use dockerTag input to specifty what Docker Tag to build, overriding TAG_REPLACE in the .env file
           if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
