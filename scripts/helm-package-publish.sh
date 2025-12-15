@@ -15,22 +15,15 @@ createPackage()
   for rootDir in */ ; do
     # Remove a trailing / if it exists
     dir=${rootDir%/}
-    # Dont want Kustomize to run
     if [ "$dir" != "postman" ]; then
-      if [ "$dir" == "ob" ] || [ "$dir" == "core" ]; then
-        cd "$dir" || exit
-        for subDir in */ ; do
-          # Remove a trailing / if it exists
-          subdir=${subDir%/}
-          if [ "$subdir" != "kustomize" ]; then
-            helmFile=$subdir
-          fi
-        done
-        cd ../
-        makePackage "$dir/$helmFile"
-      else
-        makePackage "$dir"
-      fi
+      cd "$dir" || exit
+      for subDir in */ ; do
+        # Remove a trailing / if it exists
+        subdir=${subDir%/}
+        helmFile=$subdir
+      done
+      cd ../
+      makePackage "$dir/$helmFile"
     fi
   done
 }

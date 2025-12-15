@@ -87,18 +87,6 @@ jobs:
           if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
             sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
-          # Kustomize folders will be different based off of what sapig type is being built, need to use sapigType if not null to declare what folder in needed
-          if grep -q KUSTOMIZE_DIR_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
-            case $sapigType in
-              core)
-                kustomiseDir="core/kustomize/overlay/dev-cdk/core"
-                ;;
-              ob)
-                kustomiseDir="ob/kustomize/overlay/dev-cdk/ob"
-                ;;
-            esac
-            sed -i -e "s|KUSTOMIZE_DIR_REPLACE|$kustomiseDir|g" secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
-          fi
           # We are uploading some build artifacts to maven with a [VERSION]-[PR_NUMBER]-SNAPSHOT format, need to override SNAPSHOT_REPLACE in the env file
           if grep -q SNAPSHOT_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
             # Create the snapshot version '[VERSION]-[PR_NUMBER]-SNAPSHOT'
@@ -233,7 +221,7 @@ jobs:
       # Deploy to Environment
       - name: Deploy to Environment
         uses: ./secure-api-gateway-ci/.github/actions/deploy-to-env
-        if: env.STEPS_PR_DEPLOY_CHANGES == 'true' && github.actor != 'dependabot[bot]'
+        if: env.STEPS_PR_DEPLOY_CHANGES == 'true' && github.actor != 'dependabot[bot]'github.actor != 'dependabot[bot]'
         with:
           argoServiceName: ${{ env.ARGO_SERVICE_NAME }}
           branchName: ${{ steps.branch-name.outputs.branch || null }}
