@@ -22,9 +22,7 @@ createPackage()
         for subDir in */ ; do
           # Remove a trailing / if it exists
           subdir=${subDir%/}
-          if [ "$subdir" != "kustomize" ]; then
-            helmFile=$subdir
-          fi
+          helmFile=$subdir
         done
         cd ../
         makePackage "$dir/$helmFile"

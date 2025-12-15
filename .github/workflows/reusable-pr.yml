@@ -81,23 +81,11 @@ jobs:
         run: |
           # Sapig Type is optional so need to set it as null if not in use
           sapigType=${{ inputs.sapigType || null }}
-          # Maven Args is optional so need to set itas null if not in use
+          # Maven Args is optional so need to set it as null if not in use
           mavenArg=${{ inputs.mavenArg || null }}
           # Use dockerTag input to specifty what Docker Tag to build, overriding TAG_REPLACE in the .env file
           if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
             sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
-          fi
-          # Kustomize folders will be different based off of what sapig type is being built, need to use sapigType if not null to declare what folder in needed
-          if grep -q KUSTOMIZE_DIR_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
-            case $sapigType in
-              core)
-                kustomiseDir="core/kustomize/overlay/dev-cdk/core"
-                ;;
-              ob)
-                kustomiseDir="ob/kustomize/overlay/dev-cdk/ob"
-                ;;
-            esac
-            sed -i -e "s|KUSTOMIZE_DIR_REPLACE|$kustomiseDir|g" secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
           # We are uploading some build artifacts to maven with a [VERSION]-[PR_NUMBER]-SNAPSHOT format, need to override SNAPSHOT_REPLACE in the env file
           if grep -q SNAPSHOT_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
