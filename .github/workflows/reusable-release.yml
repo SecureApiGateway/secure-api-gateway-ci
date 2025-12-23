@@ -166,3 +166,53 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ secrets.RELEASE_PAT }}
+      # Auth & Push images to ITSS Artifact Registry
+      - name: Authentication
+        uses: ./secure-api-gateway-ci/.github/actions/authentication
+        if: env.STEPS_RELEASE_ITSS_COMPONENT == 'true'
+        with:
+          gcpKey: ${{ secrets.ITSS_GAR_KEY }}
+          garLocation: ${{ env.ITSS_GAR_LOCATION }}
+      # Push to ITSS
+      - name: Push Image To ITSS
+        if: env.STEPS_RELEASE_ITSS_COMPONENT == 'true'
+        run: |
+          case ${{ inputs.componentName }} in
+            secure-api-gateway-fapi-pep-as)
+              component="fapi-pep-as"
+              itssComponent="fapi-pep-as"
+              ;;
+            secure-api-gateway-fapi-pep-rs-ob)
+              component="fapi-pep-rs-ob"
+              itssComponent="fapi-pep-rs-ob"
+              ;;
+            secure-api-gateway-ob-uk-rcs)
+              component="securebanking-openbanking-uk-rcs"
+              itssComponent="secure-api-gateway-rcs"
+              ;;
+            secure-api-gateway-ob-uk-rs)
+              component="securebanking-openbanking-uk-rs"
+              itssComponent="secure-api-gateway-rs"
+              ;;
+            secure-api-gateway-ob-uk-ui)
+              component="securebanking-ui"
+              itssComponent="secure-api-gateway-rcs-ui"
+              ;;
+            secure-api-gateway-ob-uk-functional-tests)
+              component="uk-functional-tests"
+              itssComponent="secure-api-gateway-functional-tests"
+              ;;
+            secure-api-gateway-ob-uk-test-data-initializer)
+              component="securebanking-test-data-initializer"
+              itssComponent="secure-api-gateway-test-data-initializer"
+              ;;
+            *)
+              echo "ERROR: Component not expected, please check"
+              exit 1
+              ;;
+          esac
+          if [ -z "$(docker images -q ${{ vars.GAR_RELEASE_REPO }}/securebanking/$component:${{ vars.VERSION_REPLACE }} 2> /dev/null)" ]; then
+            # Tag image for ITSS repo
+            docker tag ${{ vars.GAR_RELEASE_REPO }}/securebanking/$component:${{ vars.VERSION_REPLACE }} ${{ vars.ITSS_GAR_RELEASE_REPO }}/base/securebanking/$itssComponent:${{ vars.VERSION_REPLACE }}
+            docker push ${{ vars.ITSS_GAR_RELEASE_REPO }}/base/securebanking/$itssComponent:${{ vars.VERSION_REPLACE }}
+          fi
