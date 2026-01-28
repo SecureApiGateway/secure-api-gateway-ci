@@ -211,8 +211,8 @@ jobs:
               exit 1
               ;;
           esac
-          if [ -z "$(docker images -q ${{ vars.GAR_RELEASE_REPO }}/securebanking/$component:${{ vars.VERSION_REPLACE }} 2> /dev/null)" ]; then
+          if [ -z "$(docker images -q ${{ vars.GAR_RELEASE_REPO }}/securebanking/$component:${{ inputs.releaseVersion }} 2> /dev/null)" ]; then
             # Tag image for ITSS repo
-            docker tag ${{ vars.GAR_RELEASE_REPO }}/securebanking/$component:${{ vars.VERSION_REPLACE }} ${{ vars.ITSS_GAR_RELEASE_REPO }}/base/securebanking/$itssComponent:${{ vars.VERSION_REPLACE }}
-            docker push ${{ vars.ITSS_GAR_RELEASE_REPO }}/base/securebanking/$itssComponent:${{ vars.VERSION_REPLACE }}
+            docker tag ${{ vars.GAR_RELEASE_REPO }}/securebanking/$component:${{ inputs.releaseVersion }} ${{ vars.ITSS_GAR_RELEASE_REPO }}/base/securebanking/$itssComponent:${{ inputs.releaseVersion }}
+            docker push ${{ vars.ITSS_GAR_RELEASE_REPO }}/base/securebanking/$itssComponent:${{ inputs.releaseVersion }}
           fi
