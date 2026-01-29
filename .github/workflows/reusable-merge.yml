@@ -38,14 +38,8 @@ jobs:
       # Prepare Environment
       - name: Prepare Environment
         run: |
-          # We may have more than one 'main' branch active at one time, need to be able to identify the different branches and create different 'latest' docker tags 
           if [[ "${{ inputs.componentBranch }}" ]]; then
-            if [[ "${{ inputs.componentBranch }}" =~ v[0-9] ]]; then
-              # Only going up to v999, should be more than enough as only on v4 at time of writing
-              branch=$(echo ${{ inputs.componentBranch }} | grep -oP "v[0-9]{1,3}") 
-              sed -i -e 's/LATESTTAG_REPLACE/'latest-${branch}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
-              sed -i -e 's/DEVTAG_REPLACE/'${branch}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
-            elif [[ "${{ inputs.componentBranch }}" == sustaining/* ]]; then
+            if [[ "${{ inputs.componentBranch }}" == sustaining/* ]]; then
               sustaining_branch="${{ inputs.componentBranch }}"
               sustaining_tag="${sustaining_branch//\//-}"
               sed -i -e 's/LATESTTAG_REPLACE/'${sustaining_tag}-latest'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
@@ -54,7 +48,7 @@ jobs:
               sed -i -e 's/LATESTTAG_REPLACE/'latest'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
               sed -i -e 's/DEVTAG_REPLACE/'dev'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
             else
-              echo "ERROR: Unknown branch - Merge workflow should only run for Master | Main or ob-V# Branches"
+              echo "ERROR: Unknown branch - Merge workflow should only run for Master | Main or sustaining branches"
               exit 1
             fi
           fi
@@ -141,34 +135,26 @@ jobs:
       # Prepare Environment
       - name: Prepare Environment
         run: |
+          if [[ "${{ env.STEPS_MERGE_DEPLOY_CHANGES }}" == "true" &&
+                "${{ github.actor }}" != "dependabot[bot]" &&
+                ( "${{ inputs.componentBranch }}" == "main" || 
+                  "${{ inputs.componentBranch }}" == "master" || 
+                  "${{inputs.componentBranch }}" == "sbat-master" ) ]]; then
+            echo "TO_DEPLOY=true" >> $GITHUB_ENV
+          else
+            echo "TO_DEPLOY=false" >> $GITHUB_ENV
+          fi
           if [ -n ${{ inputs.sapigType }} ]; then
             echo "SAPIG_TYPE=${{ inputs.sapigType }}" >> $GITHUB_ENV
           fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
-      # Decide Where To Deploy
-      - name: Where To Deploy
-        run: |
-          # Only in use if more than one main branch being used within repo
-          if [[ "${{ env.STEPS_MERGE_DEPLOY_FEATURE_BRANCH }}" == "true" ]]; then
-            # Need to know if the change is for Dev-cdk or Dev-aic
-            if [[ "${{ inputs.componentBranch }}" ]]; then
-              if [[ "${{ inputs.componentBranch }}" =~ v[0-9] ]]; then
-                branch=$(echo ${{ inputs.componentBranch }} | grep -oP "v[0-9]{1,3}")
-                echo "TARGET_ENV=dev-cdk" >> $GITHUB_ENV
-                echo "LATEST_TAG=latest-$branch" >> $GITHUB_ENV
-              else
-                echo "TARGET_ENV=dev-aic" >> $GITHUB_ENV
-                echo "LATEST_TAG=latest" >> $GITHUB_ENV
-              fi
-            fi
-          else
-            echo "TARGET_ENV=both" >> $GITHUB_ENV
-            echo "LATEST_TAG=latest" >> $GITHUB_ENV
-          fi
+          echo "TARGET_ENV=both" >> $GITHUB_ENV
+          echo "LATEST_TAG=latest" >> $GITHUB_ENV
       # Deploy to Environment
       - name: Deploy to Environment
         uses: ./secure-api-gateway-ci/.github/actions/deploy-to-env
-        if: env.STEPS_MERGE_DEPLOY_CHANGES == 'true' && github.actor != 'dependabot[bot]'
+        if: |
+          env.TO_DEPLOY == 'true'
         with:
           argoServiceName: ${{ env.ARGO_SERVICE_NAME }}
           cfAPIKey: ${{ secrets.CF_API_KEY }}
@@ -182,7 +168,9 @@ jobs:
       # Run Functional Tests
       - name: Run Functional Tests
         uses: ./secure-api-gateway-ci/.github/actions/run-functional-tests
-        if: env.STEPS_MERGE_RUN_FUNCTIONAL_TESTS == 'true' && github.actor != 'dependabot[bot]'
+        if: |
+          env.TO_DEPLOY == 'true' &&
+          env.STEPS_MERGE_RUN_FUNCTIONAL_TESTS == 'true'
         with:
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
@@ -195,7 +183,9 @@ jobs:
       # Run Conformance DCR Tests
       - name: Run Conformance DCR
         uses: ./secure-api-gateway-ci/.github/actions/run-conformance-dcr
-        if: env.STEPS_MERGE_RUN_DCR_TESTS == 'true' && github.actor != 'dependabot[bot]'
+        if: |
+          env.TO_DEPLOY == 'true' &&
+          env.STEPS_MERGE_RUN_DCR_TESTS == 'true'
         with:
           cfAPIKey: ${{ secrets.CF_API_KEY }}
           cfTriggerName: ${{ env.CF_TRIGGER_NAME }}
