@@ -282,7 +282,7 @@ jobs:
             echo "SAPIG_TYPE=${{ inputs.sapigType }}" >> $GITHUB_ENV
           fi
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
-      # Set Maven Config - including java version
+      # Set Maven Config - including java version of base image
       - name: Set Maven Config
         uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
         if: env.STEPS_PR_SET_MAVEN_CONFIG == 'true'
