@@ -42,7 +42,7 @@ jobs:
         with:
           javaArchitecture: x64
           javaDistribution: zulu
-          javaVersion: 17
+          javaVersion: 21
       # Checkout Bitbucket repo
       - name: Clone BitBucket
         run: |
