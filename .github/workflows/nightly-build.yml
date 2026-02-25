@@ -21,7 +21,7 @@ jobs:
         with:
           javaArchitecture: x64
           javaDistribution: zulu
-          javaVersion: 17
+          javaVersion: 21
       # Build FAPI-PEP-AS with Latest IG
       - name: Call build-image-and-artifact for FAPI-PEP-AS with Latest IG
         uses: ./.github/actions/build-image-and-artifact
@@ -72,7 +72,7 @@ jobs:
         with:
           javaArchitecture: x64
           javaDistribution: zulu
-          javaVersion: 17
+          javaVersion: 21
       # Build Components
       - name: Call build-artifact for Parent
         uses: ./.github/actions/build-artifact

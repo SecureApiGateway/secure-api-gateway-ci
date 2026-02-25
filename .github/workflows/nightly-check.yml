@@ -41,7 +41,7 @@ jobs:
           cache: maven
           javaArchitecture: x64
           javaDistribution: zulu
-          javaVersion: 17
+          javaVersion: 21
       # Common
       - name: Call check copyright for Common
         uses: ./secure-api-gateway-ci/.github/actions/check-copyright
@@ -122,7 +122,7 @@ jobs:
           actionTrigger: nightly
           javaArchitecture: x64
           javaDistribution: 'zulu'
-          javaVersion: '17'
+          javaVersion: '21'
           language: 'java-kotlin'
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-common
       - name: Set Var if Failure
@@ -153,7 +153,7 @@ jobs:
           actionTrigger: nightly
           javaArchitecture: x64
           javaDistribution: 'zulu'
-          javaVersion: '17'
+          javaVersion: '21'
           language: 'java-kotlin'
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rs
       - name: Set Var if Failure
@@ -184,7 +184,7 @@ jobs:
           actionTrigger: nightly
           javaArchitecture: x64
           javaDistribution: 'zulu'
-          javaVersion: '17'
+          javaVersion: '21'
           language: 'java-kotlin'
           repositoryName: SecureApiGateway/secure-api-gateway-ob-uk-rcs
       - name: Set Var if Failure
