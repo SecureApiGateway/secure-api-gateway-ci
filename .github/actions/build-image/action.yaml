@@ -51,11 +51,26 @@ runs:
     - name: Run Docker Commands
       shell: bash
       run: |
+        echo "DEBUG: Get Current Directory and List Files"
         pwd
         ls -la
-        cd ${{ inputs.repositoryName }}
+        echo "DEBUG: chek the values of the inputs"
+        echo "DEBUG: repositoryName: ${{ inputs.repositoryName }}"
+        echo "DEBUG: FAPI_TESTS_COMPONENT: ${{ env.FAPI_TESTS_COMPONENT }}"
+        if [ "${{ inputs.repositoryName }}" = "${{ env.FAPI_TESTS_COMPONENT }}" ]; then
+          echo "DEBUG: Change Directory to ${{ env.FAPI_TESTS_PATH }}"
+          cd ${{ env.FAPI_TESTS_PATH }}
+          echo "DEBUG: Get Current Directory and List Files"
+          pwd
+          ls -la
+        else
+          echo "DEBUG: Change Directory to ${{ env.FAPI_TESTS_PATH }}"
+          cd ${{ inputs.repositoryName }}
+        fi
+        echo "DEBUG: Get Current Directory and List Files"
+        pwd
         ls -la
-        echo "${{ inputs.dockerBuildCommands }}"
+        echo "DEBUG: ${{ inputs.dockerBuildCommands }}"
         ${{ inputs.dockerBuildCommands }}
       env:
         FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}

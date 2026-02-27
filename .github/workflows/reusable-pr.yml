@@ -20,11 +20,13 @@ on:
         type: string
     secrets:
       DEV_GAR_KEY:
-        description: The GCP Json Auth Key (optional)
+        description: The GCP Json Auth Key. Required for callers from openig repositories
+        required: false
+      CF_API_KEY:
+        description: The Codefresh API key for auth. Required for callers from openig repositories
         required: false
 env:
   FAPI_TESTS_COMPONENT: openig
-  # TODO do I need openig as suffix? Verify
   FAPI_TESTS_PATH: openig/openig-fapi-tests/functional
   FAPI_TESTS_OWNER: ping-rocks
 jobs:
@@ -85,7 +87,8 @@ jobs:
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
         with:
-          path: ${{ inputs.componentName == env.FAPI_TESTS_COMPONENT && env.FAPI_TESTS_PATH || inputs.componentName }}
+          path: ${{ inputs.componentName }}
+#          path: ${{ inputs.componentName == env.FAPI_TESTS_COMPONENT && env.FAPI_TESTS_PATH || inputs.componentName }}
 #          repository: SecureApiGateway/${{ inputs.componentName }}
           repository: ${{ inputs.componentName == env.FAPI_TESTS_COMPONENT && env.FAPI_TESTS_OWNER || 'SecureApiGateway' }}/${{ inputs.componentName }}
 #          path: ${{ inputs.componentName == 'fapi-tests' && 'openig/openig-fapi-tests/functional' || inputs.componentName }}
@@ -224,7 +227,8 @@ jobs:
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
         with:
-          path: ${{ inputs.componentName == env.FAPI_TESTS_COMPONENT && env.FAPI_TESTS_PATH || inputs.componentName }}
+          path: ${{ inputs.componentName }}
+#          path: ${{ inputs.componentName == env.FAPI_TESTS_COMPONENT && env.FAPI_TESTS_PATH || inputs.componentName }}
           repository: ${{ inputs.componentName == env.FAPI_TESTS_COMPONENT && env.FAPI_TESTS_OWNER || 'SecureApiGateway' }}/${{ inputs.componentName }}
       # Prepare Environment
       - name: Prepare Environment
@@ -293,7 +297,8 @@ jobs:
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
         with:
-          path: ${{ inputs.componentName == env.FAPI_TESTS_COMPONENT && env.FAPI_TESTS_PATH || inputs.componentName }}
+          path: ${{ inputs.componentName }}
+#          path: ${{ inputs.componentName == env.FAPI_TESTS_COMPONENT && env.FAPI_TESTS_PATH || inputs.componentName }}
           repository: ${{ inputs.componentName == env.FAPI_TESTS_COMPONENT && env.FAPI_TESTS_OWNER || 'SecureApiGateway' }}/${{ inputs.componentName }}
       # Prepare Environment
       - name: Prepare Environment
