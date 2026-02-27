@@ -51,7 +51,11 @@ runs:
     - name: Run Docker Commands
       shell: bash
       run: |
+        pwd
+        ls -la
         cd ${{ inputs.repositoryName }}
+        ls -la
+        echo "${{ inputs.dockerBuildCommands }}"
         ${{ inputs.dockerBuildCommands }}
       env:
         FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
