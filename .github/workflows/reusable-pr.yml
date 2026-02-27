@@ -18,6 +18,17 @@ on:
         description: The SAPIG Type for the component (optional)
         required: false
         type: string
+    secrets:
+      DEV_GAR_KEY:
+        description: The GCP Json Auth Key. Required for callers from openig repositories
+        required: false
+      CF_API_KEY:
+        description: The Codefresh API key for auth. Required for callers from openig repositories
+        required: false
+env:
+  FAPI_TESTS_COMPONENT: openig
+  FAPI_TESTS_PATH: openig/openig-fapi-tests/functional
+  FAPI_TESTS_OWNER: ping-rocks
 jobs:
   check-dcr:
     runs-on: ubuntu-22.04
@@ -70,12 +81,18 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
+          # TODO This is only for testing, DELETE afterwards!!!
+          ref: 'openig-9745'
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
         with:
           path: ${{ inputs.componentName }}
-          repository: SecureApiGateway/${{ inputs.componentName }}
+#          path: ${{ inputs.componentName == env.FAPI_TESTS_COMPONENT && env.FAPI_TESTS_PATH || inputs.componentName }}
+#          repository: SecureApiGateway/${{ inputs.componentName }}
+          repository: ${{ inputs.componentName == env.FAPI_TESTS_COMPONENT && env.FAPI_TESTS_OWNER || 'SecureApiGateway' }}/${{ inputs.componentName }}
+#          path: ${{ inputs.componentName == 'fapi-tests' && 'openig/openig-fapi-tests/functional' || inputs.componentName }}
+#          repository: ${{ inputs.componentName == 'fapi-tests' && 'openig' || 'SecureApiGateway' }}/${{ inputs.componentName }}
       # Prepare Environment
       - name: Prepare Environment
         run: |
@@ -121,7 +138,11 @@ jobs:
         if: env.STEPS_PR_AUTHENTICATE == 'true'
         with:
           gcpKey: ${{ secrets.DEV_GAR_KEY }}
+#          gcpKey: ${{ secrets.gcpKey || secrets.DEV_GAR_KEY }}
           garLocation: ${{ env.GAR_LOCATION }}
+      # TODO Riso: delete this stage
+      - name: Test GCloud Authentication
+        run: gcloud auth list
       # Set Maven Config
       - name: Set Maven Config
         uses: ./secure-api-gateway-ci/.github/actions/set-maven-config
@@ -200,12 +221,15 @@ jobs:
         with:
           path: secure-api-gateway-ci
           repository: SecureApiGateway/secure-api-gateway-ci
+          # TODO This is only for testing, DELETE afterwards!!!
+          ref: 'openig-9745'
       # Checkout Calling Repo
       - name: Checkout Calling Repo
         uses: actions/checkout@v4
         with:
           path: ${{ inputs.componentName }}
-          repository: SecureApiGateway/${{ inputs.componentName }}
+#          path: ${{ inputs.componentName == env.FAPI_TESTS_COMPONENT && env.FAPI_TESTS_PATH || inputs.componentName }}
+          repository: ${{ inputs.componentName == env.FAPI_TESTS_COMPONENT && env.FAPI_TESTS_OWNER || 'SecureApiGateway' }}/${{ inputs.componentName }}
       # Prepare Environment
       - name: Prepare Environment
         run: |
@@ -274,7 +298,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: ${{ inputs.componentName }}
-          repository: SecureApiGateway/${{ inputs.componentName }}
+#          path: ${{ inputs.componentName == env.FAPI_TESTS_COMPONENT && env.FAPI_TESTS_PATH || inputs.componentName }}
+          repository: ${{ inputs.componentName == env.FAPI_TESTS_COMPONENT && env.FAPI_TESTS_OWNER || 'SecureApiGateway' }}/${{ inputs.componentName }}
       # Prepare Environment
       - name: Prepare Environment
         run: |
