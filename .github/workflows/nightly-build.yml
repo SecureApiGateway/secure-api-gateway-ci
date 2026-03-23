@@ -156,7 +156,8 @@ jobs:
           dockerBuildCommands: "make docker tag=latest"
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-          repositoryName: SecureApiGateway/secure-api-gateway-functional-test-framework
+          repositoryName: ping-rocks/openig
+          buildPath: openig/openig-fapi-tests/functional
       - name: Call build-image for OB Functional Tests
         uses: ./.github/actions/build-image
         with:
