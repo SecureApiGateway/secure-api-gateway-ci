@@ -19,6 +19,9 @@ inputs:
   repositoryName:
     description: What repository to checkout
     required: true
+  buildPath:
+    description: What path to run the build commands from
+    required: false
 runs:
   using: composite
   steps:
@@ -51,7 +54,11 @@ runs:
     - name: Run Docker Commands
       shell: bash
       run: |
-        cd ${{ inputs.repositoryName }}
+        if [ -n "${{ inputs.buildPath }}" ]; then
+          cd ${{ inputs.buildPath }}
+        else
+          cd ${{ inputs.repositoryName }}
+        fi
         ${{ inputs.dockerBuildCommands }}
       env:
         FR_ARTIFACTORY_USER: ${{ inputs.FR_ARTIFACTORY_USER }}
