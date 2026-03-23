@@ -18,6 +18,18 @@ on:
         description: The repository branch for component (optional)
         required: false
         type: string
+      repositoryOwner:
+        description: The repository owner for the component (optional)
+        required: false
+        type: string
+        default: SecureApiGateway
+    secrets:
+      DEV_GAR_KEY:
+        description: The GCP Json Auth Key. Required for callers from openig repository
+        required: false
+      CF_API_KEY:
+        description: The CodeFresh API key for auth. Required for callers from openig repository
+        required: false
 jobs:
   build:
     runs-on: ubuntu-22.04
@@ -34,7 +46,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: ${{ inputs.componentName }}
-          repository: SecureApiGateway/${{ inputs.componentName }}
+          repository: ${{ format('{0}/{1}', inputs.repositoryOwner, inputs.componentName) }}
       # Prepare Environment
       - name: Prepare Environment
         run: |
@@ -115,6 +127,7 @@ jobs:
           FR_ARTIFACTORY_USER: ${{ secrets.FR_ARTIFACTORY_USER }}
           FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD: ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           repositoryName: ${{ inputs.componentName }}
+          buildPath: ${{ env.DOCKER_BUILD_PATH }}
   deploy:
     runs-on: ubuntu-22.04
     name: Deploy
@@ -131,7 +144,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: ${{ inputs.componentName }}
-          repository: SecureApiGateway/${{ inputs.componentName }}
+          repository: ${{ format('{0}/{1}', inputs.repositoryOwner, inputs.componentName) }}
       # Prepare Environment
       - name: Prepare Environment
         run: |
