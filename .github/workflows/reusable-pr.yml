@@ -33,7 +33,7 @@ on:
 jobs:
   check-dcr:
     runs-on: ubuntu-22.04
-    container: golang:1.17-alpine3.15
+    container: golang:1.17-alpine3.16
     name: Check DCR PR Integrity
     if: inputs.componentName == 'conformance-dcr'
     steps:
