@@ -99,23 +99,7 @@ jobs:
           if grep -q TAG_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
             sed -i -e 's/TAG_REPLACE/'${{ inputs.dockerTag }}'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
           fi
-          # We are uploading some build artifacts to maven with a [VERSION]-[PR_NUMBER]-SNAPSHOT format, need to override SNAPSHOT_REPLACE in the env file
-          if grep -q SNAPSHOT_REPLACE secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env; then
-            # Create the snapshot version '[VERSION]-[PR_NUMBER]-SNAPSHOT'
-            # Get the current version from the pom.xml file
-            pomVersion=$(cd ${{ inputs.componentName }} && mvn help:evaluate -Dexpression=revision -q -DforceStdout)
-            # Remove SNAPSHOT from the retrieved version if it exists
-            if [[ "$pomVersion" =~ "-SNAPSHOT" ]]; then
-              pomVersion=${pomVersion/-SNAPSHOT/""}
-            fi
-            # Build the new version from the retrieved version and docker tag and add snapshot to the end
-            pomVersion="$pomVersion-${{ inputs.dockerTag}}-SNAPSHOT"
-            # Override SNAPSHOT_REPLACE in the env file with the built version
-            sed -i -e 's/SNAPSHOT_REPLACE/'$pomVersion'/g' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env
-            echo STEPS_PR_OUTPUT_SNAPSHOT_VERSION="true" >> $GITHUB_ENV
-            echo STEPS_PR_SNAPSHOT_VERSION=$pomVersion >> $GITHUB_ENV
-          fi
-          
+
           # Once all replacements are done, load all the variables in the .env file to github
           grep -v '^#' secure-api-gateway-ci/component-config/${{ inputs.componentName }}.env >> $GITHUB_ENV
       # Auth GCP, SDK & Artifact Registry
@@ -142,6 +126,23 @@ jobs:
           cache: ${{ env.CACHE }}
           cacheDependencyPath: ${{ env.CACHE_DEP_PATH }}
           nodeVersion: ${{ env.NODE_VERSION }}
+      # OPENIG-11186: opt-in (STEPS_PR_OVERRIDE_MAVEN_VERSION=true) per-PR version isolation.
+      # Rewrites workspace poms to '[VERSION]-[PR]-SNAPSHOT' (via versions-maven-plugin, not
+      # committed) so PR deploys never touch the shared -SNAPSHOT coordinates.
+      - name: Override Maven Project Version
+        if: env.STEPS_PR_OVERRIDE_MAVEN_VERSION == 'true'
+        working-directory: ${{ inputs.componentName }}
+        run: |
+          pomVersion=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          if [[ "$pomVersion" =~ -SNAPSHOT$ ]]; then
+            pomVersion=${pomVersion/-SNAPSHOT/""}
+          fi
+          prVersion="$pomVersion-${{ inputs.dockerTag }}-SNAPSHOT"
+          echo "Overriding maven project version $pomVersion-SNAPSHOT -> $prVersion"
+          mvn -q org.codehaus.mojo:versions-maven-plugin:2.18.0:set \
+            -DnewVersion="$prVersion" -DprocessAllModules -DgenerateBackupPoms=false
+          echo STEPS_PR_OUTPUT_SNAPSHOT_VERSION="true" >> $GITHUB_ENV
+          echo STEPS_PR_SNAPSHOT_VERSION="$prVersion" >> $GITHUB_ENV
       # Run Lint
       - name: Run Lint
         if: env.STEPS_PR_RUN_LINT == 'true'
